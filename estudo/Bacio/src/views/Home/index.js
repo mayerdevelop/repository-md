@@ -21,15 +21,21 @@ export default function Home({navigation}){
         setLoad(true)
         
         try{
-          const response = await api.get('/produtos',{
+          const response = await api.get('/produtos/1',{
               withCredentials: true,
               auth: {username:'felipe.mayer',password:'82514903'} })
 
               setLoad(false)
-              navigation.navigate('Detail',{clasId:'Produtos',prods:response.data})
+              navigation.navigate('Detail',{
+                  clasId:'Produtos',
+                  prods:response.data,
+                  numPage:1,
+                  showBackPage:false
+                })
             }
         catch(error){
             alert(error)
+            setLoad(false)
         }
     };
       

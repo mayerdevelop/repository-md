@@ -13,7 +13,7 @@ const Routes = createAppContainer(
     Login,
     Home,
     Detail,
-    DetailProd,
+    DetailProd, 
   })
 );
 

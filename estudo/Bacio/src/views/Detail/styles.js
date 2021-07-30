@@ -18,6 +18,24 @@ const styles = StyleSheet.create({
         fontWeight:'bold'
     },
 
+    contPage:{
+        flex:1,
+        flexDirection:'row',
+    },
+
+    subContPage:{
+        flex:1,
+        flexDirection:'row',
+        justifyContent:'space-around',
+        marginTop:15,
+        marginBottom:30
+    },
+
+    textNPage:{
+        top:5,
+        fontSize:20,
+    },
+
 });
 
 export default styles;
