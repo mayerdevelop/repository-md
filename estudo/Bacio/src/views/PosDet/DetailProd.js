@@ -9,14 +9,15 @@ export default function DetailProd({navigation}){
 
     const nameSec = navigation.getParam('clasId', 'NO-ID')
     const prods = navigation.getParam('prods', 'NO-ID')
+    const numPage = navigation.getParam('numPage', 'NO-ID')
 
     return( 
         
         <SafeAreaView style={styles.container}>
-            <Header showBack={true} showBell={false} showSearch={false} backPage={'Detail'} navigation={navigation}/>
+            <Header showBack={false} showBell={false} showSearch={false} backPage={'Detail'} navigation={navigation}/>
             <Text style={styles.TextTitle}>Detalhes</Text>
 
-            <ScrollView style={{marginBottom:70,top:100,marginBottom:170}}>
+            <ScrollView style={{top:80,marginBottom:200}}>
                 <Text style={styles.cardTitle1}>Código</Text>
                 
                 <View style={styles.content1}>
@@ -26,12 +27,14 @@ export default function DetailProd({navigation}){
                 </View>
 
                 <Text style={styles.cardTitle3}>Descrição</Text>
+                
                 <View style={styles.content3}>
                     <View style={styles.card3}>
                         <Text style={styles.cardDesc3}>{navigation.getParam('descricao', 'NO-ID')}</Text>
                         
                     </View>
                 </View>
+                
                 <View style={styles.content2}>
                     <View style={styles.subContent2}>
                         <Text style={styles.cardTitle2}>Tipo</Text>
@@ -64,7 +67,7 @@ export default function DetailProd({navigation}){
                     </View>
                 </View>
             </ScrollView>
-            <Footer navigation={navigation} icon={'check'} onPress={()=>{navigation.navigate('Detail',{clasId:nameSec,prods:prods})}}/>
+            <Footer navigation={navigation} icon={'check'} onPress={()=>{navigation.navigate('Detail',{clasId:nameSec,prods:prods,numPage:numPage})}}/>
         </SafeAreaView>
         
     )
