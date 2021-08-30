@@ -14,7 +14,8 @@ if (!global.btoa) { global.btoa = encode }
 if (!global.atob) { global.atob = decode }
 
 export default function Home({navigation}){
-    
+
+    const nameUser = navigation.getParam('nameUser', 'NO-ID')
     const [load, setLoad] = useState(false);
 
     const loadProd = async() =>{
@@ -30,7 +31,8 @@ export default function Home({navigation}){
                   clasId:'Produtos',
                   prods:response.data,
                   numPage:1,
-                  showBackPage:false
+                  showBackPage:false,
+                  nameUser:nameUser
                 })
             }
         catch(error){
@@ -43,7 +45,9 @@ export default function Home({navigation}){
         
         <SafeAreaView style={[{backgroundColor: '#fff',flex: 1},styles.container]}>
             <View style={styles.header}>
-                <Text style={styles.textHeader}>Olá, Felipe!</Text>
+                <View style={styles.contTextHeader}>
+                    <Text style={styles.textHeader}>Olá, {nameUser}!</Text>
+                </View>
 
                 <TouchableOpacity style={styles.notification}>
                     <Image source={bell2} style={styles.notificationImage}/>

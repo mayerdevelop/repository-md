@@ -9,7 +9,6 @@ const styles = StyleSheet.create({
     },
     
     header: {
-        alignItems: 'center',
         justifyContent:'center',
         width:'100%',
         height:100,
@@ -46,13 +45,18 @@ const styles = StyleSheet.create({
         left:15,
     },
 
+    contTextHeader:{
+        flex:1,
+        flexDirection:'row',
+        justifyContent:'flex-start',
+        alignItems:'center',
+        marginLeft:20,
+        marginRight:80
+    },
+
     textHeader:{
         fontSize:26,
         color:'#ffffff',
-        flex: 1,
-        top:30,
-        justifyContent:'flex-start',
-        right:120,
         fontFamily:'Segoe UI'
     },
 
