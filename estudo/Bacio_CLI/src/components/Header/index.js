@@ -8,13 +8,21 @@ import search from '../../assets/search.png';
 export default function Header({showBack,backPage,showSearch,navigation}){
 
     const nameSec = navigation.getParam('clasId', 'NO-ID')
-    
+    const nameUser = navigation.getParam('nameUser', 'NO-ID')
+
     return(
 
         <View style={styles.header}>
             { showBack ?
 
-            <TouchableOpacity style={styles.leftIcon} onPress={()=>{navigation.navigate(backPage,{clasId:nameSec})}}>
+            <TouchableOpacity style={styles.leftIcon} 
+                onPress={()=>{
+                    navigation.navigate(backPage,{
+                        clasId:nameSec,
+                        nameUser:nameUser
+                    })}
+                }>
+               
                 <Image source={back} style={styles.leftIconImage}/>
             </TouchableOpacity>
             :

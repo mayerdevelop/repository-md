@@ -39,11 +39,14 @@ export default function Login({navigation}){
           const response = await api.get(`/users/${user}|&|${pass}`,{
               withCredentials: true,
               auth: {username:'felipe.mayer',password:'82514903'} })
-              navigation.navigate('Home',{user:response.data})
+              navigation.navigate('Home',{
+                user: response.data,
+                nameUser: response.data[0]?.name.split(" ",1)
+              })
             }
         catch(error){
             
-            alert('Usuário ou Senha inválido')
+            alert(error)
         }
         setLoad(false)
     };

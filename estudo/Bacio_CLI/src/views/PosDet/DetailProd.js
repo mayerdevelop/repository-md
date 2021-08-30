@@ -8,6 +8,7 @@ import Footer from '../../components/Footer';
 export default function DetailProd({navigation}){
 
     const nameSec = navigation.getParam('clasId', 'NO-ID')
+    const nameUser = navigation.getParam('nameUser', 'NO-ID')
     const prods = navigation.getParam('prods', 'NO-ID')
     const numPage = navigation.getParam('numPage', 'NO-ID')
 
@@ -67,7 +68,14 @@ export default function DetailProd({navigation}){
                     </View>
                 </View>
             </ScrollView>
-            <Footer navigation={navigation} icon={'check'} onPress={()=>{navigation.navigate('Detail',{clasId:nameSec,prods:prods,numPage:numPage})}}/>
+            <Footer navigation={navigation} icon={'check'} 
+                onPress={()=>{navigation.navigate('Detail',{
+                    clasId:nameSec,
+                    prods:prods,
+                    numPage:numPage,
+                    nameUser:nameUser
+                })
+            }}/>
         </SafeAreaView>
         
     )

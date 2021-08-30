@@ -11,8 +11,12 @@ import check from '../../assets/check.png'
 
 export default function Footer({icon,navigation,onPress}){
 
+    const nameUser = navigation.getParam('nameUser', 'NO-ID')
+
     function navHome(){
-        navigation.navigate('Home')
+        navigation.navigate('Home',{
+            nameUser:nameUser
+        })
     }
 
     return(

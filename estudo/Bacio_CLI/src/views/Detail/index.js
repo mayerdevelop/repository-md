@@ -21,6 +21,7 @@ export default function Detail({navigation}){
     const user = 'felipe.mayer'
     const pass = '82514903'
 
+    const nameUser = navigation.getParam('nameUser', 'NO-ID')
     const nameSec = navigation.getParam('clasId', 'NO-ID')
     const prods = navigation.getParam('prods', 'NO-ID')
     const showBackPage = navigation.getParam('showBackPage', 'NO-ID')
@@ -45,7 +46,8 @@ export default function Detail({navigation}){
                     clasId:'Produtos',
                     prods:response.data,
                     numPage:numNextPage,
-                    showBackPage:true
+                    showBackPage:true,
+                    nameUser:nameUser
                 })
             }
         catch(error){
@@ -72,7 +74,8 @@ export default function Detail({navigation}){
                     clasId:'Produtos',
                     prods:response.data,
                     numPage:numNextPage,
-                    showBackPage:numNextPage == 1 ? false : true
+                    showBackPage:numNextPage == 1 ? false : true,
+                    nameUser:nameUser
                 })
             }
         catch(error){
@@ -80,6 +83,10 @@ export default function Detail({navigation}){
             setLoad(false)
         }
     };
+
+    const testest = () =>{
+
+    }
 
     return( 
         
@@ -108,6 +115,7 @@ export default function Detail({navigation}){
                                     }}
                             />
                         ))
+
                     }
                 </View>
 
