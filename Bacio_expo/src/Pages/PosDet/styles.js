@@ -12,34 +12,35 @@ const styles = StyleSheet.create({
     TextTitle:{
         fontSize:32,
         color:'#723600',
-        alignItems:'center',
-        justifyContent:'center',
-        top:55,
-        fontWeight:'bold'
+        fontWeight:'bold',
     },
 
-    content1:{
-        flex: 1,
-        justifyContent:'center',
-        flexDirection: 'row',
-        marginHorizontal:20,
-        marginBottom:20,
-    },
-
-    card1: {
+    contScrow:{
+        flex:1,
         width:'100%',
-        paddingHorizontal:10,
-        height:50,
+        backgroundColor:'#fff',
+        marginTop:30,
+        marginBottom:120,
+        paddingHorizontal:20
+    },
+
+    content1: {
+        flex:1,
+        width:'100%',
+        flexDirection:'row',
+        paddingHorizontal:20,
+        paddingVertical:5,
         borderColor:'#723600',
         borderWidth:2,
         borderRadius:10,
+        marginBottom:20,
     },
-
+    
     cardTitle1:{
         fontSize:25,
         fontWeight:'bold',
         color:'#723600',
-        marginHorizontal:20
+        marginBottom:2
     },
 
     cardDesc1:{
@@ -47,22 +48,17 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
         fontSize:24,
         color:'#585450',
-        top:5,
     },
 
     content2:{
         flex:1,
         flexDirection:'row',
-        justifyContent:'space-between',
-        alignItems:'center',
         marginBottom:20,
     },
 
     subContent2:{
         flex:1,
         flexDirection:'column',
-        justifyContent:'flex-start',
-        height:80,
         marginHorizontal:10,
     },
 
@@ -70,18 +66,17 @@ const styles = StyleSheet.create({
         flex:1,
         flexDirection:'row',
         justifyContent:'center',
-        marginHorizontal:10,
         marginVertical:0,
         borderColor:'#723600',
         borderWidth:2,
         borderRadius:10,
+        paddingVertical:2
     },
 
     cardTitle2:{
         fontSize:25,
         fontWeight:'bold',
         color:'#723600',
-        marginHorizontal:10
     },
 
     cardDesc2:{
@@ -92,39 +87,7 @@ const styles = StyleSheet.create({
         
     },
 
-    content3:{
-        flex:1,
-        flexDirection:'row',
-        height:90,
-        marginBottom:20,
-    },
 
-    card3: {
-        flex:1,
-        flexDirection:'row',
-        justifyContent:'flex-start',
-        alignItems:'flex-start',
-        marginHorizontal:20,
-        borderColor:'#723600',
-        borderWidth:2,
-        borderRadius:10,
-        padding:5
-    },
-
-    cardTitle3:{
-        fontSize:25,
-        fontWeight:'bold',
-        color:'#723600',
-        marginHorizontal:20
-    },
-
-    cardDesc3:{
-        textAlignVertical:'center',
-        fontWeight:'bold',
-        fontSize:24,
-        color:'#585450',
-        
-    },
 
 });
 

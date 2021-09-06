@@ -37,9 +37,9 @@ export default function Login({navigation}){
         
         try{
           const response = await api.get(`/users/${user}|&|${pass}`,{
-              withCredentials: true,
-              auth: {username:'felipe.mayer',password:'82514903'} })
-              navigation.navigate('Home',{
+            withCredentials: true,
+            headers: {'Authorization': 'Basic ZmVsaXBlLm1heWVyOjgyNTE0OTAz'} })
+            navigation.navigate('Home',{
                 user: response.data,
                 nameUser: response.data[0]?.name.split(" ",1)
               })

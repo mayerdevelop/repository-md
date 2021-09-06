@@ -8,28 +8,17 @@ import search from '../../assets/search.png';
 export default function Header({showBack,backPage,showSearch,navigation}){
 
     return(
-
+  
         <View style={styles.header}>
-            { showBack ?
-
-            <TouchableOpacity style={styles.leftIcon} 
-                onPress={()=>{
-                    navigation.navigate(backPage)}
-                }>
-               
-                <Image source={back} style={styles.leftIconImage}/>
-            </TouchableOpacity>
-            :
-            <View/>
-            }
-
-            { showSearch ?
-                <TouchableOpacity style={styles.Search} >
-                <Image source={search} style={styles.SearchImage}/>
-            </TouchableOpacity>
-            :
-            <View/>
-            }
+            <View style={styles.container}>
+                <View style={styles.leftIcon}>
+                    { showBack ?
+                        <TouchableOpacity onPress={()=>{navigation.navigate(backPage)}}>
+                            <Image source={back}/>
+                        </TouchableOpacity>
+                    : null }
+                </View>
+            </View>
         </View>
     )
 

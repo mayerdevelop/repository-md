@@ -2,19 +2,28 @@ import {StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
 
+    contSafe:{
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+    },
+
     container:{
         flex:1,
-        backgroundColor: '#fff',
         alignItems:'center',
-        justifyContent:'flex-start',
+        marginBottom:120,
+        width:'100%',
+    },
+
+    contScrow:{
+        flex:1,
+        top:15
     },
 
     TextTitle:{
         fontSize:32,
         color:'#723600',
-        alignItems:'center',
-        justifyContent:'center',
-        top:75,
         fontWeight:'bold'
     },
 
@@ -35,6 +44,23 @@ const styles = StyleSheet.create({
         top:5,
         fontSize:20,
     },
+
+    input: {
+        flex: 1,
+        height: 50,
+        margin: 30,
+        fontSize: 21,
+        paddingLeft: 15,
+        paddingRight: 15,
+        color: '#723600',
+        borderColor:'#723600',
+        borderBottomWidth:2,
+      },
+
+      searchArea: {
+        flexDirection: 'row',
+        alignItems: 'center',
+      },
 
 });
 
