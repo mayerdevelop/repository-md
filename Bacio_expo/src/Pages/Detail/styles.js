@@ -57,10 +57,23 @@ const styles = StyleSheet.create({
         borderBottomWidth:2,
       },
 
-      searchArea: {
-        flexDirection: 'row',
+      containerInput:{
+        width:'90%',
+        flexDirection:'row',
+        alignItems:'center',
+    },
+
+    emptyContainer: {
+        flex: 1,
         alignItems: 'center',
+        justifyContent: 'center',
       },
+      
+      emptyText: {
+        fontSize: 22,
+        color:'red'
+      },
+
 
 });
 

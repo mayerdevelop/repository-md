@@ -3,7 +3,6 @@ import {View,Image,TouchableOpacity} from 'react-native';
 
 import styles from './styles';
 import back from '../../assets/back.png';
-import search from '../../assets/search.png';
 
 export default function Header({showBack,backPage,showSearch,navigation}){
 

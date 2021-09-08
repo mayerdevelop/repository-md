@@ -22,23 +22,16 @@ export default function Home({route,navigation}){
     const loadProd = async() =>{
         setLoad(true)
         
-        try{
-          const response = await api.get('/produtos/1',{
-              withCredentials: true,
-              auth: {username:'felipe.mayer',password:'82514903'} })
+        const response = await api.get('/produtos/1',{
+            withCredentials: true,
+            headers: {'Authorization': 'Basic ZmVsaXBlLm1heWVyOjgyNTE0OTAz'} 
+        })
 
-              setLoad(false)
-              navigation.navigate('Detail',{
-                  nameSec:'Produtos',
-                  prods:response.data,
-                  numPage:1,
-                  showBackPage:false,
-                })
-            }
-        catch(error){
-            alert(error)
-            setLoad(false)
-        }
+        setLoad(false)
+        navigation.navigate('Detail',{
+            nameSec:'Produtos',
+            prods:response.data,
+        })
     };
 
     return(
@@ -74,7 +67,7 @@ export default function Home({route,navigation}){
                             </View>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={()=>{navigation.navigate('Detail',{clasId:'Clientes'})}} style={styles.card}>
+                        <TouchableOpacity onPress={()=>{navigation.navigate('Detail',{nameSec:'Clientes'})}} style={styles.card}>
                             <View style={styles.iconContent}>
                                 <Image source={typeIcons[18]} style={{resizeMode:'contain',width:58}}/>
                             </View>
@@ -84,7 +77,7 @@ export default function Home({route,navigation}){
                             </View>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={()=>{navigation.navigate('Detail',{clasId:'Clientes'})}} style={styles.card}>
+                        <TouchableOpacity onPress={()=>{navigation.navigate('Detail',{nameSec:'Fornece'})}} style={styles.card}>
                             <View style={styles.iconContent}>
                                 <Image source={typeIcons[7]} style={{resizeMode:'contain',width:58}}/>
                             </View>
@@ -94,7 +87,7 @@ export default function Home({route,navigation}){
                             </View>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={()=>{navigation.navigate('Detail',{clasId:'Clientes'})}} style={styles.card}>
+                        <TouchableOpacity onPress={()=>{navigation.navigate('Detail',{nameSec:'Lojas'})}} style={styles.card}>
                             <View style={styles.iconContent}>
                                 <Image source={typeIcons[14]} style={{resizeMode:'contain',width:58}}/>
                             </View>
@@ -109,14 +102,14 @@ export default function Home({route,navigation}){
                     <Text style={styles.sectionTitle}>Pedidos</Text>
                     
                     <View style={styles.content}>
-                        <TouchableOpacity onPress={()=>{navigation.navigate('Detail',{clasId:'Pedidos de Compras'})}} style={styles.cardP}>
+                        <TouchableOpacity onPress={()=>{navigation.navigate('Detail',{nameSec:'Pedidos de Compras'})}} style={styles.cardP}>
                             <Image source={typeIcons[10]} style={{resizeMode:'contain'}}/>
                             <Text style={styles.cardTitleP}>{'Pedidos de Compras'}</Text>
                         </TouchableOpacity>
                     </View>
 
                     <View style={styles.content} >
-                        <TouchableOpacity onPress={()=>{navigation.navigate('Detail',{clasId:'Pedidos de Vendas'})}} style={styles.cardP}>
+                        <TouchableOpacity onPress={()=>{navigation.navigate('Detail',{nameSec:'Pedidos de Vendas'})}} style={styles.cardP}>
                             <Image source={typeIcons[11]} style={{resizeMode:'contain'}}/>
                             <Text style={styles.cardTitleP}>{'Pedidos de Vendas'}</Text>
                         </TouchableOpacity>
