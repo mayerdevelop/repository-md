@@ -1,7 +1,7 @@
 //icones
 import iconAdd from '../assets/add.png';
 import iconBell from '../assets/bell.png';
-import iconCheck from '../assets/check.png';
+import iconConfirm from '../assets/confirm.png';
 import iconBack from '../assets/back.png';
 import iconProduct from '../assets/product.png';
 import iconSearch from '../assets/search.png';
@@ -16,13 +16,17 @@ import iconLoja from '../assets/lojas.png';
 import iconEye from '../assets/eye.png';
 import iconEyeOff from '../assets/eyeoff.png';
 import iconTask from '../assets/task.png';
-import iconPeople from '../assets/people.png'
+import iconPeople from '../assets/people.png';
+import iconCheck from '../assets/check.png';
+import iconUncheck from '../assets/uncheck.png';
+import iconLjunbloq from '../assets/ljunbloq.png';
+import iconLjbloq from '../assets/ljbloq.png';
 
 const typeIcons = [
     null,
     iconAdd,
     iconBell,
-    iconCheck,
+    iconConfirm,
     iconBack,
     iconProduct,
     iconSearch,
@@ -37,7 +41,11 @@ const typeIcons = [
     iconEye,
     iconEyeOff,
     iconTask,
-    iconPeople
+    iconPeople,
+    iconCheck,
+    iconUncheck,
+    iconLjunbloq,
+    iconLjbloq
 ];
 
 export default typeIcons;

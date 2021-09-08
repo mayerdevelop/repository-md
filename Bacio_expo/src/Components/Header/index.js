@@ -4,7 +4,7 @@ import {View,Image,TouchableOpacity} from 'react-native';
 import styles from './styles';
 import back from '../../assets/back.png';
 
-export default function Header({showBack,backPage,showSearch,navigation}){
+export default function Header({showBack,backPage,navigation}){
 
     return(
   

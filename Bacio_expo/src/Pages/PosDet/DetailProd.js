@@ -1,9 +1,10 @@
-import React,{useState, useEffect} from 'react';
+import React from 'react';
 import {SafeAreaView,Text,View,ScrollView,TouchableOpacity} from 'react-native';
-import styles from './styles';
 
 import Header from '../../Components/Header';
 import Footer from '../../Components/Footer';
+
+import styles from './StyleProd';
 
 export default function DetailProd({route,navigation}){
 

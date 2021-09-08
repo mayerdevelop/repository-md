@@ -17,20 +17,36 @@ export default function Home({route,navigation}){
 
     const { nameUser } = route.params;
 
-    const [load, setLoad] = useState(false);
+    const [loadProd, setLoadProd] = useState(false);
+    const [loadLoja, setLoadLoja] = useState(false);
 
-    const loadProd = async() =>{
-        setLoad(true)
+    const apiProdutos = async() =>{
+        setLoadProd(true)
         
         const response = await api.get('/produtos/1',{
             withCredentials: true,
             headers: {'Authorization': 'Basic ZmVsaXBlLm1heWVyOjgyNTE0OTAz'} 
         })
 
-        setLoad(false)
+        setLoadProd(false)
         navigation.navigate('Detail',{
             nameSec:'Produtos',
-            prods:response.data,
+            data:response.data,
+        })
+    };
+
+    const apiLojas = async() =>{
+        setLoadLoja(true)
+        
+        const response = await api.get('/lojas/1',{
+            withCredentials: true,
+            headers: {'Authorization': 'Basic ZmVsaXBlLm1heWVyOjgyNTE0OTAz'} 
+        })
+
+        setLoadLoja(false)
+        navigation.navigate('Detail',{
+            nameSec:'Lojas',
+            data:response.data,
         })
     };
 
@@ -52,8 +68,8 @@ export default function Home({route,navigation}){
                     <Text style={styles.sectionTitle}>Cadastros</Text>
 
                     <View style={styles.content}>
-                        <TouchableOpacity onPress={loadProd} style={styles.card}>
-                            {load ? 
+                        <TouchableOpacity onPress={apiProdutos} style={styles.card}>
+                            {loadProd ? 
                                 <View style={{flex:1,flexDirection:'row',top:5}}>
                                     <ActivityIndicator color={'#723600'} size={50}/>
                                 </View>
@@ -87,11 +103,16 @@ export default function Home({route,navigation}){
                             </View>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={()=>{navigation.navigate('Detail',{nameSec:'Lojas'})}} style={styles.card}>
-                            <View style={styles.iconContent}>
-                                <Image source={typeIcons[14]} style={{resizeMode:'contain',width:58}}/>
-                            </View>
-
+                        <TouchableOpacity onPress={apiLojas} style={styles.card}>
+                            {loadLoja ? 
+                                <View style={{flex:1,flexDirection:'row',top:5}}>
+                                    <ActivityIndicator color={'#723600'} size={50}/>
+                                </View>
+                                :
+                                <View style={styles.iconContent}>
+                                    <Image source={typeIcons[14]} style={{resizeMode:'contain',width:58}}/>
+                                </View>
+                            }
                             <View style={styles.titleContent}>
                                 <Text style={styles.cardTitle}>{'Lojas'}</Text>
                             </View>
