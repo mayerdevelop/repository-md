@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent:'center',
         flexDirection: 'row',
-        flexWrap:'wrap'
+        flexWrap:'wrap',
     },
 
     cardP: {
@@ -20,7 +20,6 @@ const styles = StyleSheet.create({
         borderColor:'#723600',
         borderWidth:2,
         borderRadius:10,
-        
     },
     
 
@@ -45,7 +44,12 @@ const styles = StyleSheet.create({
         borderColor:'#723600',
         borderWidth:2,
         borderRadius:10,
-        width:'90%'
+        width:'90%',
+        shadowColor:'#000',
+        shadowOffset:{width:5,height:5},
+        shadowOpacity:0.20,
+        shadowRadius:5.5,
+        elevation:5,
     },
 
     cardLCabec: {

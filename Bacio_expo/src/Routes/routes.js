@@ -6,6 +6,7 @@ import Profile from '../Pages/Profile/index'
 import Detail from '../Pages/Detail/index'
 import Login from '../Pages/Login/index'
 import Header from '../Components/Header/index'
+import Footer from '../Components/Footer/index'
 import DetailProd from '../Pages/PosDet/DetailProd'
 
 const Stack = createStackNavigator();
@@ -16,9 +17,10 @@ export default function Routes(){
             <Stack.Screen name="Login" component={Login}/>
             <Stack.Screen name="Home" component={Home}/>
             <Stack.Screen name="Header" component={Header}/>
-            <Stack.Screen name="Profile" component={Profile}/>
+            <Stack.Screen name="Footer" component={Footer}/>
             <Stack.Screen name="Detail" component={Detail}/>
             <Stack.Screen name="DetailProd" component={DetailProd}/>
+            <Stack.Screen name="Profile" component={Profile}/>
         </Stack.Navigator>
     )
 };

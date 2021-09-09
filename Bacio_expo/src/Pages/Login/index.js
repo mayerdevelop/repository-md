@@ -40,8 +40,7 @@ export default function Login({navigation}){
             withCredentials: true,
             headers: {'Authorization': 'Basic ZmVsaXBlLm1heWVyOjgyNTE0OTAz'} })
             navigation.navigate('Home',{
-                user: response.data,
-                nameUser: response.data[0]?.name.split(" ",1)
+                dataUser: response.data
               })
             }
         catch(error){

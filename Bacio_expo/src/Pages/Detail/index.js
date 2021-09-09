@@ -27,7 +27,7 @@ if (!global.atob) { global.atob = decode }
 
 export default function Detail({route,navigation}){
 
-    const { nameSec,data } = route.params;
+    const { nameSec,data,dataUser } = route.params;
 
     const [searchText, setSearchText] = useState('');
     const [searchT,setSearchT] = useState(false);
@@ -83,13 +83,25 @@ export default function Detail({route,navigation}){
         setPage(page+1)
     };
 
+    const searchLoja = async() =>{
+        if (searchText==='') return;
+        
+        const response = await api.get(`/searchloja/${searchText}`,{
+            withCredentials: true,
+            headers: {'Authorization': 'Basic ZmVsaXBlLm1heWVyOjgyNTE0OTAz'} 
+        })
+
+        setListSearch(response.data)
+        setSearchT(true)
+    };
+
 
     function buttomSearch (){
         if(nameSec==='Produtos'){
             if(searchT){ loadProd() } else { searchProd() }
 
         } else if (nameSec==='Lojas'){
-            alert(nameSec)
+            if(searchT){ loadLoja() } else { searchLoja() }
         }
     }
 
@@ -167,7 +179,7 @@ export default function Detail({route,navigation}){
                 
             </View>
             
-            <Footer navigation={navigation} />
+            <Footer navigation={navigation} dataUser={dataUser} backPage={'Detail'}/>
         </SafeAreaView>
         
     )

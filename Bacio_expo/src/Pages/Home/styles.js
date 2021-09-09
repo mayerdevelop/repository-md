@@ -35,11 +35,6 @@ const styles = StyleSheet.create({
         resizeMode:'contain'
     },
 
-    notificationText:{
-        fontWeight:'bold',
-        color: '#723600',
-    },
-
     circle:{
         width:20,
         height:20,
@@ -63,21 +58,8 @@ const styles = StyleSheet.create({
     textHeader:{
         fontSize:26,
         color:'#ffffff',
-    },
+    },    
 
-    filter:{
-        flexDirection:'row',
-        width: '100%',
-        justifyContent:'space-around',
-        height:50,
-        alignItems:'center'
-    },
-    
-
-    logo:{
-        width: '80%',
-        resizeMode:'contain'
-    },
 
     content:{
         flex: 1,
@@ -91,7 +73,7 @@ const styles = StyleSheet.create({
         marginBottom:0,
         margin:30,
         color:'#585450',
-        fontWeight:'bold'
+        fontWeight:'bold',
     },
 
 
@@ -122,7 +104,6 @@ const styles = StyleSheet.create({
         borderColor:'#723600',
         borderWidth:2,
         borderRadius:10,
-
     },
 
     cardTitleP:{

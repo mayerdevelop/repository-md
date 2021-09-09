@@ -15,7 +15,7 @@ import Footer from '../../Components/Footer/index'
 
 export default function Home({route,navigation}){
 
-    const { nameUser } = route.params;
+    const { dataUser } = route.params;
 
     const [loadProd, setLoadProd] = useState(false);
     const [loadLoja, setLoadLoja] = useState(false);
@@ -32,6 +32,7 @@ export default function Home({route,navigation}){
         navigation.navigate('Detail',{
             nameSec:'Produtos',
             data:response.data,
+            dataUser:dataUser
         })
     };
 
@@ -47,6 +48,7 @@ export default function Home({route,navigation}){
         navigation.navigate('Detail',{
             nameSec:'Lojas',
             data:response.data,
+            dataUser:dataUser
         })
     };
 
@@ -55,7 +57,7 @@ export default function Home({route,navigation}){
             <View style={styles.container}>
                 <View style={styles.header}>
                     <View style={styles.contTextHeader}>
-                        <Text style={styles.textHeader}>Olá, {nameUser}!</Text>
+                        <Text style={styles.textHeader}>Olá, {dataUser[0]?.name.split(" ",1)}!</Text>
                     </View>
 
                     <TouchableOpacity style={styles.notification}>
@@ -136,7 +138,7 @@ export default function Home({route,navigation}){
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
-                <Footer/>
+                <Footer navigation={navigation} dataUser={dataUser} backPage={'Home'}/>
             </View>
         </SafeAreaView>
     

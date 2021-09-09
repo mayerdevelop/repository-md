@@ -21,6 +21,12 @@ import iconCheck from '../assets/check.png';
 import iconUncheck from '../assets/uncheck.png';
 import iconLjunbloq from '../assets/ljunbloq.png';
 import iconLjbloq from '../assets/ljbloq.png';
+import iconImgProfile from '../assets/imgprofile.png';
+import iconLogout from '../assets/logout.png';
+import iconBackwhite from '../assets/backwhite.png';
+import iconGroup from '../assets/group.png';
+import iconDpto from '../assets/dpto.png';
+import iconMail from '../assets/mail.png';
 
 const typeIcons = [
     null,
@@ -45,7 +51,13 @@ const typeIcons = [
     iconCheck,
     iconUncheck,
     iconLjunbloq,
-    iconLjbloq
+    iconLjbloq,
+    iconImgProfile,
+    iconLogout,
+    iconBackwhite,
+    iconGroup,
+    iconDpto,
+    iconMail,
 ];
 
 export default typeIcons;

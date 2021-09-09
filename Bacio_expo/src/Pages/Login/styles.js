@@ -33,7 +33,12 @@ const styles = StyleSheet.create({
         borderWidth:2,
         borderRadius:7,
         padding:10,
-        borderColor:'#723600'
+        borderColor:'#723600',
+        shadowColor:'#000000',
+        shadowOffset:{width:5,height:5},
+        shadowOpacity:0.30,
+        shadowRadius:3.5,
+        elevation:5,
     },
 
     containerInpuPass:{
@@ -45,6 +50,11 @@ const styles = StyleSheet.create({
         borderRadius:7,
         borderColor:'#723600',
         alignItems:'center',
+        shadowColor:'#000000',
+        shadowOffset:{width:5,height:5},
+        shadowOpacity:0.30,
+        shadowRadius:3.5,
+        elevation:5,
     },
         
     inputPass:{
@@ -61,6 +71,11 @@ const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center',
         borderRadius:7,
+        shadowColor:'#000000',
+        shadowOffset:{width:5,height:5},
+        shadowOpacity:0.30,
+        shadowRadius:3.5,
+        elevation:5,
     },
 
     buttonText:{
