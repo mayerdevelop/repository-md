@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "RobsolApp3",
+    "slug": "RobsolApp3",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
