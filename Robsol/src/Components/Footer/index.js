@@ -21,15 +21,10 @@ export default function Footer({icon,navigation}){
                 : 
                 <></>
             }
-            <TouchableOpacity style={styles.imageContent} onPress={()=>{ /*navigation.navigate('Profile',{
-                dataUser:dataUser,
-                backPage:backPage
-                }) */
-                }}>
+            <TouchableOpacity style={styles.imageContent} onPress={()=>{ }}>
                 <Image style={{resizeMode:'contain',width:30}} source={typeIcons[13]}/>
                 <Text style={styles.titleButtom}>Perfil</Text>
             </TouchableOpacity>
-
         </View>
     )
 }

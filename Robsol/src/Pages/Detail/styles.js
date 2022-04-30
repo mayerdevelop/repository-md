@@ -84,11 +84,12 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         elevation: 20,
       },
-      header: {
-        width: '100%',
-         justifyContent: 'space-between',
-        flexDirection:'row'
-      },
+      
+      headerPed: {
+        flexDirection:'row',
+        justifyContent:'space-between',
+        marginBottom:15
+    },
 
       button:{
         backgroundColor:'#2F8BD8',
@@ -109,6 +110,46 @@ const styles = StyleSheet.create({
         fontSize:20,
         fontWeight:'bold',
     },
+
+
+    //footer
+
+    footerContent:{
+      flex:1,
+      flexDirection:'row',
+      alignItems:'center',
+      justifyContent:'center',
+      backgroundColor:'#175A93',
+      width:'94%',
+      height:90,
+      borderRadius:12,
+      position:'absolute',
+      bottom: Platform.OS === 'ios' ? 32 : 10,
+      shadowColor:'#000',
+      shadowOffset:{width:0,height:20},
+      shadowOpacity:0.25,
+      shadowRadius:3.5,
+      elevation:5,
+  },
+
+  imageContent:{
+      flex:1,
+      alignItems:'center',
+  
+  },
+
+  imageConfirm:{
+      flex:1,
+      alignItems:'center',
+      bottom:30,
+  },
+  
+  titleButtom:{
+      fontSize:18,
+      fontWeight:'bold',
+      color:'#fff',
+      marginTop:3
+  }
 
 });
 

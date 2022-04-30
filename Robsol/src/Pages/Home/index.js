@@ -1,9 +1,11 @@
-import React,{useState, useEffect} from 'react';
+import React,{useState, useContext} from 'react';
 import {Text,SafeAreaView,View,Image,TouchableOpacity,ActivityIndicator} from 'react-native';
 import typeIcons from '../../utils/typeIcons';
 import {decode, encode} from 'base-64';
 
 import api from '../../services/api'
+
+import {CartContext} from '../../Contexts/cart'
 
 if (!global.btoa) { global.btoa = encode }
 if (!global.atob) { global.atob = decode }
@@ -13,6 +15,8 @@ import styles from './styles';
 import Footer from '../../Components/Footer/index'
 
 export default function Home({route,navigation}){
+
+    const { addCart } = useContext(CartContext)
 
     const { dataUser } = route.params;
     const authBasic = 'YWRtaW46QVZTSTIwMjI';
@@ -48,14 +52,18 @@ export default function Home({route,navigation}){
 
         let icon = null
 
-        if(sec == 'Sales'){icon = 'add'}
+        if(sec == 'Sales'){
+            icon = 'add' 
+            addCart([])
+        };
 
         navigation.navigate('Detail',{
             nameSec:sec,
             data:response.data["items"],
             dataUser:dataUser,
             filter:initialFilter,
-            icon:icon
+            icon:icon,
+            prdProd:false
         })
     };
 

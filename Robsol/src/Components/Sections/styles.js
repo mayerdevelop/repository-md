@@ -75,21 +75,24 @@ const styles = StyleSheet.create({
     headerPed: {
         flexDirection:'row',
         justifyContent:'space-between',
-        marginBottom:15
+        marginBottom:15,
     },
 
     contDetPed: {
         flex:1,
+        height:'100%',
+        justifyContent:'space-between',
+        flexDirection:'column',
         borderBottomWidth:2,
-        borderColor:'#2F8BD8',
-        marginVertical:10
+        marginBottom:15,
+        borderBottomColor:'#2F8BD8'
     },
 
     cabecDet:{
         marginTop:20,
         flexDirection:'row',
         justifyContent:'space-between',
-        marginHorizontal:10
+        marginHorizontal:10,
     },
 
     itensDet:{
@@ -115,6 +118,64 @@ const styles = StyleSheet.create({
         fontSize:16, 
         fontWeight:'bold'
     },
+
+
+    //formulario
+
+    input:{
+        height:35,
+        borderBottomWidth:2,
+        marginBottom:20,
+        paddingHorizontal:5,
+        fontSize:16
+    },
+
+    submitAtualizar:{
+        backgroundColor:'#2F8BD8',
+        justifyContent:'center',
+        alignItems:'center',
+        height:50,
+        marginHorizontal:70,
+        borderRadius:15
+    },
+
+    submitTxtAtualizar:{
+        fontSize:18,
+        fontWeight:'bold',
+        color:'#fff'
+    },
+
+    buttonAddInitial:{
+        backgroundColor:'#2F8BD8',
+        justifyContent:'center',
+        alignItems:'center',
+        marginHorizontal:100,
+        marginTop:20,
+        height:40,
+        borderRadius:10
+    },
+
+    txtAddInitial:{
+        color:'#fff',
+        fontSize:16,
+        fontWeight:'bold'
+    },
+
+
+    buttonQty:{
+        width: 30,
+        height: 30,
+        borderRadius: 30/2,
+        backgroundColor:'#2F8BD8',
+        alignItems:'center',
+        justifyContent:'center'
+    },
+
+    txtButtonQty:{
+        color:'#fff',
+        fontWeight:'bold',
+        fontSize:16
+    }
       
 });
 

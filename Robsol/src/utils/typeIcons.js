@@ -28,11 +28,15 @@ import iconGroup from '../assets/group.png';
 import iconDpto from '../assets/dpto.png';
 import iconMail from '../assets/mail.png';
 import iconShop from '../assets/shop.png';
+import iconShopW from '../assets/shopW.png';
 import iconMale from '../assets/male.png';
 import iconFemale from '../assets/female.png';
 import iconClose from '../assets/close.png';
 import iconFilter from '../assets/filter.png';
 import iconFilterChk from '../assets/filterCheck.png';
+import iconScan from '../assets/scan.png';
+import iconClear from '../assets/clear.png';
+
 
 
 const typeIcons = [
@@ -70,7 +74,10 @@ const typeIcons = [
     iconFemale,
     iconClose,
     iconFilter,
-    iconFilterChk
+    iconFilterChk,
+    iconShopW,
+    iconScan,
+    iconClear,
 ];
 
 export default typeIcons;
