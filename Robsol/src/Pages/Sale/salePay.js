@@ -79,7 +79,7 @@ export default function SalePay({route,navigation}){
                         dataUser:dataBack[2],
                         filter:dataBack[3],
                     })}}>
-                        <Image source={typeIcons[4]} />
+                        <Image source={typeIcons[2]} />
                     </TouchableOpacity>
 
                     <Text style={{fontSize:24,fontWeight:'bold', color:'#fff'}}>Cond. Pagamento</Text>
@@ -132,7 +132,7 @@ export default function SalePay({route,navigation}){
 
                     <TouchableOpacity onPress={() => {setVisibleObs(false),setTxtObs('')}}>
                         <Image
-                            source={typeIcons[32]}
+                            source={typeIcons[15]}
                             style={{height: 25, width: 25}}
                         />
                     </TouchableOpacity>

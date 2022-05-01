@@ -78,7 +78,7 @@ export default function Home({route,navigation}){
                     </View>
 
                     <TouchableOpacity style={styles.logout} onPress={()=>{navigation.navigate('Login')}}>
-                        <Image source={typeIcons[24]} style={styles.logoutImage}/>
+                        <Image source={typeIcons[11]} style={styles.logoutImage}/>
                     </TouchableOpacity>
                 </View>
 
@@ -91,7 +91,7 @@ export default function Home({route,navigation}){
                                 </View>
                                 :
                                 <View>
-                                    <Image source={typeIcons[5]} style={{marginTop:20}}/>
+                                    <Image source={typeIcons[3]} style={{marginTop:20}}/>
                                 </View>
                             }
                             <View style={styles.titleContent}>
@@ -106,7 +106,7 @@ export default function Home({route,navigation}){
                                 </View>
                                 :
                                 <View>
-                                    <Image source={typeIcons[18]} style={{resizeMode:'contain',width:58}}/>
+                                    <Image source={typeIcons[10]} style={{resizeMode:'contain',width:58}}/>
                                 </View>
                             }
 
@@ -122,7 +122,7 @@ export default function Home({route,navigation}){
                                 </View>
                                 :
                                 <View>
-                                    <Image source={typeIcons[29]} style={{resizeMode:'contain',width:50}}/>
+                                    <Image source={typeIcons[12]} style={{resizeMode:'contain',width:50}}/>
                                 </View>
                             }
 
@@ -134,7 +134,7 @@ export default function Home({route,navigation}){
                         <TouchableOpacity  style={styles.card}>
             
                             <View>
-                                <Image source={typeIcons[11]} style={{resizeMode:'contain',width:50,height:44,top:10}}/>
+                                <Image source={typeIcons[6]} style={{resizeMode:'contain',width:50,height:44,top:10}}/>
                             </View>
            
                             <View style={styles.titleContent}>

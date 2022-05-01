@@ -141,7 +141,7 @@ export default function SaleCli({route,navigation}){
                         filter:dataBack[3],
                         dataBack: dataBack[4]
                     })}}>
-                        <Image source={typeIcons[4]} />
+                        <Image source={typeIcons[2]} />
                     </TouchableOpacity>
 
                     <Text style={{fontSize:24,fontWeight:'bold', color:'#fff'}}>Selecione o Cliente</Text>
@@ -164,7 +164,7 @@ export default function SaleCli({route,navigation}){
                         <TouchableOpacity style={{right:30}} onPress={()=>{buttomSearch(`${checked}:${searchText}`)}}>
                             <Image 
                                 style={{resizeMode:'contain', width:30}}
-                                source={searchT?typeIcons[32]:typeIcons[6]}
+                                source={searchT?typeIcons[15]:typeIcons[4]}
                             />
                         </TouchableOpacity>
                     }
@@ -172,7 +172,7 @@ export default function SaleCli({route,navigation}){
                     <TouchableOpacity onPress={() => { setVisibleFilter(true) }}>
                         <Image 
                             style={{resizeMode:'contain', width:30}}
-                            source={checked==''?typeIcons[33]:typeIcons[34]}
+                            source={checked==''?typeIcons[16]:typeIcons[17]}
                         />
                     </TouchableOpacity>
                 </View>
@@ -211,7 +211,7 @@ export default function SaleCli({route,navigation}){
 
                         <TouchableOpacity onPress={() => setVisibleFilter(false)}>
                             <Image
-                                source={typeIcons[32]}
+                                source={typeIcons[15]}
                                 style={{height: 30, width: 30}}
                             />
                         </TouchableOpacity>

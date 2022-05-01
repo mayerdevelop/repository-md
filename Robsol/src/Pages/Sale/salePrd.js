@@ -247,7 +247,7 @@ export default function SalePrd({route,navigation}){
                         dataUser:dataBack[2],
                         filter:dataBack[3],
                     })}}>
-                        <Image source={typeIcons[4]} />
+                        <Image source={typeIcons[2]} />
                     </TouchableOpacity>
 
                     <Text style={{fontSize:24,fontWeight:'bold', color:'#fff'}}>Selecione o Produto</Text>
@@ -270,7 +270,7 @@ export default function SalePrd({route,navigation}){
                         <TouchableOpacity style={{right:30}} onPress={()=>{buttomSearch(`${checked}:${searchText}`)}}>
                             <Image 
                                 style={{resizeMode:'contain', width:30}}
-                                source={searchT?typeIcons[32]:typeIcons[6]}
+                                source={searchT?typeIcons[15]:typeIcons[4]}
                             />
                         </TouchableOpacity>
                     }
@@ -278,7 +278,7 @@ export default function SalePrd({route,navigation}){
                     <TouchableOpacity onPress={() => { setVisibleFilter(true) }}>
                         <Image 
                             style={{resizeMode:'contain', width:30}}
-                            source={checked==''?typeIcons[33]:typeIcons[34]}
+                            source={checked==''?typeIcons[16]:typeIcons[17]}
                         />
                     </TouchableOpacity>
                 </View>
@@ -312,13 +312,13 @@ export default function SalePrd({route,navigation}){
 
             <View style={styles.footerContent}>
                 <TouchableOpacity style={styles.imageContent} onPress={()=>{visibleCart(true)}}>
-                    <Image style={{resizeMode:'contain',width:35}} source={typeIcons[35]}/>
+                    <Image style={{resizeMode:'contain',width:35}} source={typeIcons[18]}/>
                     <Text style={styles.titleButtom}>Cart</Text>
                 </TouchableOpacity>
 
 
                 <TouchableOpacity style={styles.imageContent} onPress={()=>{ /*setVisibleScan(true)*/ }}>
-                    <Image style={{resizeMode:'contain',width:35}} source={typeIcons[36]}/>
+                    <Image style={{resizeMode:'contain',width:35}} source={typeIcons[19]}/>
                     <Text style={styles.titleButtom}>Scan</Text>
                 </TouchableOpacity>
             </View>
@@ -331,7 +331,7 @@ export default function SalePrd({route,navigation}){
 
                         <TouchableOpacity onPress={() => setVisibleFilter(false)}>
                             <Image
-                                source={typeIcons[32]}
+                                source={typeIcons[15]}
                                 style={{height: 30, width: 30}}
                             />
                         </TouchableOpacity>
@@ -403,7 +403,7 @@ export default function SalePrd({route,navigation}){
 
                         <TouchableOpacity onPress={() => setVisibleScan(false)}>
                             <Image
-                                source={typeIcons[32]}
+                                source={typeIcons[15]}
                                 style={{height: 30, width: 30}}
                             />
                         </TouchableOpacity>

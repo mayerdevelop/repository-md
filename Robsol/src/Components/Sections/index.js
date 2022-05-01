@@ -280,7 +280,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
                         <Text style={styles.cardTitleP}>{item.codigo.trim()}</Text>
                         <Image 
                             style={styles.genero}
-                            source={item.genero.trim()==='Masculino'?typeIcons[30]:typeIcons[31]} 
+                            source={item.genero.trim()==='Masculino'?typeIcons[13]:typeIcons[14]} 
                         />
                     </View>
 
@@ -340,7 +340,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
                 <View style={styles.closeModal}>
                     <TouchableOpacity onPress={() => setVisiblePreview(false)}>
                         <Image
-                            source={typeIcons[32]}
+                            source={typeIcons[15]}
                             style={{height: 30, width: 30}}
                         />
                     </TouchableOpacity>
@@ -362,7 +362,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
                     <View style={styles.closeModal}>
                         <TouchableOpacity onPress={() => setVisibleSale(false)}>
                             <Image
-                                source={typeIcons[32]}
+                                source={typeIcons[15]}
                                 style={{height: 25, width: 25}}
                             />
                         </TouchableOpacity>
@@ -414,7 +414,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
                     <View style={styles.closeModal}>
                         <TouchableOpacity onPress={() => setVisibleCli(false)}>
                             <Image
-                                source={typeIcons[32]}
+                                source={typeIcons[15]}
                                 style={{height: 25, width: 25}}
                             />
                         </TouchableOpacity>
@@ -776,7 +776,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
                         >   
                             <Image 
                                 style={{resizeMode:'contain', width:20,marginHorizontal:10}}
-                                source={typeIcons[37]}
+                                source={typeIcons[20]}
                             />
                             <Text style={{color:'#2F8BD8', fontWeight:'bold', fontSize:16}}>Limpar</Text>
                         </TouchableOpacity>

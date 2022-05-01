@@ -151,7 +151,7 @@ export default function Login({navigation}){
                                 resizeMode:'contain',
                                 right:10,
                             }}
-                            source={hidepass?typeIcons[16]:typeIcons[15]}
+                            source={hidepass?typeIcons[9]:typeIcons[8]}
                         />
                     </TouchableOpacity>
                 </View>

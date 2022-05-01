@@ -1,32 +1,15 @@
 //icones
 import iconAdd from '../assets/add.png';
-import iconBell from '../assets/bell.png';
-import iconConfirm from '../assets/confirm.png';
 import iconBack from '../assets/back.png';
 import iconProduct from '../assets/product.png';
 import iconSearch from '../assets/search.png';
-import iconTruck from '../assets/truck.png';
-import iconDown from '../assets/down.png';
 import iconHome from '../assets/home.png';
-import iconPedc from '../assets/pedc.png';
 import iconComissao from '../assets/comissao.png';
-import iconPict from '../assets/picture.png';
 import iconProfile from '../assets/profile.png';
-import iconLoja from '../assets/lojas.png';
 import iconEye from '../assets/eye.png';
 import iconEyeOff from '../assets/eyeoff.png';
-import iconTask from '../assets/task.png';
 import iconPeople from '../assets/people.png';
-import iconCheck from '../assets/check.png';
-import iconUncheck from '../assets/uncheck.png';
-import iconLjunbloq from '../assets/ljunbloq.png';
-import iconLjbloq from '../assets/ljbloq.png';
-import iconImgProfile from '../assets/imgprofile.png';
 import iconLogout from '../assets/logout.png';
-import iconBackwhite from '../assets/backwhite.png';
-import iconGroup from '../assets/group.png';
-import iconDpto from '../assets/dpto.png';
-import iconMail from '../assets/mail.png';
 import iconShop from '../assets/shop.png';
 import iconShopW from '../assets/shopW.png';
 import iconMale from '../assets/male.png';
@@ -41,43 +24,26 @@ import iconClear from '../assets/clear.png';
 
 const typeIcons = [
     null,
-    iconAdd,
-    iconBell,
-    iconConfirm,
-    iconBack,
-    iconProduct,
-    iconSearch,
-    iconTruck,
-    iconDown,
-    iconHome,
-    iconPedc,
-    iconComissao,
-    iconPict,
-    iconProfile,
-    iconLoja,
-    iconEye,
-    iconEyeOff,
-    iconTask,
-    iconPeople,
-    iconCheck,
-    iconUncheck,
-    iconLjunbloq,
-    iconLjbloq,
-    iconImgProfile,
-    iconLogout,
-    iconBackwhite,
-    iconGroup,
-    iconDpto,
-    iconMail,
-    iconShop,
-    iconMale,
-    iconFemale,
-    iconClose,
-    iconFilter,
-    iconFilterChk,
-    iconShopW,
-    iconScan,
-    iconClear,
+    iconAdd, //1
+    iconBack, //4  2
+    iconProduct,//5  3
+    iconSearch,//6  4
+    iconHome,//9  5
+    iconComissao,//11  6
+    iconProfile,//13  7
+    iconEye,//15  //8
+    iconEyeOff,//16 //9
+    iconPeople,//18 //10
+    iconLogout,//24 //11
+    iconShop,//29  12
+    iconMale,//30  13
+    iconFemale,//31  14
+    iconClose,//32  15
+    iconFilter,//33  16
+    iconFilterChk,//34  17
+    iconShopW,//35  18
+    iconScan,//36  19
+    iconClear,//37  20
 ];
 
 export default typeIcons;

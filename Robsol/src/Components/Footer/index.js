@@ -10,7 +10,7 @@ export default function Footer({icon,navigation}){
     return(
         <View style={styles.footerContent}>
             <TouchableOpacity style={styles.imageContent} onPress={()=>{navigation.navigate('Home')}}>
-                <Image style={{resizeMode:'contain',width:35}} source={typeIcons[9]}/>
+                <Image style={{resizeMode:'contain',width:35}} source={typeIcons[5]}/>
                 <Text style={styles.titleButtom}>Home</Text>
             </TouchableOpacity>
 
@@ -22,7 +22,7 @@ export default function Footer({icon,navigation}){
                 <></>
             }
             <TouchableOpacity style={styles.imageContent} onPress={()=>{ }}>
-                <Image style={{resizeMode:'contain',width:30}} source={typeIcons[13]}/>
+                <Image style={{resizeMode:'contain',width:30}} source={typeIcons[7]}/>
                 <Text style={styles.titleButtom}>Perfil</Text>
             </TouchableOpacity>
         </View>
