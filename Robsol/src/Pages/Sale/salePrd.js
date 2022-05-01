@@ -1,4 +1,4 @@
-import React,{useState, useContext} from 'react';
+import React,{useState, useContext, useEffect} from 'react';
 import {
     SafeAreaView,
     View,
@@ -21,11 +21,14 @@ import {decode, encode} from 'base-64';
 import typeIcons from '../../utils/typeIcons'
 import api from '../../services/api'
 
-import ModFilter from '../../Modal/modFilter'
+import ModFilter from '../../Modal/modFilter';
+import ModScan from '../../Modal/modScan';
 
-import {CartContext} from '../../Contexts/cart'
+import {CartContext} from '../../Contexts/cart';
 
 import Section from '../../Components/Sections';
+
+import {BarCodeScanner} from 'expo-barcode-scanner';
 
 if (!global.btoa) { global.btoa = encode }
 if (!global.atob) { global.atob = decode }
@@ -33,7 +36,7 @@ if (!global.atob) { global.atob = decode }
 
 export default function SalePrd({route,navigation}){
 
-    const { addCart,visibleCart,totalCart } = useContext(CartContext)
+    const { addCart,cart,visibleCart,totalCart } = useContext(CartContext)
 
     const { nameSec,data,dataUser,filter,dataBack,prdProd } = route.params;
 
@@ -42,11 +45,102 @@ export default function SalePrd({route,navigation}){
     const [listSearch,setListSearch] = useState([]);
     const [list, setList] = useState(data);
     const [page, setPage] = useState(2);
-    const [visibleFilter, setVisibleFilter] = useState(false);
     const [checked, setChecked] = useState(filter);
     const [load, setLoad] = useState(false);
 
+    const [visibleFilter, setVisibleFilter] = useState(false);
+    const [visibleScan, setVisibleScan] = useState(false);
+
+    const [hasPermission, setHasPermission] = useState(null);
+    const [scanned, setScanned] = useState(false);
+    const [textScan, setTextScan] = useState('');
+
     const authBasic = 'YWRtaW46QVZTSTIwMjI';
+
+
+    const askForCameraPermission = () =>{
+        (async () =>{
+            const {status} = await BarCodeScanner.requestPermissionsAsync();
+            setHasPermission(status == 'granted')
+        })()
+    }
+
+    useEffect(()=> {
+        askForCameraPermission();
+    },[])
+
+
+    const handleBarCodeScanned = async({type, data}) =>{
+        setScanned(true);
+        setTextScan(data);
+        //console.log('Type: '+ type + '\nData: ' + data)
+
+
+        const response = await api.get(`/Products/`,{
+            withCredentials: true,
+            headers: {
+                'Authorization': 'Basic '+authBasic,
+                'VENDEDOR': dataUser.cod_vendedor,
+                'page': 1,
+                'pageSize': 10,
+                'CODIGO':data
+            } 
+        });
+
+        const item = response.data["items"][0]
+
+        if (item.length !== 0){
+
+          tst(item)
+            
+       }
+      
+    }
+
+    function tst(item){
+
+        let vlrTotal = 0
+
+        const copyCart = [...cart];
+        const result = copyCart.find((product) => product.id === parseInt(item.id));
+        
+        console.log(copyCart)
+        if(!result){
+
+            vlrTotal = parseFloat(item.preco.trim().replace(',', '.'))
+
+            copyCart.push({
+                id: parseInt(item.id),
+                QUANTIDADE: 1,
+                PRODUTO: item.codigo.trim(),
+                DESCRICAO: item.descricao.trim(), 
+                VALOR: item.preco.trim(),
+                TOTAL: vlrTotal
+            });
+
+            console.log(JSON.stringify(copyCart))
+            setScanned(false)
+            addCart(copyCart)
+            visibleCart(true)
+            setVisibleScan(false)
+        };
+    }
+    
+
+    if (hasPermission === null){
+        <View>
+            <Text>Requesting for camera permission</Text>
+        </View>
+    }
+
+    if(hasPermission === false){
+        <View>
+            <Text style={{margin:10}}>no access to camera</Text>
+            <TouchableOpacity onPress={()=> askForCameraPermission()}>
+                <Text>Allow Camera</Text>
+            </TouchableOpacity>
+        </View>
+    }
 
 
     function buttomSearch(option){
@@ -139,7 +233,7 @@ export default function SalePrd({route,navigation}){
         setListSearch(aResult)
         setSearchT(true)
         setLoad(false)
-    };
+    }; 
 
 
     return( 
@@ -199,6 +293,7 @@ export default function SalePrd({route,navigation}){
                             item={item}
                             nameSec={nameSec}
                             vendedor={dataUser.cod_vendedor}
+                            dataBack={[nameSec,list,dataUser,filter]}
                             prdProd={prdProd}
                         />
                     }
@@ -222,7 +317,7 @@ export default function SalePrd({route,navigation}){
                 </TouchableOpacity>
 
 
-                <TouchableOpacity style={styles.imageContent} onPress={()=>{ }}>
+                <TouchableOpacity style={styles.imageContent} onPress={()=>{ /*setVisibleScan(true)*/ }}>
                     <Image style={{resizeMode:'contain',width:35}} source={typeIcons[36]}/>
                     <Text style={styles.titleButtom}>Scan</Text>
                 </TouchableOpacity>
@@ -300,6 +395,38 @@ export default function SalePrd({route,navigation}){
                     </View>
                 </View>
             </ModFilter>
+
+            <ModScan visibleScan={visibleScan}>
+                <View style={{alignItems: 'center'}}>
+                    <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
+                        <Text style={{ fontSize: 30,color:'#2F8BD8'}}>Scan</Text>
+
+                        <TouchableOpacity onPress={() => setVisibleScan(false)}>
+                            <Image
+                                source={typeIcons[32]}
+                                style={{height: 30, width: 30}}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                
+                <View style={{alignItems:'center',justifyContent:'center'}}>
+                    <View style={styles.barCodeBox}>
+                        <BarCodeScanner 
+                            onBarCodeScanned={scanned?undefined:handleBarCodeScanned}
+                            style={styles.scanBox}
+                        />
+                    </View>
+
+                    <Text>{textScan}</Text>
+
+                    {scanned && 
+                        <TouchableOpacity onPress={()=> setScanned(false)}>
+                            <Text>Scan again</Text>
+                        </TouchableOpacity>
+                    }
+                </View>
+            </ModScan>
 
         </SafeAreaView>
         

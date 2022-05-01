@@ -152,6 +152,20 @@ const styles = StyleSheet.create({
     flexDirection:'row',
   },
 
+  
+  barCodeBox:{
+    alignItems:'center',
+    justifyContent:'center',
+    height:300,
+    width:300,
+  },
+
+  scanBox:{
+    height: '90%', 
+    width: '90%',    
+    borderRadius:30,
+  },
+
 });
 
 export default styles;

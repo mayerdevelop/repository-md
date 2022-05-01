@@ -12,7 +12,7 @@ import ModPrd from '../../Modal/modPrd'
 import api from '../../services/api'
 import _ from 'underscore';
 
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, set } from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
@@ -40,7 +40,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
     const DinamicTouch = prdProd?View:TouchableOpacity
     const DinamicTouchButton = prdProd?TouchableOpacity:View
 
-    const { addCart,cart,visibleCart,visiblePrd,totalCart,vlrTotalCart} = useContext(CartContext)
+    const { addCart,cart,visibleCart,visiblePrd,totalCart,vlrTotalCart,setCli} = useContext(CartContext)
 
 
     const {control,handleSubmit,formState:{errors},reset} = useForm({ 
@@ -60,6 +60,25 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
         )
     });
 
+
+    const apiPayment = async() =>{
+        
+        const response = await api.get(`/CondPgto/`,{
+            withCredentials: true,
+            headers: {
+                'Authorization': 'Basic '+authBasic,
+                'VENDEDOR': vendedor,
+            } 
+        })
+        
+        visibleCart(false)
+
+        navigation.navigate('SalePay',{
+            data:response.data["items"],
+            dataBack: dataBack,
+            vendedor:vendedor
+        })
+    };
 
     const searchSec = async(option) =>{
 
@@ -130,11 +149,12 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
         setLoad(false)
         setListSearch(aResult)
         
-    }
+    };
 
 
     const handleSignIn = async(data) =>{
 
+        setCli(data)
         setLoadPrd(true)
 
         const response = await api.get(`/Products/`,{
@@ -158,7 +178,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
 
         setLoadPrd(false)
         setVisibleCli(false)
-    }
+    };
 
 
     function addProductToCart(item,initial){
@@ -176,6 +196,8 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
 
             copyCart.push({
                 id: parseInt(item.id),
+                ITEM: 'id',
+                DESCONTO: 0,
                 QUANTIDADE: 1,
                 PRODUTO: item.codigo.trim(),
                 DESCRICAO: item.descricao.trim(), 
@@ -247,6 +269,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
         totalCart(0)
         visibleCart(false)
     };
+
 
     return (
         <SafeAreaView style={styles.content}>
@@ -760,7 +783,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
                         
 
                         <TouchableOpacity 
-                            onPress={()=>{clearCart()}}
+                            onPress={()=>{apiPayment()}}
                             style={{
                                 flex:2,
                                 height:40,

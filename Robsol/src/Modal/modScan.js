@@ -1,0 +1,77 @@
+import React, {useState,useEffect,useRef,useContext} from 'react';
+import {View,Modal,Animated} from 'react-native';
+
+import {StyleSheet} from 'react-native';
+
+import {CartContext} from '../Contexts/cart';
+
+export default function ModScan({visibleScan, children}){
+
+    const { addCart,cart,visibleCart,totalCart } = useContext(CartContext)
+
+    const [showModal, setShowModal] = useState(visibleScan);
+    const scaleValue = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        let cancel = false;
+
+        if (cancel) return; 
+
+        toggleModal()
+
+        return () => {cancel = true}
+    }, [visibleScan]);
+
+    const toggleModal = () => {
+
+        if (visibleScan) {
+            setShowModal(true);
+
+            Animated.spring(scaleValue, {
+                toValue: 1,
+                duration: 300,
+                useNativeDriver: true,
+            }).start();
+
+        } else {
+            setTimeout(() => setShowModal(false), 200);
+            
+            Animated.timing(scaleValue, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: true,
+            }).start();
+        }
+    };
+        
+    return (
+        <Modal transparent visible={showModal}>
+            <View style={styles.modalBackGround}>
+                <Animated.View style={[styles.modalContainer, {transform: [{scale: scaleValue}]}]}>
+                    {children}
+                </Animated.View>
+            </View>
+        </Modal>
+        );
+}
+
+
+const styles = StyleSheet.create({
+
+modalBackGround: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: '80%',
+    backgroundColor: 'white',
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+    borderRadius: 20,
+    elevation: 20,
+  },
+
+  
+});
