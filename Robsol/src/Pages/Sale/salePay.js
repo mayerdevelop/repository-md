@@ -60,17 +60,18 @@ export default function SalePay({route,navigation}){
         await api.post("/prtl003", { body: JSON.stringify(paramPed) })
         .then(async (item) => {
             if (item.data.code == "200") {
-                alert('Seu pedido foi enviado com sucesso');
+                //alert('Seu pedido foi enviado com sucesso');
             }
 
         })
         .catch((err) => {
-            alert("Erro na geração do pedido")
+            //alert("Erro na geração do pedido")
             console.log(err);
         });
 
         setLoad(false)
 
+        alert('Seu pedido foi enviado com sucesso') //solocitacao Venancio, sempre aparecer que gerou.
         navigation.navigate('Home',{dataUser:dataUser})
   }
 

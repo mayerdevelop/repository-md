@@ -373,7 +373,7 @@ export default function SalePrd({route,navigation}){
                     }
                     style={{width:'100%'}}
                     renderItem={({item})=> 
-                        <View style={styles.cardP} >
+                        <View style={styles.cardP} > 
                             <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                                 <Text style={styles.cardTitleP}>{item.codigo.trim()}</Text>
                                 <Image 
@@ -414,10 +414,8 @@ export default function SalePrd({route,navigation}){
                         </View>
                     }
                 />
-                
-            </View>
 
-            <View style={styles.footerContent}>
+            <View style={searchT ? styles.footerContentS : styles.footerContent}>
                 <TouchableOpacity style={styles.imageContent} onPress={()=>{setVisibleCart(true)}}>
                     <Image style={{resizeMode:'contain',width:35}} source={typeIcons[18]}/>
                     <Text style={styles.titleButtom}>Cart</Text>
@@ -429,6 +427,10 @@ export default function SalePrd({route,navigation}){
                     <Text style={styles.titleButtom}>Scan</Text>
                 </TouchableOpacity>
             </View>
+                
+            </View>
+
+
 
 
             <ModFilter visibleFilter={visibleFilter}>

@@ -213,7 +213,7 @@ export default function Detail({route,navigation}){
 
                 <FlatList
                     data={searchT 
-                        ? listSearch.sort((a, b) => b.id.localeCompare(a.id))
+                        ? listSearch
                         : list.sort((a, b) => b.id.localeCompare(a.id))
                     }
                     renderItem={({item})=> 

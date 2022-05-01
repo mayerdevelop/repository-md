@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         width:'100%',
         backgroundColor: '#fff',
-        marginTop:10
+        marginTop:10,
     },
 
     contScrow:{
@@ -125,13 +125,30 @@ const styles = StyleSheet.create({
       height:90,
       borderRadius:12,
       position:'absolute',
-      bottom: Platform.OS === 'ios' ? 32 : 10,
+      bottom: Platform.OS === 'ios' ? 80 : 100,
       shadowColor:'#fff',
       shadowOffset:{width:0,height:50},
       shadowOpacity:1,
       shadowRadius:3.5,
       elevation:5,
   },
+
+  footerContentS:{
+    flexDirection:'row',
+    alignItems:'center',
+    justifyContent:'space-around',
+    backgroundColor:'#175A93',
+    width:'94%',
+    height:90,
+    borderRadius:12,
+    marginVertical:60,
+    bottom:50,
+    shadowColor:'#fff',
+    shadowOffset:{width:0,height:50},
+    shadowOpacity:1,
+    shadowRadius:3.5,
+    elevation:5,
+},
 
   imageContent:{
       alignItems:'center',
