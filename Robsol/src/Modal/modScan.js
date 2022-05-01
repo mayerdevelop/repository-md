@@ -1,13 +1,9 @@
 import React, {useState,useEffect,useRef,useContext} from 'react';
-import {View,Modal,Animated} from 'react-native';
+import {View,Modal,Animated,StatusBar} from 'react-native';
 
 import {StyleSheet} from 'react-native';
 
-import {CartContext} from '../Contexts/cart';
-
 export default function ModScan({visibleScan, children}){
-
-    const { addCart,cart,visibleCart,totalCart } = useContext(CartContext)
 
     const [showModal, setShowModal] = useState(visibleScan);
     const scaleValue = useRef(new Animated.Value(0)).current;
@@ -46,6 +42,7 @@ export default function ModScan({visibleScan, children}){
         
     return (
         <Modal transparent visible={showModal}>
+            <StatusBar hidden={true} />
             <View style={styles.modalBackGround}>
                 <Animated.View style={[styles.modalContainer, {transform: [{scale: scaleValue}]}]}>
                     {children}

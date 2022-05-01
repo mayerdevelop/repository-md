@@ -23,10 +23,9 @@ import api from '../../services/api'
 
 import ModFilter from '../../Modal/modFilter';
 import ModScan from '../../Modal/modScan';
+import ModCart from '../../Modal/modCart'
 
 import {CartContext} from '../../Contexts/cart';
-
-import Section from '../../Components/Sections';
 
 import {BarCodeScanner} from 'expo-barcode-scanner';
 
@@ -36,9 +35,11 @@ if (!global.atob) { global.atob = decode }
 
 export default function SalePrd({route,navigation}){
 
-    const { addCart,cart,visibleCart,totalCart } = useContext(CartContext)
+    const [visibleCart, setVisibleCart] = useState(false);
 
-    const { nameSec,data,dataUser,filter,dataBack,prdProd } = route.params;
+    const { addCart,cart,totalCart,vlrTotalCart,quantCart,qtdTotalCart } = useContext(CartContext)
+
+    const { nameSec,data,dataUser,filter,dataBack } = route.params;
 
     const [searchText, setSearchText] = useState('');
     const [searchT,setSearchT] = useState(false);
@@ -72,7 +73,7 @@ export default function SalePrd({route,navigation}){
 
     const handleBarCodeScanned = async({type, data}) =>{
         setScanned(true);
-        setTextScan(data);
+        setTextScan(data+' adicionado ao carrinho!');
         //console.log('Type: '+ type + '\nData: ' + data)
 
 
@@ -90,42 +91,12 @@ export default function SalePrd({route,navigation}){
         const item = response.data["items"][0]
 
         if (item.length !== 0){
-
-          tst(item)
-            
+            addProductToCart(item)
        }
       
     }
 
-    function tst(item){
-
-        let vlrTotal = 0
-
-        const copyCart = [...cart];
-        const result = copyCart.find((product) => product.id === parseInt(item.id));
-        
-        console.log(copyCart)
-        if(!result){
-
-            vlrTotal = parseFloat(item.preco.trim().replace(',', '.'))
-
-            copyCart.push({
-                id: parseInt(item.id),
-                QUANTIDADE: 1,
-                PRODUTO: item.codigo.trim(),
-                DESCRICAO: item.descricao.trim(), 
-                VALOR: item.preco.trim(),
-                TOTAL: vlrTotal
-            });
-
-            console.log(JSON.stringify(copyCart))
-            setScanned(false)
-            addCart(copyCart)
-            visibleCart(true)
-            setVisibleScan(false)
-        };
-    }
-    
+   
 
     if (hasPermission === null){
         <View>
@@ -233,8 +204,120 @@ export default function SalePrd({route,navigation}){
         setListSearch(aResult)
         setSearchT(true)
         setLoad(false)
-    }; 
+    };
 
+
+    function addProductToCart(item,initial){
+
+        if(initial){setVisibleCart(true)}
+        
+        let vlrTotal = 0
+
+        const copyCart = [...cart];
+        const result = copyCart.find((product) => product.id === parseInt(item.id));
+
+        if(!result){
+
+            vlrTotal = parseFloat(item.preco.trim().replace(',', '.'))
+
+            copyCart.push({
+                id: parseInt(item.id),
+                ITEM: 'id',
+                DESCONTO: 0,
+                QUANTIDADE: 1,
+                PRODUTO: item.codigo.trim(),
+                DESCRICAO: item.descricao.trim(), 
+                VALOR: item.preco.trim(),
+                TOTAL: vlrTotal
+            });
+            
+            const sumall =  vlrTotalCart + parseInt(item.preco)
+            totalCart(sumall)
+
+        }else {
+            copyCart.forEach((list) => { 
+                if(list.id === item.id){
+                    vlrTotal += parseFloat(list.VALOR.replace(',', '.')) 
+                }
+            });
+
+            result.QUANTIDADE = result.QUANTIDADE + 1;
+
+            if(vlrTotal !== 0){
+                result.TOTAL = vlrTotal * result.QUANTIDADE;
+            } else{
+                result.TOTAL = parseFloat(result.VALOR.replace(',', '.')) * result.QUANTIDADE;
+            }
+
+            const sumall = copyCart.map(item => item.TOTAL).reduce((prev, curr) => prev + curr, 0);
+            
+            totalCart(sumall)
+        };
+
+        addCart(copyCart)
+
+        const sumQtd = copyCart.map(item => item.QUANTIDADE).reduce((prev, curr) => prev + curr, 0);
+        quantCart(sumQtd)
+
+    };
+
+
+    function removeProductToCart(item){
+
+        let vlrTotal = 0
+
+        const copyCart = [...cart];
+        const result = copyCart.find((product) => product.id === parseInt(item.id));
+
+        if(result && result.QUANTIDADE > 1){
+            result.QUANTIDADE = result.QUANTIDADE - 1
+            addCart(copyCart)
+
+        }else {
+            const arrayFilter = copyCart.filter(product => product.id !== item.id);
+            addCart(arrayFilter)
+        }
+
+        if(result && result.QUANTIDADE >= 1){
+            copyCart.forEach((list) => { 
+                if(list.id === item.id){
+                    vlrTotal += parseFloat(list.VALOR.replace(',', '.')) 
+                }
+            });
+
+            result.TOTAL = vlrTotal * result.QUANTIDADE;
+            const totalSub = vlrTotalCart - parseFloat(result.VALOR)
+
+            totalCart(totalSub)
+        }
+
+    };
+
+    function clearCart(){
+        addCart([])
+        totalCart(0)
+        setVisibleCart(false)
+    };
+    
+    const apiPayment = async() =>{
+        
+        const response = await api.get(`/CondPgto/`,{
+            withCredentials: true,
+            headers: {
+                'Authorization': 'Basic '+authBasic,
+                'VENDEDOR': dataUser.cod_vendedor,
+            } 
+        })
+        
+        setVisibleCart(false)
+
+        navigation.navigate('SalePay',{
+            data:response.data["items"],
+            dataBack: list,
+            dataUser:dataUser,
+            vendedor:dataUser.cod_vendedor,
+        })
+    };
 
     return( 
 
@@ -288,14 +371,38 @@ export default function SalePrd({route,navigation}){
                         ? listSearch.sort((a, b) => b.id.localeCompare(a.id))
                         : list.sort((a, b) => b.id.localeCompare(a.id))
                     }
+                    style={{width:'100%'}}
                     renderItem={({item})=> 
-                        <Section
-                            item={item}
-                            nameSec={nameSec}
-                            vendedor={dataUser.cod_vendedor}
-                            dataBack={[nameSec,list,dataUser,filter]}
-                            prdProd={prdProd}
-                        />
+                        <View style={styles.cardP} >
+                            <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                                <Text style={styles.cardTitleP}>{item.codigo.trim()}</Text>
+                                <Image 
+                                    style={styles.genero}
+                                    source={item.genero.trim()==='Masculino'?typeIcons[13]:typeIcons[14]} 
+                                />
+                            </View>
+
+                            <Text style={styles.cardDescP}>{item.descricao.trim().substr(0,35)}</Text>
+                           
+                            <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                                <View>
+                                    <Text style={styles.cardSubTitleP}>{'R$ '+item.preco.trim()}</Text>
+                                    <Text style={styles.cardSubTitleP}>{'Saldo '+item.saldo.trim()}</Text>
+                                    <Text style={styles.cardSubTitleP}>{'Linha: '+item.linha.trim()}</Text>
+                                </View>
+                                <View>
+                                    <Text style={styles.cardSubTitleP}>{'Marca: '+item.marca.trim()}</Text>
+                                    <Text style={styles.cardSubTitleP}>{'Material: '+item.material.trim()}</Text>
+                                </View>
+                            </View>
+
+                            <TouchableOpacity 
+                                style={styles.buttonAddInitial} 
+                                onPress={()=>{addProductToCart(item, true)}}
+                            >
+                                <Text style={styles.txtAddInitial}>Adicionar +</Text>
+                            </TouchableOpacity>
+                        </View>
                     }
 
                     onEndReached={searchT?null:loadSec}
@@ -311,13 +418,13 @@ export default function SalePrd({route,navigation}){
             </View>
 
             <View style={styles.footerContent}>
-                <TouchableOpacity style={styles.imageContent} onPress={()=>{visibleCart(true)}}>
+                <TouchableOpacity style={styles.imageContent} onPress={()=>{setVisibleCart(true)}}>
                     <Image style={{resizeMode:'contain',width:35}} source={typeIcons[18]}/>
                     <Text style={styles.titleButtom}>Cart</Text>
                 </TouchableOpacity>
 
 
-                <TouchableOpacity style={styles.imageContent} onPress={()=>{ /*setVisibleScan(true)*/ }}>
+                <TouchableOpacity style={styles.imageContent} onPress={()=>{ setVisibleScan(true) }}>
                     <Image style={{resizeMode:'contain',width:35}} source={typeIcons[19]}/>
                     <Text style={styles.titleButtom}>Scan</Text>
                 </TouchableOpacity>
@@ -396,12 +503,136 @@ export default function SalePrd({route,navigation}){
                 </View>
             </ModFilter>
 
+
+            <ModCart visibleCart={visibleCart}>
+                <View style={{flexDirection:'row',justifyContent:'space-between',}}>
+                    <View>
+                        <Text style={{fontSize:22, fontWeight:'bold'}}>Adicionar Produto</Text>
+                    </View>
+                    <View>
+                        <TouchableOpacity onPress={() => setVisibleCart(false)} style={{bottom:25}}>
+                            <Text style={{fontSize:50}}>+</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                
+                <FlatList
+                    data={cart}
+                    renderItem={({item})=> 
+                        <View style={{
+                            flexDirection:'row',
+                            justifyContent:'space-between',
+                            marginHorizontal:10,
+                            marginBottom:30,
+                            alignItems:'center'
+                        }}>
+                            <View>
+                                <Text style={styles.txtBold}>{item.PRODUTO.trim()}</Text>
+                                <Text >{item.DESCRICAO.trim().substr(0,19)}</Text>
+                                <Text >{item.VALOR.trim()}</Text>
+                            </View>
+
+
+                            <View style={{justifyContent:'center',alignItems:'center'}}>
+                                <Text>{item.TOTAL.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</Text>
+                                <View style={{flexDirection:'row',alignItems:'center',marginTop:5}}>
+                                    <TouchableOpacity onPress={()=>{removeProductToCart(item)}} style={styles.buttonQty}>
+                                        <Text style={styles.txtButtonQty}>-</Text>
+                                    </TouchableOpacity>
+
+                                    <Text style={{fontSize:18,fontWeight:'bold',marginHorizontal:5}}>
+                                        {item.QUANTIDADE}
+                                    </Text>
+
+                                    <TouchableOpacity onPress={()=>{addProductToCart(item, false)}} style={styles.buttonQty}>
+                                        <Text style={styles.txtButtonQty}>+</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View> 
+
+                        </View>
+                    }
+                    onEndReached={null}
+                    onEndReachedThreshold={0.1}
+                    keyExtractor={(item, index) => String(index)}
+                    ListEmptyComponent={ load ? 
+                        <ActivityIndicator color={'#000000'} size={50}/>
+                        :
+                        <TouchableOpacity onPress={()=>{setVisibleCart(false)}} style={{alignItems:'center',marginTop:50}}>
+                            <Text style={{fontSize:22,color:'#49BB17',fontWeight:'bold'}}>Adicionar Itens ao Carrinho</Text>
+                        </TouchableOpacity>
+                    }
+                />
+
+                <View style={{marginBottom:25}}>
+                    <View style={{
+                        flexDirection:'row',
+                        justifyContent:'space-between',
+                        marginBottom:10
+                    }}>
+
+                        <Text style={{fontWeight:'bold'}}>Quant. Total: </Text>
+                        <Text>{qtdTotalCart}</Text>
+                    </View>
+
+                    <View style={{
+                        flexDirection:'row',
+                        justifyContent:'space-between',
+                        marginBottom:10
+                    }}>
+
+                        <Text style={{fontWeight:'bold'}}>Total Pedido: </Text>
+                        <Text>{vlrTotalCart.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</Text>
+                    </View>
+                </View>
+                
+                {cart.length !== 0 &&
+                    <View style={{flexDirection:'row', marginBottom:10}}>
+                        <TouchableOpacity 
+                            onPress={()=>{clearCart()}}
+                            style={{
+                                flex:1,
+                                flexDirection:'row',
+                                height:40,
+                                alignItems:'center',
+                                borderWidth:3,
+                                borderColor:'#2F8BD8',
+                                borderRadius:10,
+                            }}
+                        >   
+                            <Image 
+                                style={{resizeMode:'contain', width:20,marginHorizontal:10}}
+                                source={typeIcons[20]}
+                            />
+                            <Text style={{color:'#2F8BD8', fontWeight:'bold', fontSize:16}}>Limpar</Text>
+                        </TouchableOpacity>
+                        
+
+                        <TouchableOpacity 
+                            onPress={()=>{apiPayment()}}
+                            style={{
+                                flex:2,
+                                height:40,
+                                justifyContent:'center',
+                                alignItems:'center',
+                                backgroundColor:'#222020',
+                                borderRadius:10,
+                                marginLeft:10
+                            }}
+                        >
+                            <Text style={{color:'#fff', fontWeight:'bold', fontSize:16}}>Finalizar</Text>
+                        </TouchableOpacity>
+                    </View>
+                }
+            </ModCart>
+
+
             <ModScan visibleScan={visibleScan}>
                 <View style={{alignItems: 'center'}}>
                     <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
                         <Text style={{ fontSize: 30,color:'#2F8BD8'}}>Scan</Text>
 
-                        <TouchableOpacity onPress={() => setVisibleScan(false)}>
+                        <TouchableOpacity onPress={() => {setVisibleScan(false),setTextScan(''),setScanned(false)}}>
                             <Image
                                 source={typeIcons[15]}
                                 style={{height: 30, width: 30}}
@@ -418,11 +649,22 @@ export default function SalePrd({route,navigation}){
                         />
                     </View>
 
-                    <Text>{textScan}</Text>
+                    <Text style={{color:'tomato',fontWeight:'bold'}}>{textScan}</Text>
 
                     {scanned && 
-                        <TouchableOpacity onPress={()=> setScanned(false)}>
-                            <Text>Scan again</Text>
+                        <TouchableOpacity 
+                            onPress={()=> {setScanned(false), setTextScan('')}}
+                            style={{
+                                height:40,
+                                backgroundColor:'#2F8BD8',
+                                justifyContent:'center',
+                                alignItems:'center',
+                                borderRadius:10,
+                                width:'55%',
+                                marginTop:20
+                            }}
+                        >
+                            <Text style={[styles.txtBold,{color:'#fff'}]}>Scanear outro</Text>
                         </TouchableOpacity>
                     }
                 </View>

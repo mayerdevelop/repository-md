@@ -6,13 +6,15 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#175A93',
         justifyContent: 'flex-start',
-        alignItems:'center'
+        alignItems:'center',
     },
 
     container:{
         alignItems:'center',
+        justifyContent:'center',
         width:'100%',
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        marginTop:10
     },
 
     contScrow:{
@@ -165,6 +167,74 @@ const styles = StyleSheet.create({
     width: '90%',    
     borderRadius:30,
   },
+
+  // flatlist
+
+  cardP: {
+    marginHorizontal:20,
+    padding:10,
+    borderColor:'#2F8BD8',
+    borderWidth:2,
+    borderRadius:10,
+    marginBottom:10,
+},
+
+
+cardTitleP:{
+    fontWeight: 'bold',
+    fontSize:20,
+    color:'#000',
+    marginBottom:8 
+},
+
+cardDescP:{
+    fontWeight: 'bold',
+    fontSize:16,
+    color:'#585450',
+    marginBottom:8 
+},
+
+cardSubTitleP:{
+    fontSize:14,
+    color:'#585450',
+},
+
+buttonAddInitial:{
+  backgroundColor:'#2F8BD8',
+  justifyContent:'center',
+  alignItems:'center',
+  marginHorizontal:100,
+  marginTop:20,
+  height:40,
+  borderRadius:10
+},
+
+txtAddInitial:{
+  color:'#fff',
+  fontSize:16,
+  fontWeight:'bold'
+},
+
+txtBold:{
+  fontSize:16, 
+  fontWeight:'bold'
+},
+
+
+buttonQty:{
+  width: 30,
+  height: 30,
+  borderRadius: 30/2,
+  backgroundColor:'#2F8BD8',
+  alignItems:'center',
+  justifyContent:'center'
+},
+
+txtButtonQty:{
+  color:'#fff',
+  fontWeight:'bold',
+  fontSize:16
+},
 
 });
 

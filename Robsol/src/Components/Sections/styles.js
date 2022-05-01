@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
         color:'#fff',
         fontWeight:'bold',
         fontSize:16
-    }
+    },
       
 });
 

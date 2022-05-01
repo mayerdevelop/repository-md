@@ -188,6 +188,7 @@ export default function SaleCli({route,navigation}){
                             nameSec={nameSec}
                             vendedor={dataUser.cod_vendedor}
                             dataBack={[nameSec,list,dataUser,filter]}
+                            prdProd={true}
                         />
                     }
 

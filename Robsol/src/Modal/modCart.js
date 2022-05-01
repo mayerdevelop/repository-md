@@ -1,11 +1,11 @@
 import React, {useState,useEffect,useRef} from 'react';
-import {View,Modal,Animated} from 'react-native';
+import {View,Modal,Animated,StatusBar} from 'react-native';
 
 import {StyleSheet} from 'react-native';
 
-export default function ModPrd({visiblePrd, children}){
+export default function ModCart({visibleCart, children}){
 
-    const [showModal, setShowModal] = useState(visiblePrd);
+    const [showModal, setShowModal] = useState(visibleCart);
     const scaleValue = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
@@ -16,16 +16,16 @@ export default function ModPrd({visiblePrd, children}){
         toggleModal()
 
         return () => {cancel = true}
-    }, [visiblePrd]);
+    }, [visibleCart]);
 
     const toggleModal = () => {
 
-        if (visiblePrd) {
+        if (visibleCart) {
             setShowModal(true);
 
             Animated.spring(scaleValue, {
                 toValue: 1,
-                duration: 200,
+                duration: 300,
                 useNativeDriver: true,
             }).start();
 
@@ -34,7 +34,7 @@ export default function ModPrd({visiblePrd, children}){
             
             Animated.timing(scaleValue, {
                 toValue: 0,
-                duration: 200,
+                duration: 300,
                 useNativeDriver: true,
             }).start();
         }
@@ -42,6 +42,7 @@ export default function ModPrd({visiblePrd, children}){
         
     return (
         <Modal transparent visible={showModal}>
+            <StatusBar hidden={true}/>
             <View style={styles.modalBackGround}>
                 <Animated.View style={[styles.modalContainer, {transform: [{scale: scaleValue}]}]}>
                     {children}

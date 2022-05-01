@@ -1,5 +1,5 @@
 import React, {useState,useEffect,useRef} from 'react';
-import {View,Modal,Animated} from 'react-native';
+import {View,Modal,Animated,StatusBar} from 'react-native';
 
 import {StyleSheet} from 'react-native';
 
@@ -34,6 +34,7 @@ export default function ModPreview({visiblePreview, children}){
         
     return (
         <Modal transparent visible={showModal}>
+            <StatusBar hidden={true} />
             <View style={styles.modalBackGround}>
                 <Animated.View style={[styles.modalContainer, {transform: [{scale: scaleValue}]}]}>
                     {children}

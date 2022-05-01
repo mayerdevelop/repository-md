@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     FlatList,
     TextInput,
+    ActivityIndicator,
 
 } from 'react-native';
 
@@ -30,15 +31,18 @@ if (!global.atob) { global.atob = decode }
 
 export default function SalePay({route,navigation}){
 
-    const { data,dataBack,vendedor } = route.params;
+    const { data,dataUser,dataBack,vendedor } = route.params;
     const { cart,cliente } = useContext(CartContext)
     
     const [visibleObs,setVisibleObs] = useState(false);
     const [txtObs,setTxtObs] = useState('')
     const [payment,setPayment] = useState('');
+    const [load,setLoad] = useState(false);
 
 
     const geraPedido = async() =>{
+
+        setLoad(true)
         
         const copyCart = [...cart];
         const copyClient = {...cliente};
@@ -57,8 +61,6 @@ export default function SalePay({route,navigation}){
         .then(async (item) => {
             if (item.data.code == "200") {
                 alert('Seu pedido foi enviado com sucesso');
-
-                navigation.navigate('Home',{dataUser:dataBack[2]})
             }
 
         })
@@ -66,6 +68,10 @@ export default function SalePay({route,navigation}){
             alert("Erro na geração do pedido")
             console.log(err);
         });
+
+        setLoad(false)
+
+        navigation.navigate('Home',{dataUser:dataUser})
   }
 
     return( 
@@ -156,7 +162,7 @@ export default function SalePay({route,navigation}){
                         }}
                     />
                 </View>
-
+                        
                 <TouchableOpacity 
                     style={{
                         justifyContent:'center',
@@ -170,7 +176,10 @@ export default function SalePay({route,navigation}){
                     }}
                     onPress={()=>{geraPedido()}}
                 >
-                    <Text style={{fontSize:18,color:'#fff',fontWeight:'bold'}}>Enviar Pedido</Text>
+                    {load 
+                        ? <ActivityIndicator color={'#fff'} size={35}/>                        
+                        :<Text style={{fontSize:18,color:'#fff',fontWeight:'bold'}}>Enviar Pedido</Text>
+                    }
                 </TouchableOpacity>
             
 

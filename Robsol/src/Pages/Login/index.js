@@ -38,7 +38,7 @@ export default function Login({navigation}){
         
         try{
             const response = await api.post("/PRTL001", {
-                USUARIO: user,
+                USUARIO: user.toUpperCase(),
                 SENHA: pass, 
             });
 
