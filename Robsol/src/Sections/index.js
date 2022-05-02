@@ -3,11 +3,11 @@ import {Text,View,TouchableOpacity,Image,FlatList,ActivityIndicator,TextInput,Sc
 
 import styles from './styles';
 
-import ModPreview from '../../Modal/modPreview'
-import ModSale from '../../Modal/modSale'
-import ModCli from '../../Modal/modCli'
+import ModPreview from '../Modal/modPreview'
+import ModSale from '../Modal/modSale'
+import ModCli from '../Modal/modCli'
 
-import api from '../../services/api';
+import api from '../services/api';
 import { Ionicons } from '@expo/vector-icons';
 
 import axios from "axios";
@@ -18,7 +18,7 @@ import { useForm, Controller, set } from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
-import {CartContext} from '../../Contexts/cart'
+import {CartContext} from '../Contexts/cart'
 
 import { useNavigation } from '@react-navigation/native';
 

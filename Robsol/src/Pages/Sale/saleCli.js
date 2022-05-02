@@ -26,7 +26,7 @@ import axios from "axios";
 
 import ModFilter from '../../Modal/modFilter'
 
-import Section from '../../Components/Sections';
+import Section from '../../Sections/index';
 
 import {CartContext} from '../../Contexts/cart'
 

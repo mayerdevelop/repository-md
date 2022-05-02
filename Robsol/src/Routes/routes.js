@@ -7,7 +7,7 @@ import Detail from '../Pages/Detail/index'
 import SaleCli from '../Pages/Sale/saleCli'
 import SalePrd from '../Pages/Sale/salePrd'
 import SalePay from '../Pages/Sale/salePay'
-import Sections from '../Components/Sections/index'
+import Sections from '../Sections/index'
 
 const Stack = createStackNavigator();
 

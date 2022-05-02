@@ -21,9 +21,9 @@ import typeIcons from '../../utils/typeIcons';
 import { Ionicons,FontAwesome } from '@expo/vector-icons';
 import api from '../../services/api'
 
-import ModFilter from '../../Modal/modFilter'
+import ModFilter from '../../Modal/modPreview'
 
-import Section from '../../Components/Sections';
+import Section from '../../Sections/index';
 
 import {CartContext} from '../../Contexts/cart'
 

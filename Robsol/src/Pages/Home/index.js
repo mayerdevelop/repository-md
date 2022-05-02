@@ -14,9 +14,7 @@ if (!global.atob) { global.atob = decode }
 
 import styles from './styles';
 
-import Footer from '../../Components/Footer/index'
-
-export default function Home({route,navigation}){
+export default function Home({navigation}){
 
     const { addCart,dataUser } = useContext(CartContext)
 
@@ -144,7 +142,17 @@ export default function Home({route,navigation}){
                     </View>
                      
                 </View>
-                <Footer navigation={navigation} backPage={'Home'}/>
+                <View style={styles.footerContent}>
+                    <TouchableOpacity style={styles.imageContent}>
+                        <Ionicons name="home" size={35} color="white" />
+                        <Text style={styles.titleButtom}>Home</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.imageContent} onPress={()=>{ }}>
+                        <Ionicons style={{marginBottom:3}} name="person" size={35} color="white" />
+                        <Text style={styles.titleButtom}>Perfil</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </SafeAreaView>
         </>
