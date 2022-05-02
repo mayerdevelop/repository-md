@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState,useEffect,useContext} from 'react';
 import {
     KeyboardAvoidingView, 
     View, 
@@ -15,6 +15,8 @@ import typeIcons from '../../utils/typeIcons';
 import {decode, encode} from 'base-64'
 import api from '../../services/api'
 
+import {CartContext} from '../../Contexts/cart'
+
 import styles from './styles';
 
 if (!global.btoa) { global.btoa = encode }
@@ -30,6 +32,8 @@ export default function Login({navigation}){
     const [pass, setPass] = useState('');
     const [load, setLoad] = useState(false);
 
+    const {setUserData} = useContext(CartContext)
+
     const [hidepass, setHidepass] = useState(false)
 
     const loadUser = async() =>{
@@ -43,7 +47,8 @@ export default function Login({navigation}){
             });
 
             if (response.data.statusrequest[0].code === '#200') {
-                navigation.navigate('Home',{ dataUser: response.data.statusrequest[0] })
+                setUserData(response.data.statusrequest[0])
+                navigation.navigate('Home')
             } else {
                 alert(response.data.statusrequest[0].Cod_Usuario)
             } 

@@ -25,6 +25,7 @@ const updateAppAutomatic = async() =>{
 //useEffect(() => {updateAppAutomatic()}, []);
 
 
+
 export default function App() {
   return (
       <NavigationContainer>

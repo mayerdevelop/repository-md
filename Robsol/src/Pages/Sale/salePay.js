@@ -31,11 +31,12 @@ if (!global.atob) { global.atob = decode }
 
 export default function SalePay({route,navigation}){
 
-    const { data,dataUser,dataBack,vendedor } = route.params;
+    const { data,dataBack,vendedor } = route.params;
     const { cart,cliente } = useContext(CartContext)
     
     const [visibleObs,setVisibleObs] = useState(false);
     const [txtObs,setTxtObs] = useState('')
+    const [itensErrSld, setItensErrSld] = useState([]);
     const [payment,setPayment] = useState('');
     const [load,setLoad] = useState(false);
 
@@ -51,7 +52,7 @@ export default function SalePay({route,navigation}){
             CLIENTE: copyClient,
             CONDPAGTO: payment,
             DESCONTO: '',
-            FORCE: 'TRUE',
+            FORCE: 'FALSE',
             ITEMS: copyCart,
             VENDEDOR: vendedor,
             OBSERVATION: txtObs
@@ -60,31 +61,35 @@ export default function SalePay({route,navigation}){
         await api.post("/prtl003", { body: JSON.stringify(paramPed) })
         .then(async (item) => {
             if (item.data.code == "200") {
-                //alert('Seu pedido foi enviado com sucesso');
-            }
+                alert('Seu pedido foi enviado com sucesso');
+                navigation.navigate('Home')
 
+            } else if(item.data.codigo == "410"){
+                setItensErrSld(item.data)
+            }
         })
         .catch((err) => {
             //alert("Erro na geração do pedido")
             console.log(err);
+            navigation.navigate('Home')
         });
 
         setLoad(false)
-
-        alert('Seu pedido foi enviado com sucesso') //solocitacao Venancio, sempre aparecer que gerou.
-        navigation.navigate('Home',{dataUser:dataUser})
-  }
+    }
 
     return( 
-
-        <SafeAreaView style={styles.contSafe}>
+        <>
+        <SafeAreaView edges={["top"]} style={{ flex: 0, backgroundColor: "#175A93" }}/>
+        <SafeAreaView
+            edges={["left", "right", "bottom"]}
+            style={{flex: 1, backgroundColor: "#fff",position: "relative",}}
+        >
             <View style={{backgroundColor:'#fff',width:'100%',flex:1}}>
                 <View style={[styles.headerSales,{marginBottom:30}]}>  
                     <TouchableOpacity onPress={()=>{navigation.navigate('SalePrd',{
                         nameSec:dataBack[0],
                         data:dataBack[1],
-                        dataUser:dataBack[2],
-                        filter:dataBack[3],
+                        filter:dataBack[2],
                     })}}>
                         <Image source={typeIcons[2]} />
                     </TouchableOpacity>
@@ -173,7 +178,8 @@ export default function SalePay({route,navigation}){
                         opacity:0.8,
                         borderRadius:10,
                         marginHorizontal:80,
-                        marginVertical:30
+                        marginTop:30,
+                        marginBottom:50
                     }}
                     onPress={()=>{geraPedido()}}
                 >
@@ -182,11 +188,26 @@ export default function SalePay({route,navigation}){
                         :<Text style={{fontSize:18,color:'#fff',fontWeight:'bold'}}>Enviar Pedido</Text>
                     }
                 </TouchableOpacity>
-            
+                
+                { itensErrSld.length !== 0 &&
+                    <Text style={{color:'tomato'}}>{'*** '+itensErrSld.mensagem+' ***' + '\n\nProdutos: '}</Text>
+                }
+
+                <FlatList
+                    data={itensErrSld.produtos}
+                    renderItem={({item})=>
+
+                    <Text style={{color:'tomato'}}>{item.codigo}</Text>
+
+                    }
+
+                    onEndReachedThreshold={0.1}
+                    keyExtractor={(item, index) => String(index)}
+                />
 
             </ModObs>
         </SafeAreaView>
-        
+        </>
     )
 }
 

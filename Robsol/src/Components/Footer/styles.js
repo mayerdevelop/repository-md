@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
         height:90,
         borderRadius:12,
         position:'absolute',
-        bottom: Platform.OS === 'ios' ? 32 : 10,
+        bottom: 10,
         shadowColor:'#000',
         shadowOffset:{width:0,height:20},
         shadowOpacity:0.25,

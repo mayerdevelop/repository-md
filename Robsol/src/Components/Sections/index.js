@@ -9,6 +9,8 @@ import ModSale from '../../Modal/modSale'
 import ModCli from '../../Modal/modCli'
 
 import api from '../../services/api'
+import axios from "axios";
+
 import _ from 'underscore';
 
 import { useForm, Controller, set } from 'react-hook-form';
@@ -20,10 +22,38 @@ import {CartContext} from '../../Contexts/cart'
 import { useNavigation } from '@react-navigation/native';
 
 
+
+export async function getClientByCNPJ(cnpj) {
+    const result = await axios.get(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
+
+    console.log(JSON.stringify(result.data.logradouro))
+
+    let jsonClient = {
+        cnpj: result.data.cnpj,
+        insc_estadual: "N/A",
+        codigo: result.data.cnpj,
+        filial: "N/A",
+        razao_social: result.data.razao_social,
+        nome_fantasia: result.data.nome_fantasia,
+        endereco: result.data.logradouro,
+        bairro: result.data.bairro,
+        cidade: result.data.municipio,
+        uf: result.data.uf,
+        cep: result.data.cep,
+        contato: "",
+        email: "",
+        celular: "",
+        id: result.data.cnpj
+    }
+
+    return jsonClient;
+}
+
+
 export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
 
     
-    const {setCli} = useContext(CartContext)
+    const {setCli,dataUser} = useContext(CartContext)
 
     const navigation = useNavigation();
 
@@ -81,10 +111,6 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
                 params.codigo = opt_new[1];
                 setVisibleSale(true)
                 break;
-            case "prd":
-                params.codigo = opt_new[1];
-                setVisibleCart(true)
-                break;
             default:
                 break;
         }
@@ -95,6 +121,14 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
             const response = await api.get(`/${nameSec}/`,{headers: params})
             if(_.has(response.data,"Erro")){
                 aResult = [];
+
+                if(opt_new[2] === 'cli'){
+                    let responseSefaz = await getClientByCNPJ(opt_new[1]);
+
+                    console.log(JSON.stringify(responseSefaz))
+                    aResult.push(responseSefaz)
+                };
+
             }else {
                 if(response.data.items){
                     response.data["items"].forEach((element, index) => {
@@ -106,7 +140,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
             }
             
         }catch(error){
-            alert(error)
+            console.log(error)
         }
 
         reset(aResult[0]);
@@ -139,7 +173,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
             withCredentials: true,
             headers: {
                 'Authorization': 'Basic '+authBasic,
-                'VENDEDOR': dataBack[2].cod_vendedor,
+                'VENDEDOR': dataUser.cod_vendedor,
                 'page': 1,
                 'pageSize': 10
             } 
@@ -148,7 +182,6 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
         navigation.navigate('SalePrd',{
             nameSec:'Products',
             data:response.data["items"],
-            dataUser:dataBack[2],
             filter:'CODIGO',
             dataBack: dataBack,
             prdProd:true

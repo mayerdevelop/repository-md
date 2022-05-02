@@ -16,9 +16,8 @@ import Footer from '../../Components/Footer/index'
 
 export default function Home({route,navigation}){
 
-    const { addCart } = useContext(CartContext)
+    const { addCart,dataUser } = useContext(CartContext)
 
-    const { dataUser } = route.params;
     const authBasic = 'YWRtaW46QVZTSTIwMjI';
 
     const [loadSec, setLoadSec] = useState('');
@@ -60,7 +59,6 @@ export default function Home({route,navigation}){
         navigation.navigate('Detail',{
             nameSec:sec,
             data:response.data["items"],
-            dataUser:dataUser,
             filter:initialFilter,
             icon:icon,
             prdProd:false
@@ -68,7 +66,12 @@ export default function Home({route,navigation}){
     };
 
     return(
-        <SafeAreaView style={styles.safeArea}>
+        <>
+        <SafeAreaView edges={["top"]} style={{ flex: 0, backgroundColor: "#175A93" }}/>
+        <SafeAreaView
+            edges={["left", "right", "bottom"]}
+            style={{flex: 1, backgroundColor: "#fff",position: "relative",}}
+        >
             <View style={styles.container}>
                 <View style={styles.header}>
                     <View style={styles.contTextHeader}>
@@ -145,9 +148,9 @@ export default function Home({route,navigation}){
                     </View>
                      
                 </View>
-                <Footer navigation={navigation} dataUser={dataUser} backPage={'Home'}/>
+                <Footer navigation={navigation} backPage={'Home'}/>
             </View>
         </SafeAreaView>
-    
+        </>
     )
 }

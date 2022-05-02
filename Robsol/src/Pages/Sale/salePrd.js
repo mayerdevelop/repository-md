@@ -37,9 +37,9 @@ export default function SalePrd({route,navigation}){
 
     const [visibleCart, setVisibleCart] = useState(false);
 
-    const { addCart,cart,totalCart,vlrTotalCart,quantCart,qtdTotalCart } = useContext(CartContext)
+    const { addCart,cart,totalCart,vlrTotalCart,quantCart,qtdTotalCart,dataUser } = useContext(CartContext)
 
-    const { nameSec,data,dataUser,filter,dataBack } = route.params;
+    const { nameSec,data,filter,dataBack } = route.params;
 
     const [searchText, setSearchText] = useState('');
     const [searchT,setSearchT] = useState(false);
@@ -313,21 +313,23 @@ export default function SalePrd({route,navigation}){
 
         navigation.navigate('SalePay',{
             data:response.data["items"],
-            dataBack: list,
-            dataUser:dataUser,
+            dataBack: [nameSec,data,filter],
             vendedor:dataUser.cod_vendedor,
         })
     };
 
     return( 
-
-        <SafeAreaView style={styles.contSafe}>
+        <>
+        <SafeAreaView edges={["top"]} style={{ flex: 0, backgroundColor: "#175A93" }}/>
+        <SafeAreaView
+            edges={["left", "right", "bottom"]}
+            style={{flex: 1, backgroundColor: "#fff",position: "relative",}}
+        >
             <View style={styles.container}>
                 <View style={styles.headerSales}>  
                     <TouchableOpacity onPress={()=>{addCart([]),totalCart(0),navigation.navigate('SaleCli',{
                         nameSec:dataBack[0],
                         data:dataBack[1],
-                        dataUser:dataBack[2],
                         filter:dataBack[3],
                     })}}>
                         <Image source={typeIcons[2]} />
@@ -368,8 +370,8 @@ export default function SalePrd({route,navigation}){
 
                 <FlatList
                     data={searchT 
-                        ? listSearch.sort((a, b) => b.id.localeCompare(a.id))
-                        : list.sort((a, b) => b.id.localeCompare(a.id))
+                        ? Array.from(listSearch).sort((a, b) => b.id.localeCompare(a.id))
+                        : Array.from(list).sort((a, b) => b.id.localeCompare(a.id))
                     }
                     style={{width:'100%'}}
                     renderItem={({item})=> 
@@ -415,18 +417,20 @@ export default function SalePrd({route,navigation}){
                     }
                 />
 
-            <View style={searchT ? styles.footerContentS : styles.footerContent}>
-                <TouchableOpacity style={styles.imageContent} onPress={()=>{setVisibleCart(true)}}>
-                    <Image style={{resizeMode:'contain',width:35}} source={typeIcons[18]}/>
-                    <Text style={styles.titleButtom}>Cart</Text>
-                </TouchableOpacity>
+                { !searchT &&
+                    <View style={styles.footerContent}>
+                        <TouchableOpacity style={styles.imageContent} onPress={()=>{setVisibleCart(true)}}>
+                            <Image style={{resizeMode:'contain',width:35}} source={typeIcons[18]}/>
+                            <Text style={styles.titleButtom}>Cart</Text>
+                        </TouchableOpacity>
 
 
-                <TouchableOpacity style={styles.imageContent} onPress={()=>{ setVisibleScan(true) }}>
-                    <Image style={{resizeMode:'contain',width:35}} source={typeIcons[19]}/>
-                    <Text style={styles.titleButtom}>Scan</Text>
-                </TouchableOpacity>
-            </View>
+                        <TouchableOpacity style={styles.imageContent} onPress={()=>{ setVisibleScan(true) }}>
+                            <Image style={{resizeMode:'contain',width:35}} source={typeIcons[19]}/>
+                            <Text style={styles.titleButtom}>Scan</Text>
+                        </TouchableOpacity>
+                    </View>
+                }
                 
             </View>
 
@@ -673,7 +677,7 @@ export default function SalePrd({route,navigation}){
             </ModScan>
 
         </SafeAreaView>
-        
+        </>
     )
 }
 

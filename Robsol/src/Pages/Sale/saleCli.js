@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState,useContext} from 'react';
 import {
     SafeAreaView,
     View,
@@ -19,19 +19,32 @@ import styles from './styles';
 
 import {decode, encode} from 'base-64';
 import typeIcons from '../../utils/typeIcons'
+
 import api from '../../services/api'
+import axios from "axios";
 
 import ModFilter from '../../Modal/modFilter'
 
 import Section from '../../Components/Sections';
 
+import {CartContext} from '../../Contexts/cart'
+
 if (!global.btoa) { global.btoa = encode }
 if (!global.atob) { global.atob = decode }
 
 
+
+export async function getClientByCNPJ(cnpj) {
+    const result = await axios.get(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
+    return result.data;
+}
+
+
 export default function SaleCli({route,navigation}){
 
-    const { nameSec,data,dataUser,filter,dataBack } = route.params;
+    const {dataUser} = useContext(CartContext)
+
+    const { nameSec,data,filter,dataBack } = route.params;
 
     const [searchText, setSearchText] = useState('');
     const [searchT,setSearchT] = useState(false);
@@ -107,8 +120,17 @@ export default function SaleCli({route,navigation}){
         try{
             setLoad(true)
             const response = await api.get(`/${nameSec}/`,{headers: params})
+
             if(_.has(response.data,"Erro")){
                 aResult = [];
+                
+                if(opt_new[0] === 'cnpj'){
+                    let responseSefaz = await getClientByCNPJ(opt_new[1]);
+
+                    aResult.push({index: 1, ...responseSefaz});
+                }
+
+                
             }else{
                 if(response.data.items){
                     response.data["items"].forEach((element, index) => {
@@ -120,7 +142,7 @@ export default function SaleCli({route,navigation}){
             }
             
         }catch(error){
-            alert(error)
+            alert('Cliente não localizado na Sefaz')
         }
         
         setListSearch(aResult)
@@ -130,14 +152,17 @@ export default function SaleCli({route,navigation}){
 
 
     return( 
-
-        <SafeAreaView style={styles.contSafe}>
+        <>
+        <SafeAreaView edges={["top"]} style={{ flex: 0, backgroundColor: "#175A93" }}/>
+        <SafeAreaView
+            edges={["left", "right", "bottom"]}
+            style={{flex: 1, backgroundColor: "#fff",position: "relative",}}
+        >
             <View style={styles.container}>
                 <View style={styles.headerSales}>  
                     <TouchableOpacity onPress={()=>{navigation.navigate('Detail',{
                         nameSec:dataBack[0],
                         data:dataBack[1],
-                        dataUser:dataBack[2],
                         filter:dataBack[3],
                         dataBack: dataBack[4]
                     })}}>
@@ -250,7 +275,7 @@ export default function SaleCli({route,navigation}){
             </ModFilter>
 
         </SafeAreaView>
-        
+        </>
     )
 }
 

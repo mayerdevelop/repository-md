@@ -2,19 +2,12 @@ import {StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
 
-    contSafe:{
-        flex: 1,
-        backgroundColor: '#175A93',
-        justifyContent: 'flex-start',
-        alignItems:'center',
-    },
-
     container:{
         alignItems:'center',
         justifyContent:'center',
         width:'100%',
         backgroundColor: '#fff',
-        marginTop:10,
+        flex:1
     },
 
     contScrow:{
@@ -125,12 +118,7 @@ const styles = StyleSheet.create({
       height:90,
       borderRadius:12,
       position:'absolute',
-      bottom: Platform.OS === 'ios' ? 80 : 100,
-      shadowColor:'#fff',
-      shadowOffset:{width:0,height:50},
-      shadowOpacity:1,
-      shadowRadius:3.5,
-      elevation:5,
+      bottom: 0,
   },
 
   footerContentS:{

@@ -32,9 +32,9 @@ if (!global.atob) { global.atob = decode }
 
 export default function Detail({route,navigation}){
 
-    const { addCart } = useContext(CartContext)
+    const { addCart,dataUser } = useContext(CartContext)
 
-    const { nameSec,data,dataUser,filter,icon,prdProd } = route.params;
+    const { nameSec,data,filter,icon,prdProd } = route.params;
 
     const [searchText, setSearchText] = useState('');
     const [searchT,setSearchT] = useState(false);
@@ -169,7 +169,6 @@ export default function Detail({route,navigation}){
         navigation.navigate('SaleCli',{
             nameSec:'Customers',
             data:response.data["items"],
-            dataUser:dataUser,
             filter:'cnpj',
             dataBack: [nameSec,data,dataUser,filter,icon]
         })

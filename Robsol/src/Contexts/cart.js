@@ -7,6 +7,8 @@ function CartProvider({children}){
     const [cart, setCart] = useState([]);
     const [vlrTotalCart, setVlrTotalCart] = useState(0)
     const [qtdTotalCart, setQtdTotalCart] = useState(0)
+
+    const [dataUser,setDataUser] = useState();
     const [cliente, setCliente] = useState([])
 
     function addCart(cartReceive){
@@ -26,13 +28,18 @@ function CartProvider({children}){
         setCliente(receive)
     };
 
+    function setUserData(receive){
+        setDataUser(receive)
+    };
+
 
     return(
         <CartContext.Provider value={{
             addCart,cart,
             totalCart,vlrTotalCart,
             setCli,cliente,
-            quantCart,qtdTotalCart            
+            quantCart,qtdTotalCart,
+            setUserData,dataUser
         }}>
             {children}
         </CartContext.Provider>
