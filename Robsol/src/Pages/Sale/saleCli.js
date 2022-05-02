@@ -18,7 +18,8 @@ import _ from 'underscore';
 import styles from './styles';
 
 import {decode, encode} from 'base-64';
-import typeIcons from '../../utils/typeIcons'
+import typeIcons from '../../utils/typeIcons';
+import { Ionicons } from '@expo/vector-icons';
 
 import api from '../../services/api'
 import axios from "axios";
@@ -166,7 +167,7 @@ export default function SaleCli({route,navigation}){
                         filter:dataBack[3],
                         dataBack: dataBack[4]
                     })}}>
-                        <Image source={typeIcons[2]} />
+                        <Ionicons style={{bottom:5,right:7}} name="arrow-back" size={40} color="white" />
                     </TouchableOpacity>
 
                     <Text style={{fontSize:24,fontWeight:'bold', color:'#fff'}}>Selecione o Cliente</Text>
@@ -187,17 +188,14 @@ export default function SaleCli({route,navigation}){
                         </View>
                         :
                         <TouchableOpacity style={{right:30}} onPress={()=>{buttomSearch(`${checked}:${searchText}`)}}>
-                            <Image 
-                                style={{resizeMode:'contain', width:30}}
-                                source={searchT?typeIcons[15]:typeIcons[4]}
-                            />
+                            <Ionicons name={searchT?"close":"search"} size={32} color='#175A93' />
                         </TouchableOpacity>
                     }
 
                     <TouchableOpacity onPress={() => { setVisibleFilter(true) }}>
                         <Image 
                             style={{resizeMode:'contain', width:30}}
-                            source={checked==''?typeIcons[16]:typeIcons[17]}
+                            source={checked==''?typeIcons[4]:typeIcons[5]}
                         />
                     </TouchableOpacity>
                 </View>
@@ -236,10 +234,7 @@ export default function SaleCli({route,navigation}){
                         <Text style={{ fontSize: 30,color:'#2F8BD8'}}>Filtro</Text>
 
                         <TouchableOpacity onPress={() => setVisibleFilter(false)}>
-                            <Image
-                                source={typeIcons[15]}
-                                style={{height: 30, width: 30}}
-                            />
+                            <Ionicons name="close" size={40} color="black" />
                         </TouchableOpacity>
                     </View>
                 </View>

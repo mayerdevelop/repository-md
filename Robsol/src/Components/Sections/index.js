@@ -2,13 +2,14 @@ import React, {useState,useContext,useEffect} from 'react';
 import {Text,View,TouchableOpacity,Image,FlatList,ActivityIndicator,TextInput,ScrollView,KeyboardAvoidingView,Platform,SafeAreaView} from 'react-native';
 
 import styles from './styles';
-import typeIcons from '../../utils/typeIcons'
 
 import ModPreview from '../../Modal/modPreview'
 import ModSale from '../../Modal/modSale'
 import ModCli from '../../Modal/modCli'
 
-import api from '../../services/api'
+import api from '../../services/api';
+import { Ionicons } from '@expo/vector-icons';
+
 import axios from "axios";
 
 import _ from 'underscore';
@@ -201,9 +202,11 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
 
                     <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                         <Text style={styles.cardTitleP}>{item.codigo.trim()}</Text>
-                        <Image 
-                            style={styles.genero}
-                            source={item.genero.trim()==='Masculino'?typeIcons[13]:typeIcons[14]} 
+
+                        <Ionicons
+                            name={item.genero.trim()==='Masculino'?"male":"female"} 
+                            size={24} 
+                            color={item.genero.trim()==='Masculino'?"#2F8BD8":"#ED52DD"}
                         />
                     </View>
 
@@ -254,10 +257,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
             <ModPreview visiblePreview={visiblePreview}>
                 <View style={styles.closeModal}>
                     <TouchableOpacity onPress={() => setVisiblePreview(false)}>
-                        <Image
-                            source={typeIcons[15]}
-                            style={{height: 30, width: 30}}
-                        />
+                        <Ionicons name="close" size={40} color="black" />
                     </TouchableOpacity>
                 </View>
 
@@ -276,10 +276,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
                     <Text style={{fontSize:22, fontWeight:'bold'}}>Itens do pedido</Text>
                     <View style={styles.closeModal}>
                         <TouchableOpacity onPress={() => setVisibleSale(false)}>
-                            <Image
-                                source={typeIcons[15]}
-                                style={{height: 25, width: 25}}
-                            />
+                            <Ionicons name="close" size={40} color="black" />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -328,10 +325,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
                     <Text style={{fontSize:22, fontWeight:'bold'}}>Atualizar Cadastro</Text>
                     <View style={styles.closeModal}>
                         <TouchableOpacity onPress={() => setVisibleCli(false)}>
-                            <Image
-                                source={typeIcons[15]}
-                                style={{height: 25, width: 25}}
-                            />
+                            <Ionicons style={{bottom:7}} name="close" size={40} color="black" />
                         </TouchableOpacity>
                     </View>
                 </View>

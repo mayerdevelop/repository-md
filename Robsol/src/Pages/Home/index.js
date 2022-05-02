@@ -5,7 +5,9 @@ import {decode, encode} from 'base-64';
 
 import api from '../../services/api'
 
-import {CartContext} from '../../Contexts/cart'
+import {CartContext} from '../../Contexts/cart';
+
+import {Ionicons,MaterialIcons,MaterialCommunityIcons} from '@expo/vector-icons';
 
 if (!global.btoa) { global.btoa = encode }
 if (!global.atob) { global.atob = decode }
@@ -81,7 +83,7 @@ export default function Home({route,navigation}){
                     </View>
 
                     <TouchableOpacity style={styles.logout} onPress={()=>{navigation.navigate('Login')}}>
-                        <Image source={typeIcons[11]} style={styles.logoutImage}/>
+                    <MaterialCommunityIcons name="logout" size={30} color="white" />
                     </TouchableOpacity>
                 </View>
 
@@ -94,7 +96,7 @@ export default function Home({route,navigation}){
                                 </View>
                                 :
                                 <View>
-                                    <Image source={typeIcons[3]} style={{marginTop:20}}/>
+                                    <Image source={typeIcons[2]} style={{marginTop:20}}/>
                                 </View>
                             }
                             <View style={styles.titleContent}>
@@ -109,7 +111,7 @@ export default function Home({route,navigation}){
                                 </View>
                                 :
                                 <View>
-                                    <Image source={typeIcons[10]} style={{resizeMode:'contain',width:58}}/>
+                                    <Ionicons name="people" size={54} color="black" />
                                 </View>
                             }
 
@@ -124,9 +126,7 @@ export default function Home({route,navigation}){
                                     <ActivityIndicator color={'#000000'} size={50}/>
                                 </View>
                                 :
-                                <View>
-                                    <Image source={typeIcons[12]} style={{resizeMode:'contain',width:50}}/>
-                                </View>
+                                <Image source={typeIcons[3]} style={{resizeMode:'contain',width:45}}/>
                             }
 
                             <View style={styles.titleContent}>
@@ -135,11 +135,7 @@ export default function Home({route,navigation}){
                         </TouchableOpacity>
 
                         <TouchableOpacity  style={styles.card}>
-            
-                            <View>
-                                <Image source={typeIcons[6]} style={{resizeMode:'contain',width:50,height:44,top:10}}/>
-                            </View>
-           
+                            <MaterialIcons name="attach-money" size={54} color="black" />
                             <View style={styles.titleContent}>
                                 <Text style={styles.cardTitle}>{'Comissões'}</Text>
                             </View>

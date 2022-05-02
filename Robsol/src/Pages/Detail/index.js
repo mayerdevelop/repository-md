@@ -17,7 +17,8 @@ import _ from 'underscore';
 import styles from './styles';
 
 import {decode, encode} from 'base-64';
-import typeIcons from '../../utils/typeIcons'
+import typeIcons from '../../utils/typeIcons';
+import { Ionicons,FontAwesome } from '@expo/vector-icons';
 import api from '../../services/api'
 
 import ModFilter from '../../Modal/modFilter'
@@ -195,17 +196,14 @@ export default function Detail({route,navigation}){
                         </View>
                         :
                         <TouchableOpacity style={{right:30}} onPress={()=>{buttomSearch(`${checked}:${searchText}`)}}>
-                            <Image 
-                                style={{resizeMode:'contain', width:30}}
-                                source={searchT?typeIcons[15]:typeIcons[4]}
-                            />
+                            <Ionicons name={searchT?"close":"search"} size={32} color='#175A93' />
                         </TouchableOpacity>
                     }
 
                     <TouchableOpacity onPress={() => { setVisibleFilter(true) }}>
                         <Image 
                             style={{resizeMode:'contain', width:30}}
-                            source={checked==''?typeIcons[16]:typeIcons[17]}
+                            source={checked==''?typeIcons[4]:typeIcons[5]}
                         />
                     </TouchableOpacity>
                 </View>
@@ -239,19 +237,19 @@ export default function Detail({route,navigation}){
             { footerEnable ? 
                 <View style={styles.footerContent}>
                     <TouchableOpacity style={styles.imageContent} onPress={()=>{navigation.navigate('Home')}}>
-                        <Image style={{resizeMode:'contain',width:35}} source={typeIcons[5]}/>
+                        <Ionicons name="home" size={35} color="white" />
                         <Text style={styles.titleButtom}>Home</Text>
                     </TouchableOpacity>
 
                     { icon != null ?
                         <TouchableOpacity onPress={()=>{apiSale()}} style={styles.imageConfirm}>
-                            <Image source={icon =='add' ? typeIcons[1] : typeIcons[3]}/>
+                            <Image source={icon =='add' ? typeIcons[1] : typeIcons[2]}/>
                         </TouchableOpacity>
                         : 
                         <></>
                     }
                     <TouchableOpacity style={styles.imageContent} onPress={()=>{ }}>
-                        <Image style={{resizeMode:'contain',width:30}} source={typeIcons[7]}/>
+                        <Ionicons style={{marginBottom:3}} name="person" size={35} color="white" />
                         <Text style={styles.titleButtom}>Perfil</Text>
                     </TouchableOpacity>
                 </View>

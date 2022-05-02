@@ -4,7 +4,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login from '../Pages/Login/index'
 import Home from '../Pages/Home/index'
 import Detail from '../Pages/Detail/index'
-import Header from '../Components/Header/index'
 import SaleCli from '../Pages/Sale/saleCli'
 import SalePrd from '../Pages/Sale/salePrd'
 import SalePay from '../Pages/Sale/salePay'
@@ -17,7 +16,6 @@ export default function Routes(){
         <Stack.Navigator headerMode='none'>
             <Stack.Screen name="Login" component={Login}/>
             <Stack.Screen name="Home" component={Home}/>
-            <Stack.Screen name="Header" component={Header}/>
             <Stack.Screen name="Detail" component={Detail}/>
             <Stack.Screen name="Sections" component={Sections}/>
             <Stack.Screen name="SaleCli" component={SaleCli}/>

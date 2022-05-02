@@ -18,7 +18,7 @@ import _ from 'underscore';
 import styles from './styles';
 
 import {decode, encode} from 'base-64';
-import typeIcons from '../../utils/typeIcons'
+import { Ionicons } from '@expo/vector-icons';
 
 import {CartContext} from '../../Contexts/cart'
 
@@ -91,7 +91,7 @@ export default function SalePay({route,navigation}){
                         data:dataBack[1],
                         filter:dataBack[2],
                     })}}>
-                        <Image source={typeIcons[2]} />
+                        <Ionicons style={{bottom:5,right:7}} name="arrow-back" size={40} color="white" />
                     </TouchableOpacity>
 
                     <Text style={{fontSize:24,fontWeight:'bold', color:'#fff'}}>Cond. Pagamento</Text>
@@ -143,10 +143,7 @@ export default function SalePay({route,navigation}){
                     <Text style={{fontSize:22, fontWeight:'bold'}}>Observação</Text>
 
                     <TouchableOpacity onPress={() => {setVisibleObs(false),setTxtObs('')}}>
-                        <Image
-                            source={typeIcons[15]}
-                            style={{height: 25, width: 25}}
-                        />
+                        <Ionicons name="close" size={40} color="black" />
                     </TouchableOpacity>
                 </View>
 

@@ -11,7 +11,7 @@ import {
     Image
 } from 'react-native';
  
-import typeIcons from '../../utils/typeIcons';
+import { Ionicons } from '@expo/vector-icons';
 import {decode, encode} from 'base-64'
 import api from '../../services/api'
 
@@ -151,13 +151,7 @@ export default function Login({navigation}){
                         secureTextEntry={!hidepass}
                     />
                     <TouchableOpacity onPress={()=>{setHidepass(!hidepass)}}>
-                        <Image 
-                            style={{
-                                resizeMode:'contain',
-                                right:10,
-                            }}
-                            source={hidepass?typeIcons[9]:typeIcons[8]}
-                        />
+                        <Ionicons style={{right:10}} name={hidepass?"eye-off":"eye"} size={30} color="black" />
                     </TouchableOpacity>
                 </View>
 
