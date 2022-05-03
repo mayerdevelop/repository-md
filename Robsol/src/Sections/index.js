@@ -44,6 +44,7 @@ export async function getClientByCNPJ(cnpj) {
         contato: "",
         email: "",
         celular: "",
+        fone2: "",
         id: result.data.cnpj
     }
 
@@ -79,6 +80,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
                 nome_fantasia: yup.string().required("Informe o Nome Fantasia..."),
                 email: yup.string().email('E-mail invalido').required("Informe o Email..."),
                 celular: yup.string().required("Informe o Telefone..."),
+                fone2: yup.string().required("Informe o Telefone..."),
                 cep: yup.string().required("Informe o CEP..."),
                 endereco: yup.string().required("Informe o Endereço..."),
                 bairro: yup.string().required("Informe o Bairro..."),
@@ -245,12 +247,15 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
                     <Text style={styles.cardSubTitleP}>{'Cliente: '+item.cliente.trim()}</Text>
                     <Text style={styles.cardSubTitleP}>{'Emissão: '+item.emissao.trim()}</Text>
                     <Text style={styles.cardSubTitleP}>{'Status: '+item.status.trim()}</Text>
-
+                    <Text style={styles.cardSubTitleP}>{'CNPJ: '+item.cnpj.trim()}</Text>
+                    
                     { (!!item.nota.trim()) ?
                         <Text style={styles.cardSubTitleP}>{'Nota: '+item.nota.trim()+' / Série: '+item.serie.trim()}</Text>
                         :
                         <Text style={styles.cardSubTitleP}>{'Nota: Não possui'}</Text>
                     }
+
+                    <Text style={styles.cardSubTitleP}>{'Razão Social: '+item.razao_social.trim()}</Text>
                 </TouchableOpacity>
             }
 
@@ -469,13 +474,31 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
                             name='celular'
                             render={({field: {onChange,onBlur,value}})=>(
                                 <View>
-                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Telefone Contato *</Text>
+                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Telefone Contato 1 *</Text>
                                     <TextInput
                                         onChangeText={onChange}
                                         value={value}
                                         onBlur={onBlur}
                                         style={[styles.input, errors.celular ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
                                         placeholder={errors.celular && errors.celular?.message}
+                                        placeholderTextColor='#FA7E7E'
+                                    />
+                                </View>
+                            )}
+                        />
+
+                        <Controller
+                            control={control}
+                            name='fone2'
+                            render={({field: {onChange,onBlur,value}})=>(
+                                <View>
+                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Telefone Contato 2 *</Text>
+                                    <TextInput
+                                        onChangeText={onChange}
+                                        value={value}
+                                        onBlur={onBlur}
+                                        style={[styles.input, errors.fone2 ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                        placeholder={errors.fone2 && errors.fone2?.message}
                                         placeholderTextColor='#FA7E7E'
                                     />
                                 </View>

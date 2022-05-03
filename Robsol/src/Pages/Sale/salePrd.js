@@ -26,7 +26,8 @@ import api from '../../services/api'
 
 import ModFilter from '../../Modal/modFilter';
 import ModScan from '../../Modal/modScan';
-import ModCart from '../../Modal/modCart'
+import ModCart from '../../Modal/modCart';
+import ModBack from '../../Modal/modBack';
 
 import {CartContext} from '../../Contexts/cart';
 
@@ -38,12 +39,11 @@ if (!global.atob) { global.atob = decode }
 
 export default function SalePrd({route,navigation}){
 
-    const [visibleCart, setVisibleCart] = useState(false);
-
-    const { addCart,cart,totalCart,vlrTotalCart,quantCart,qtdTotalCart,dataUser } = useContext(CartContext)
+    const { addCart,cart,totalCart,vlrTotalCart,quantCart,qtdTotalCart,dataUser,descontoCart,desconto } = useContext(CartContext)
 
     const { nameSec,data,filter,dataBack } = route.params;
 
+    const [visibleCart, setVisibleCart] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [searchT,setSearchT] = useState(false);
     const [listSearch,setListSearch] = useState([]);
@@ -54,6 +54,7 @@ export default function SalePrd({route,navigation}){
 
     const [visibleFilter, setVisibleFilter] = useState(false);
     const [visibleScan, setVisibleScan] = useState(false);
+    const [visibleBack, setVisibleBack] = useState(false);
 
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
@@ -62,17 +63,16 @@ export default function SalePrd({route,navigation}){
     const authBasic = 'YWRtaW46QVZTSTIwMjI';
 
 
+    useEffect(()=> {
+        askForCameraPermission();
+    },[])
+    
     const askForCameraPermission = () =>{
         (async () =>{
             const {status} = await BarCodeScanner.requestPermissionsAsync();
             setHasPermission(status == 'granted')
         })()
-    }
-
-    useEffect(()=> {
-        askForCameraPermission();
-    },[])
-
+    };
 
     const handleBarCodeScanned = async({type, data}) =>{
         setScanned(true);
@@ -93,19 +93,14 @@ export default function SalePrd({route,navigation}){
 
         const item = response.data["items"][0]
 
-        if (item.length !== 0){
-            addProductToCart(item)
-       }
-      
-    }
-
-   
+        if (item.length !== 0){ addProductToCart(item)} 
+    };
 
     if (hasPermission === null){
         <View>
             <Text>Requesting for camera permission</Text>
         </View>
-    }
+    };
 
     if(hasPermission === false){
         <View>
@@ -114,7 +109,7 @@ export default function SalePrd({route,navigation}){
                 <Text>Allow Camera</Text>
             </TouchableOpacity>
         </View>
-    }
+    };
 
 
     function buttomSearch(option){
@@ -209,7 +204,6 @@ export default function SalePrd({route,navigation}){
         setLoad(false)
     };
 
-
     function addProductToCart(item,initial){
 
         if(initial){setVisibleCart(true)}
@@ -225,8 +219,6 @@ export default function SalePrd({route,navigation}){
 
             copyCart.push({
                 id: parseInt(item.id),
-                ITEM: 'id',
-                DESCONTO: 0,
                 QUANTIDADE: 1,
                 PRODUTO: item.codigo.trim(),
                 DESCRICAO: item.descricao.trim(), 
@@ -264,7 +256,6 @@ export default function SalePrd({route,navigation}){
 
     };
 
-
     function removeProductToCart(item){
 
         let vlrTotal = 0
@@ -292,6 +283,9 @@ export default function SalePrd({route,navigation}){
             const totalSub = vlrTotalCart - parseFloat(result.VALOR)
 
             totalCart(totalSub)
+
+            const quantSub = qtdTotalCart - 1
+            quantCart(quantSub)
         }
 
     };
@@ -299,7 +293,28 @@ export default function SalePrd({route,navigation}){
     function clearCart(){
         addCart([])
         totalCart(0)
+        quantCart(0)
+        descontoCart('')
         setVisibleCart(false)
+    };
+
+    function backCart(retorna){
+
+        if(retorna){
+            addCart([])
+            totalCart(0)
+            quantCart(0)
+            descontoCart('')
+            
+            navigation.navigate('SaleCli',{
+                nameSec:dataBack[0],
+                data:dataBack[1],
+                filter:dataBack[3],
+            });
+        }
+       
+        setVisibleBack(false)
+
     };
     
     const apiPayment = async() =>{
@@ -321,6 +336,7 @@ export default function SalePrd({route,navigation}){
         })
     };
 
+
     return( 
         <>
         <SafeAreaView edges={["top"]} style={{ flex: 0, backgroundColor: "#175A93" }}/>
@@ -330,11 +346,7 @@ export default function SalePrd({route,navigation}){
         >
             <View style={styles.container}>
                 <View style={styles.headerSales}>  
-                    <TouchableOpacity onPress={()=>{addCart([]),totalCart(0),navigation.navigate('SaleCli',{
-                        nameSec:dataBack[0],
-                        data:dataBack[1],
-                        filter:dataBack[3],
-                    })}}>
+                    <TouchableOpacity onPress={()=>{setVisibleBack(true)}}>
                         <Ionicons style={{bottom:5,right:7}} name="arrow-back" size={40} color="white" />
                     </TouchableOpacity>
 
@@ -435,9 +447,6 @@ export default function SalePrd({route,navigation}){
                 }
                 
             </View>
-
-
-
 
             <ModFilter visibleFilter={visibleFilter}>
                 <View style={{alignItems: 'center'}}>
@@ -570,24 +579,39 @@ export default function SalePrd({route,navigation}){
                 />
 
                 <View style={{marginBottom:25}}>
-                    <View style={{
-                        flexDirection:'row',
-                        justifyContent:'space-between',
-                        marginBottom:10
-                    }}>
 
+                    <View style={{flexDirection:'row',marginBottom:30}}>
+                        <Text style={{fontWeight:'bold',marginBottom:5,alignItems:'flex-end'}}>Desconto %</Text>
+                        
+                        <View style={{
+                            marginHorizontal:10,
+                            borderBottomWidth:2,
+                            borderBottomColor:'#2F8BD8',
+                            width:'25%',
+                            alignItems:'center',
+                        }}> 
+                            
+                            <TextInput style={{width:'100%'}}
+                                keyboardType='numeric'
+                                value={desconto}
+                                onChangeText={(t) => descontoCart(t)}
+                            />
+                        </View>
+                    </View>
+
+                    <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:10}}>
                         <Text style={{fontWeight:'bold'}}>Quant. Total: </Text>
                         <Text>{qtdTotalCart}</Text>
                     </View>
 
-                    <View style={{
-                        flexDirection:'row',
-                        justifyContent:'space-between',
-                        marginBottom:10
-                    }}>
-
+                    <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:10}}>
                         <Text style={{fontWeight:'bold'}}>Total Pedido: </Text>
-                        <Text>{vlrTotalCart.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</Text>
+                        <Text>{(vlrTotalCart-(vlrTotalCart*(~~desconto))/100).toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</Text>
+                    </View>
+
+                    <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:10}}>
+                        <Text style={{fontWeight:'bold', color:'tomato'}}>Vlr Desconto: </Text>
+                        <Text style={{color:'tomato'}}>{((vlrTotalCart*(~~desconto)/100)*-1).toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</Text>
                     </View>
                 </View>
                 
@@ -600,13 +624,14 @@ export default function SalePrd({route,navigation}){
                                 flexDirection:'row',
                                 height:40,
                                 alignItems:'center',
+                                justifyContent:'center',
                                 borderWidth:3,
                                 borderColor:'#2F8BD8',
                                 borderRadius:10,
                             }}
                         >   
                             <Image 
-                                style={{resizeMode:'contain', width:20,marginHorizontal:10}}
+                                style={{resizeMode:'contain', width:20,marginHorizontal:5}}
                                 source={typeIcons[8]}
                             />
                             <Text style={{color:'#2F8BD8', fontWeight:'bold', fontSize:16}}>Limpar</Text>
@@ -671,6 +696,39 @@ export default function SalePrd({route,navigation}){
                     }
                 </View>
             </ModScan>
+
+
+            <ModBack visibleBack={visibleBack}>
+                <View style={{alignItems: 'center', marginBottom:26}}>
+                    <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
+                        <Text style={{ fontSize: 26,color:'#F4C619'}}>Atenção</Text>
+
+                        <TouchableOpacity onPress={() => {setVisibleBack(false)}}>
+                            <Ionicons name="close" size={40} color="black" />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                
+                <Text style={{ fontSize: 18,color:'#000'}}>O carrinho será zerado, deseja realmente voltar?</Text>
+
+                <View style={{flexDirection:'row', justifyContent:'flex-end',marginTop:60}}>
+                    <TouchableOpacity 
+                        style={styles.buttonBack}
+                        onPress={() => {backCart(false)}}
+                    >
+                        <Text style={{fontWeight:'bold'}}>Não</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity 
+                        style={[styles.buttonBack,{backgroundColor:'#175A93',marginLeft:10}]}
+                        onPress={() => {backCart(true)}}
+                    >
+                        <Text style={{color:'white', fontWeight:'bold'}}>Sim</Text>
+                    </TouchableOpacity>
+                </View>
+                
+
+            </ModBack>
 
         </SafeAreaView>
         </>

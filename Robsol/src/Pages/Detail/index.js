@@ -21,7 +21,7 @@ import typeIcons from '../../utils/typeIcons';
 import { Ionicons,FontAwesome } from '@expo/vector-icons';
 import api from '../../services/api'
 
-import ModFilter from '../../Modal/modPreview'
+import ModFilter from '../../Modal/modFilter'
 
 import Section from '../../Sections/index';
 
@@ -33,7 +33,7 @@ if (!global.atob) { global.atob = decode }
 
 export default function Detail({route,navigation}){
 
-    const { addCart,dataUser } = useContext(CartContext)
+    const { addCart,dataUser,descontoCart } = useContext(CartContext)
 
     const { nameSec,data,filter,icon,prdProd } = route.params;
 
@@ -104,6 +104,9 @@ export default function Detail({route,navigation}){
             case "cnpj":
                 params.cnpj = opt_new[1];
                 break;
+            case "cidade":
+                params.cidade = opt_new[1];
+                break;
             case "CODIGO":
                 params.codigo = opt_new[1];
                 break;
@@ -122,9 +125,14 @@ export default function Detail({route,navigation}){
             case "GENERO":
                 params.genero = opt_new[1];
                 break;
+            case "RAZAO":
+                params.razao = opt_new[1];
+                break;
             default:
                 break;
         }
+
+        if(nameSec === 'Sales'){params.filtro = 'S'}
 
         let aResult = [];
 
@@ -166,6 +174,7 @@ export default function Detail({route,navigation}){
         })
 
         addCart([])
+        descontoCart('')
 
         navigation.navigate('SaleCli',{
             nameSec:'Customers',
@@ -200,7 +209,7 @@ export default function Detail({route,navigation}){
                         </TouchableOpacity>
                     }
 
-                    <TouchableOpacity onPress={() => { setVisibleFilter(true) }}>
+                    <TouchableOpacity onPress={() =>  setVisibleFilter(true) }> 
                         <Image 
                             style={{resizeMode:'contain', width:30}}
                             source={checked==''?typeIcons[4]:typeIcons[5]}
@@ -263,10 +272,7 @@ export default function Detail({route,navigation}){
                         <Text style={{ fontSize: 30,color:'#2F8BD8'}}>Filtro</Text>
 
                         <TouchableOpacity onPress={() => setVisibleFilter(false)}>
-                            <Image
-                                source={typeIcons[15]}
-                                style={{height: 30, width: 30}}
-                            />
+                            <Ionicons name="close" size={40} color="black" />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -289,6 +295,15 @@ export default function Detail({route,navigation}){
                                 onPress={() => {setChecked('nome_fantasia');setVisibleFilter(false)}}
                             />
                             <Text>Nome Fantasia</Text>
+                        </View>
+
+                        <View style={{flexDirection:'row',alignItems:'center'}}>
+                            <RadioButton
+                                value="cidade"
+                                status={ checked === 'cidade' ? 'checked' : 'unchecked' }
+                                onPress={() => {setChecked('cidade');setVisibleFilter(false)}}
+                            />
+                            <Text>Cidade</Text>
                         </View>
 
                         <View style={{flexDirection:'row',alignItems:'center'}}>
@@ -357,6 +372,37 @@ export default function Detail({route,navigation}){
                                 />
                                 <Text>Gênero</Text>
                             </View>
+                        </View>
+                    </View>
+                }
+
+                { nameSec == 'Sales' &&
+                    <View style={{marginVertical:20}}>
+                        <View style={{flexDirection:'row',alignItems:'center'}}>
+                            <RadioButton
+                                value="CODIGO"
+                                status={ checked === 'CODIGO' ? 'checked' : 'unchecked' }
+                                onPress={() => {setChecked('CODIGO');setVisibleFilter(false)}}
+                            />
+                            <Text>Codigo</Text>
+                        </View>
+
+                        <View style={{flexDirection:'row',alignItems:'center'}}>
+                            <RadioButton
+                                value="RAZAO"
+                                status={ checked === 'RAZAO' ? 'checked' : 'unchecked' }
+                                onPress={() => {setChecked('RAZAO');setVisibleFilter(false)}}
+                            />
+                            <Text>Razão Social</Text>
+                        </View>
+
+                        <View style={{flexDirection:'row',alignItems:'center'}}>
+                            <RadioButton
+                                value="cnpj"
+                                status={ checked === 'cnpj' ? 'checked' : 'unchecked' }
+                                onPress={() => {setChecked('cnpj');setVisibleFilter(false)}}
+                            />
+                            <Text>CNPJ</Text>
                         </View>
                     </View>
                 }

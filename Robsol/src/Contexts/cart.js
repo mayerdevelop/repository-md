@@ -5,11 +5,13 @@ export const CartContext = createContext({})
 function CartProvider({children}){
 
     const [cart, setCart] = useState([]);
-    const [vlrTotalCart, setVlrTotalCart] = useState(0)
-    const [qtdTotalCart, setQtdTotalCart] = useState(0)
+
+    const [desconto, setDesconto] = useState('');
+    const [vlrTotalCart, setVlrTotalCart] = useState(0);
+    const [qtdTotalCart, setQtdTotalCart] = useState(0);
 
     const [dataUser,setDataUser] = useState();
-    const [cliente, setCliente] = useState([])
+    const [cliente, setCliente] = useState([]);
 
     function addCart(cartReceive){
         setCart(cartReceive)
@@ -23,6 +25,11 @@ function CartProvider({children}){
     function quantCart(receive){
         setQtdTotalCart(receive)
     };
+
+    function descontoCart(receive){
+        setDesconto(receive)
+    };
+
 
     function setCli(receive){
         setCliente(receive)
@@ -39,7 +46,8 @@ function CartProvider({children}){
             totalCart,vlrTotalCart,
             setCli,cliente,
             quantCart,qtdTotalCart,
-            setUserData,dataUser
+            setUserData,dataUser,
+            descontoCart,desconto
         }}>
             {children}
         </CartContext.Provider>

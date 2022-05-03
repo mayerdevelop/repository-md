@@ -32,18 +32,19 @@ if (!global.atob) { global.atob = decode }
 export default function SalePay({route,navigation}){
 
     const { data,dataBack,vendedor } = route.params;
-    const { cart,cliente } = useContext(CartContext)
+    const { cart,cliente,desconto } = useContext(CartContext)
     
     const [visibleObs,setVisibleObs] = useState(false);
     const [txtObs,setTxtObs] = useState('')
     const [itensErrSld, setItensErrSld] = useState([]);
     const [payment,setPayment] = useState('');
-    const [load,setLoad] = useState(false);
+    const [load1,setLoad1] = useState(false);
+    const [load2,setLoad2] = useState(false);
 
 
     const geraPedido = async() =>{
 
-        setLoad(true)
+        setLoad2(true)
         
         const copyCart = [...cart];
         const copyClient = {...cliente};
@@ -51,13 +52,14 @@ export default function SalePay({route,navigation}){
         let paramPed = {
             CLIENTE: copyClient,
             CONDPAGTO: payment,
-            DESCONTO: '',
+            DESCONTO: desconto,
             FORCE: 'FALSE',
             ITEMS: copyCart,
             VENDEDOR: vendedor,
             OBSERVATION: txtObs
         }
 
+        
         await api.post("/prtl003", { body: JSON.stringify(paramPed) })
         .then(async (item) => {
             if (item.data.code == "200") {
@@ -73,8 +75,9 @@ export default function SalePay({route,navigation}){
             console.log(err);
             navigation.navigate('Home')
         });
+        
 
-        setLoad(false)
+        setLoad2(false)
     }
 
     return( 
@@ -165,26 +168,50 @@ export default function SalePay({route,navigation}){
                         }}
                     />
                 </View>
-                        
-                <TouchableOpacity 
-                    style={{
-                        justifyContent:'center',
-                        alignItems:'center',
-                        height:40,
-                        backgroundColor:'#000',
-                        opacity:0.8,
-                        borderRadius:10,
-                        marginHorizontal:80,
-                        marginTop:30,
-                        marginBottom:50
-                    }}
-                    onPress={()=>{geraPedido()}}
-                >
-                    {load 
-                        ? <ActivityIndicator color={'#fff'} size={35}/>                        
-                        :<Text style={{fontSize:18,color:'#fff',fontWeight:'bold'}}>Enviar Pedido</Text>
-                    }
-                </TouchableOpacity>
+                
+                <View style={{flexDirection:'row', justifyContent:'space-between',marginHorizontal:30}}>
+                    <TouchableOpacity 
+                            style={{
+                            justifyContent:'center',
+                            alignItems:'center',
+                            height:40,
+                            backgroundColor:'#F4C619',
+                            opacity:0.8,
+                            borderRadius:10,
+                            padding:10,
+                            marginTop:30,
+                            marginBottom:50,
+                            width:'48%'
+                        }}
+                        onPress={()=>{alert('Em desenvolvimento')}}
+                    >
+                        {load1 
+                            ? <ActivityIndicator color={'#000'} size={35}/>                        
+                            :<Text style={{fontSize:18,color:'#000',fontWeight:'bold'}}>Salvar</Text>
+                        }
+                    </TouchableOpacity>
+                            
+                    <TouchableOpacity 
+                        style={{
+                            justifyContent:'center',
+                            alignItems:'center',
+                            height:40,
+                            backgroundColor:'#000',
+                            opacity:0.8,
+                            borderRadius:10,
+                            padding:10,
+                            marginTop:30,
+                            marginBottom:50,
+                            width:'48%',
+                        }}
+                        onPress={()=>{geraPedido()}}
+                    >
+                        {load2
+                            ? <ActivityIndicator color={'#fff'} size={35}/>                        
+                            :<Text style={{fontSize:18,color:'#fff',fontWeight:'bold'}}>Enviar Pedido</Text>
+                        }
+                    </TouchableOpacity> 
+                </View>
                 
                 { itensErrSld.length !== 0 &&
                     <Text style={{color:'tomato'}}>{'*** '+itensErrSld.mensagem+' ***' + '\n\nProdutos: '}</Text>

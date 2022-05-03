@@ -241,6 +241,16 @@ txtButtonQty:{
   fontSize:16
 },
 
+buttonBack:{
+  borderColor:'#175A93',
+  borderWidth:2,
+  borderRadius:5,
+  height:35,
+  width:'30%',
+  justifyContent:'center',
+  alignItems:'center'
+},
+
 });
 
 export default styles;

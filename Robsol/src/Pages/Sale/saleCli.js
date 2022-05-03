@@ -112,6 +112,9 @@ export default function SaleCli({route,navigation}){
             case "cnpj":
                 params.cnpj = opt_new[1];
                 break;
+            case "cidade":
+                params.cidade = opt_new[1];
+                break;
             default:
                 break;
         }
@@ -256,6 +259,15 @@ export default function SaleCli({route,navigation}){
                             onPress={() => {setChecked('nome_fantasia');setVisibleFilter(false)}}
                         />
                         <Text>Nome Fantasia</Text>
+                    </View>
+
+                    <View style={{flexDirection:'row',alignItems:'center'}}>
+                        <RadioButton
+                            value="cidade"
+                            status={ checked === 'cidade' ? 'checked' : 'unchecked' }
+                            onPress={() => {setChecked('cidade');setVisibleFilter(false)}}
+                        />
+                        <Text>Cidade</Text>
                     </View>
 
                     <View style={{flexDirection:'row',alignItems:'center'}}>

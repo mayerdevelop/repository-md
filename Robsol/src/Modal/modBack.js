@@ -3,9 +3,9 @@ import {View,Modal,Animated,StatusBar} from 'react-native';
 
 import {StyleSheet} from 'react-native';
 
-export default function ModScan({visibleScan, children}){
+export default function ModBack({visibleBack, children}){
 
-    const [showModal, setShowModal] = useState(visibleScan);
+    const [showModal, setShowModal] = useState(visibleBack);
     const scaleValue = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
@@ -16,11 +16,11 @@ export default function ModScan({visibleScan, children}){
         toggleModal()
 
         return () => {cancel = true}
-    }, [visibleScan]);
+    }, [visibleBack]);
 
     const toggleModal = () => {
 
-        if (visibleScan) {
+        if (visibleBack) {
             setShowModal(true);
 
             Animated.spring(scaleValue, {

@@ -42,6 +42,9 @@ export default function Home({navigation}){
             case "Products":
                 initialFilter = 'CODIGO'
                 break;
+            case "Sales":
+                initialFilter = 'CODIGO'
+                break;
             case "Customers":
                 initialFilter = 'cnpj'
                 break;
