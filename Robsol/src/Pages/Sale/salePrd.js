@@ -41,7 +41,7 @@ export default function SalePrd({route,navigation}){
 
     const { addCart,cart,totalCart,vlrTotalCart,quantCart,qtdTotalCart,dataUser,descontoCart,desconto } = useContext(CartContext)
 
-    const { nameSec,data,filter,dataBack } = route.params;
+    const { nameSec,data,filter,dataBack,continuaP,ItensContinua } = route.params;
 
     const [visibleCart, setVisibleCart] = useState(false);
     const [searchText, setSearchText] = useState('');
@@ -287,7 +287,7 @@ export default function SalePrd({route,navigation}){
             const quantSub = qtdTotalCart - 1
             quantCart(quantSub)
         }
-
+ 
     };
 
     function clearCart(){
@@ -301,22 +301,33 @@ export default function SalePrd({route,navigation}){
     function backCart(retorna){
 
         if(retorna){
-            addCart([])
-            totalCart(0)
-            quantCart(0)
-            descontoCart('')
-            
-            navigation.navigate('SaleCli',{
-                nameSec:dataBack[0],
-                data:dataBack[1],
-                filter:dataBack[3],
-            });
-        }
-       
-        setVisibleBack(false)
 
-    };
-    
+            if(!continuaP){
+                addCart([])
+                totalCart(0)
+                quantCart(0)
+                descontoCart('')
+
+                navigation.navigate('SaleCli',{
+                    nameSec:dataBack[0],
+                    data:dataBack[1],
+                    filter:dataBack[3],});
+
+            } else{
+
+                navigation.navigate('Detail',{
+                    nameSec:dataBack[0],
+                    data:dataBack[1],
+                    filter:dataBack[2],
+                });
+            }
+        };
+
+        setVisibleBack(false)
+    }
+
+
+
     const apiPayment = async() =>{
         
         const response = await api.get(`/CondPgto/`,{
@@ -333,6 +344,8 @@ export default function SalePrd({route,navigation}){
             data:response.data["items"],
             dataBack: [nameSec,data,filter],
             vendedor:dataUser.cod_vendedor,
+            continuaP:continuaP,
+            ItensContinua:ItensContinua
         })
     };
 
@@ -346,7 +359,7 @@ export default function SalePrd({route,navigation}){
         >
             <View style={styles.container}>
                 <View style={styles.headerSales}>  
-                    <TouchableOpacity onPress={()=>{setVisibleBack(true)}}>
+                    <TouchableOpacity onPress={()=>{!continuaP?setVisibleBack(true):backCart(true)}}>
                         <Ionicons style={{bottom:5,right:7}} name="arrow-back" size={40} color="white" />
                     </TouchableOpacity>
 

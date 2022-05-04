@@ -3,13 +3,14 @@ import {
     SafeAreaView,
     View,
     Text,
-    Image,
     TouchableOpacity,
     FlatList,
     TextInput,
     ActivityIndicator,
 
 } from 'react-native';
+
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import api from '../../services/api'
 
@@ -20,9 +21,9 @@ import styles from './styles';
 import {decode, encode} from 'base-64';
 import { Ionicons } from '@expo/vector-icons';
 
-import {CartContext} from '../../Contexts/cart'
+import {CartContext} from '../../Contexts/cart';
 
-import ModObs from '../../Modal/modObs'
+import ModObs from '../../Modal/modObs';
 
 
 if (!global.btoa) { global.btoa = encode }
@@ -31,8 +32,8 @@ if (!global.atob) { global.atob = decode }
 
 export default function SalePay({route,navigation}){
 
-    const { data,dataBack,vendedor } = route.params;
-    const { cart,cliente,desconto } = useContext(CartContext)
+    const { data,dataBack,vendedor,continuaP,ItensContinua } = route.params;
+    const { cart,cliente,desconto,qtdTotalCart,vlrTotalCart } = useContext(CartContext)
     
     const [visibleObs,setVisibleObs] = useState(false);
     const [txtObs,setTxtObs] = useState('')
@@ -63,6 +64,17 @@ export default function SalePay({route,navigation}){
         await api.post("/prtl003", { body: JSON.stringify(paramPed) })
         .then(async (item) => {
             if (item.data.code == "200") {
+                
+                if(continuaP){
+                    const response = await AsyncStorage.getItem('@OpenOrders')
+                    const copyResponse = [...JSON.parse(response)]
+
+                    var remove = copyResponse.filter((item) => item.id !== ItensContinua.id);
+   
+                    await AsyncStorage.setItem('@OpenOrders',JSON.stringify(remove))
+                };
+                
+                
                 alert('Seu pedido foi enviado com sucesso');
                 navigation.navigate('Home')
 
@@ -78,7 +90,97 @@ export default function SalePay({route,navigation}){
         
 
         setLoad2(false)
-    }
+    };
+
+
+
+    const salvaPedido = async() =>{
+
+        setLoad1(true)
+
+        const copyCart = [...cart]
+        const copyClient = {...cliente};
+
+        const codigoId = Math.floor(Math.random() * (999999 - 900000 + 1) + 900000);
+
+        const data = new Date()
+        const dataInt  = data.getDate().toString().padStart(2, '0') +`/`+ (data.getMonth()+1).toString().padStart(2, '0') +`/`+ data.getFullYear().toString().substring(2,4);
+
+        let pedido = {
+            id: codigoId.toString(),
+            cliente: copyClient.nome_fantasia,
+            cnpj: copyClient.cnpj,
+            codigo: codigoId.toString(),
+            emissao: dataInt,
+            nota: "",
+            serie: "",
+            razao_social: copyClient.razao_social,
+            status: "Editando",
+            items: copyCart,
+            cliItm: copyClient,
+            desconto: desconto,
+            qtdTotal: qtdTotalCart,
+            vlrTotal: vlrTotalCart
+        };
+
+
+        const response = await AsyncStorage.getItem('@OpenOrders')
+
+        if(response){
+
+            const copyResponse = [...JSON.parse(response)]
+
+            if(continuaP){
+
+                var remove = copyResponse.filter((item) => item.id !== ItensContinua.id);
+                console.log(remove);
+
+                let updPed = {
+                    id: ItensContinua.id,
+                    cliente: ItensContinua.cliente,
+                    cnpj: ItensContinua.cnpj,
+                    codigo: ItensContinua.codigo,
+                    emissao: ItensContinua.emissao,
+                    nota: "",
+                    serie: "",
+                    razao_social: ItensContinua.razao_social,
+                    status: "Editando",
+                    items: copyCart,
+                    cliItm: ItensContinua.cliItm,
+                    desconto: desconto,
+                    qtdTotal: qtdTotalCart,
+                    vlrTotal: vlrTotalCart
+                };
+
+                remove.push(updPed)
+                await AsyncStorage.setItem('@OpenOrders',JSON.stringify(remove))
+
+            } else{
+                copyResponse.push(pedido)
+                await AsyncStorage.setItem('@OpenOrders',JSON.stringify(copyResponse))
+        }
+
+
+        } else {
+            await AsyncStorage.setItem('@OpenOrders',JSON.stringify([pedido]))
+        }
+
+        
+        const response2 = await AsyncStorage.getItem('@OpenOrders')
+        
+        //console.log('***-------***')
+        //console.log(JSON.stringify(JSON.parse(response2)))
+
+        setLoad1(false)
+
+        alert('Pedido salvo localmente')
+        navigation.navigate('Home')
+    };
+
+
+
+
+
 
     return( 
         <>
@@ -183,7 +285,7 @@ export default function SalePay({route,navigation}){
                             marginBottom:50,
                             width:'48%'
                         }}
-                        onPress={()=>{alert('Em desenvolvimento')}}
+                        onPress={()=>{salvaPedido()}}
                     >
                         {load1 
                             ? <ActivityIndicator color={'#000'} size={35}/>                        

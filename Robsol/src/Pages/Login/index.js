@@ -7,8 +7,7 @@ import {
     Text, 
     TouchableOpacity,
     Animated,
-    ActivityIndicator,
-    Image
+    ActivityIndicator
 } from 'react-native';
  
 import { Ionicons } from '@expo/vector-icons';
@@ -48,7 +47,9 @@ export default function Login({navigation}){
 
             if (response.data.statusrequest[0].code === '#200') {
                 setUserData(response.data.statusrequest[0])
-                navigation.navigate('Home')
+
+                navigation.navigate('Home');
+
             } else {
                 alert(response.data.statusrequest[0].Cod_Usuario)
             } 

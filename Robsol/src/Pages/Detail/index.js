@@ -18,7 +18,7 @@ import styles from './styles';
 
 import {decode, encode} from 'base-64';
 import typeIcons from '../../utils/typeIcons';
-import { Ionicons,FontAwesome } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api'
 
 import ModFilter from '../../Modal/modFilter'
@@ -228,6 +228,7 @@ export default function Detail({route,navigation}){
                             nameSec={nameSec}
                             vendedor={dataUser.cod_vendedor}
                             prdProd={prdProd}
+                            dataBack={[nameSec,data,filter,icon,prdProd]}
                         />
                     }
 

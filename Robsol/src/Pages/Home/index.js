@@ -1,4 +1,4 @@
-import React,{useState, useContext} from 'react';
+import React,{useState,useEffect,useContext} from 'react';
 import {Text,SafeAreaView,View,Image,TouchableOpacity,ActivityIndicator} from 'react-native';
 import typeIcons from '../../utils/typeIcons';
 import {decode, encode} from 'base-64';
@@ -6,6 +6,8 @@ import {decode, encode} from 'base-64';
 import api from '../../services/api'
 
 import {CartContext} from '../../Contexts/cart';
+
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import {Ionicons,MaterialIcons,MaterialCommunityIcons} from '@expo/vector-icons';
 
@@ -30,7 +32,7 @@ export default function Home({navigation}){
                 'Authorization': 'Basic '+authBasic,
                 'VENDEDOR': dataUser.cod_vendedor,
                 'page': 1,
-                'pageSize': 10
+                'pageSize': 2,
             } 
         })
 
@@ -52,21 +54,40 @@ export default function Home({navigation}){
                 break;
         }
 
+        const dataItens = response.data["items"]
+
         let icon = null
+
+       // await AsyncStorage.clear()
+
 
         if(sec == 'Sales'){
             icon = 'add' 
             addCart([])
+
+            const openOrders = await AsyncStorage.getItem('@OpenOrders')
+
+            if(openOrders){
+
+                let cpyOpenOrders = JSON.parse(openOrders)
+
+                cpyOpenOrders.forEach((element, index) => {
+                    dataItens.push({index: index, ...element});
+                  });
+            }
         };
 
         navigation.navigate('Detail',{
             nameSec:sec,
-            data:response.data["items"],
+            data:dataItens,
             filter:initialFilter,
             icon:icon,
             prdProd:false
         })
+
+        
     };
+
 
     return(
         <>

@@ -22,7 +22,7 @@ import {CartContext} from '../Contexts/cart'
 
 import { useNavigation } from '@react-navigation/native';
 
-
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export async function getClientByCNPJ(cnpj) {
     const result = await axios.get(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
@@ -55,7 +55,7 @@ export async function getClientByCNPJ(cnpj) {
 export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
 
     
-    const {setCli,dataUser} = useContext(CartContext)
+    const {setCli,dataUser,addCart,totalCart,quantCart,descontoCart} = useContext(CartContext)
 
     const navigation = useNavigation();
 
@@ -167,7 +167,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
     };
 
 
-    const handleSignIn = async(data) =>{
+    const handleSignIn = async(data) =>{ 
 
         setCli(data)
         setLoadPrd(true)
@@ -194,6 +194,53 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
         setVisibleCli(false)
     };
 
+
+    const continuaPed = async(data) =>{ 
+
+        setCli(data.cliItm)
+        setLoadPrd(true)
+
+        const response = await api.get(`/Products/`,{
+            withCredentials: true,
+            headers: {
+                'Authorization': 'Basic '+authBasic,
+                'VENDEDOR': dataUser.cod_vendedor,
+                'page': 1,
+                'pageSize': 10
+            } 
+        })
+
+        navigation.navigate('SalePrd',{
+            nameSec:'Products',
+            data:response.data["items"],
+            filter:'CODIGO',
+            dataBack:dataBack,
+            prdProd:true,
+            continuaP:true,
+            ItensContinua:data
+        })
+
+        addCart(data.items)
+        totalCart(data.vlrTotal)
+        quantCart(data.qtdTotal)
+        descontoCart(data.desconto)
+        setLoadPrd(false)
+        setVisibleCli(false)
+    };
+
+
+
+    const removePedLocal = async(data) =>{
+        const response = await AsyncStorage.getItem('@OpenOrders')
+        const copyResponse = [...JSON.parse(response)]
+
+        var remove = copyResponse.filter((index) => index.id !== data.id);
+
+        await AsyncStorage.setItem('@OpenOrders',JSON.stringify(remove))
+        
+        navigation.navigate('Home')
+        
+    };
 
 
 
@@ -241,12 +288,24 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
             }
 
             { nameSec == 'Sales' &&
-                <TouchableOpacity onPress={() => searchSec(`CODIGO:${item.codigo}:ped`)} style={styles.cardP}>
+                <TouchableOpacity 
+                    onPress={() => item.status.trim() !== 'Editando' ? searchSec(`CODIGO:${item.codigo}:ped`):continuaPed(item)} 
+                    style={[styles.cardP, item.status.trim() === 'Editando'&&{backgroundColor:'#C1D7E5'}]}
+                >
 
-                    <Text style={styles.cardDescP}>{'Código: '+item.codigo.trim()}</Text>
+                    <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                        <Text style={styles.cardDescP}>{'Código: '+item.codigo.trim()}</Text>
+
+                        {item.status.trim() === 'Editando' &&
+                            <TouchableOpacity onPress={()=>{removePedLocal(item)}}> 
+                                <Ionicons name="trash-outline" size={30} color="black" />
+                           </TouchableOpacity>
+                        } 
+                    </View>
+
                     <Text style={styles.cardSubTitleP}>{'Cliente: '+item.cliente.trim()}</Text>
                     <Text style={styles.cardSubTitleP}>{'Emissão: '+item.emissao.trim()}</Text>
-                    <Text style={styles.cardSubTitleP}>{'Status: '+item.status.trim()}</Text>
+                    <Text style={[styles.cardSubTitleP,item.status.trim() === 'Editando'&&{fontWeight:'bold'}]}>{'Status: '+item.status.trim()}</Text>
                     <Text style={styles.cardSubTitleP}>{'CNPJ: '+item.cnpj.trim()}</Text>
                     
                     { (!!item.nota.trim()) ?
@@ -256,6 +315,12 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
                     }
 
                     <Text style={styles.cardSubTitleP}>{'Razão Social: '+item.razao_social.trim()}</Text>
+
+                    
+                    { item.status.trim() === 'Editando' &&
+                         <Text style={{fontSize:18,fontWeight:'bold',marginTop:10}}>Clique aqui para continuar o Pedido</Text>
+                    }
+
                 </TouchableOpacity>
             }
 
