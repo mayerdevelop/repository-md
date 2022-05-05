@@ -21,7 +21,7 @@ import typeIcons from '../../utils/typeIcons';
 import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api'
 
-import ModFilter from '../../Modal/modFilter'
+import ModFilter from '../../Modal/modFilter';
 
 import Section from '../../Sections/index';
 
