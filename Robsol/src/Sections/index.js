@@ -289,7 +289,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
 
             { nameSec == 'Sales' &&
                 <TouchableOpacity 
-                    onPress={() => item.status.trim() !== 'Editando' ? searchSec(`CODIGO:${item.codigo}:ped`):continuaPed(item)} 
+                    onPress={() => item.status.trim() === 'Editando' ? continuaPed(item) : searchSec(`CODIGO:${item.codigo}:ped`)} 
                     style={[styles.cardP, item.status.trim() === 'Editando'&&{backgroundColor:'#C1D7E5'}]}
                 >
 
