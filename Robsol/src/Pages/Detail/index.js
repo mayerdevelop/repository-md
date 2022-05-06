@@ -221,8 +221,8 @@ export default function Detail({route,navigation}){
                     data={searchT 
                         ? listSearch
                         : nameSec=='Sales' 
-                            ? list.sort((a, b) => b.dtemisped.localeCompare(a.dtemisped)) 
-                            :list.sort((a, b) => b.id.localeCompare(a.id))
+                            ? list.sort((a, b) => b.dtemisped.localeCompare(a.dtemisped))
+                            : list.sort((a, b) => b.id.localeCompare(a.id))
                     }
                     renderItem={({item})=> 
                         <Section
