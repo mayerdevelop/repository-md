@@ -79,7 +79,7 @@ export default function Home({navigation}){
 
         navigation.navigate('Detail',{
             nameSec:sec,
-            data:dataItens,
+            data:dataItens.sort((a, b) => b.id.localeCompare(a.id)),
             filter:initialFilter,
             icon:icon,
             prdProd:false
