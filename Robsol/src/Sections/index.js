@@ -1,5 +1,5 @@
-import React, {useState,useContext,useEffect} from 'react';
-import {Text,View,TouchableOpacity,Image,FlatList,ActivityIndicator,TextInput,ScrollView,KeyboardAvoidingView,Platform,SafeAreaView} from 'react-native';
+import React, {useState,useContext} from 'react';
+import {Text,View,TouchableOpacity,Image,FlatList,ActivityIndicator,TextInput,ScrollView,KeyboardAvoidingView,Platform,SafeAreaView,StatusBar} from 'react-native';
 
 import styles from './styles';
 
@@ -66,8 +66,8 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
     const [visibleCli, setVisibleCli] = useState(false);
 
     const [listSearch,setListSearch] = useState([]);
-    const [qtdTotal, setQtdTotal] = useState('')
-    const [vlrTotal, setVlrTotal] = useState('')
+    const [qtdTotal, setQtdTotal] = useState(0)
+    const [vlrTotal, setVlrTotal] = useState(0)
     const [load, setLoad] = useState(false)
     const [loadPrd, setLoadPrd] = useState(false)
 
@@ -246,6 +246,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
 
     return (
         <SafeAreaView style={styles.content}>
+            <StatusBar hidden={true}/>
             { nameSec == 'Products' && 
                 <TouchableOpacity style={styles.cardP} onLongPress={() => { setVisiblePreview(true) }}>
 
@@ -385,7 +386,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
 
                 <View style={styles.totalPed}>
                     <Text style={styles.txtBold}>{'Quant.: '+qtdTotal}</Text>
-                    <Text style={styles.txtBold}>{'Total: '+vlrTotal.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</Text>
+                    <Text style={styles.txtBold}>{'Total: '+(vlrTotal).toLocaleString('pt-BR',{style: 'currency', currency: 'BRL'})}</Text>
                 </View>
                 
             </ModSale>

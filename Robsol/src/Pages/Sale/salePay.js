@@ -104,14 +104,18 @@ export default function SalePay({route,navigation}){
         const codigoId = Math.floor(Math.random() * (999999 - 900000 + 1) + 900000);
 
         const data = new Date()
-        const dataInt  = data.getDate().toString().padStart(2, '0') +`/`+ (data.getMonth()+1).toString().padStart(2, '0') +`/`+ data.getFullYear().toString().substring(2,4);
+
+        let dia = data.getDate().toString().padStart(2, '0')
+        let mes = (data.getMonth()+1).toString().padStart(2, '0')
+        let ano = data.getFullYear().toString()
 
         let pedido = {
             id: codigoId.toString(),
             cliente: copyClient.nome_fantasia,
             cnpj: copyClient.cnpj,
             codigo: codigoId.toString(),
-            emissao: dataInt,
+            emissao: dia+'/'+mes+'/'+ano.substring(2,4),
+            dtemisped: ano+mes+dia,
             nota: "",
             serie: "",
             razao_social: copyClient.razao_social,

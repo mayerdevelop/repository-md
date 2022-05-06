@@ -9,6 +9,7 @@ import {
     FlatList,
     Keyboard,
     ActivityIndicator,
+    StatusBar
 } from 'react-native';
 
 import { RadioButton } from 'react-native-paper';

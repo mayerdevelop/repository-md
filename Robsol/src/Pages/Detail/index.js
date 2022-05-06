@@ -220,7 +220,9 @@ export default function Detail({route,navigation}){
                 <FlatList
                     data={searchT 
                         ? listSearch
-                        : list.sort((a, b) => b.id.localeCompare(a.id))
+                        : nameSec=='Sales' 
+                            ? list.sort((a, b) => b.dtemisped.localeCompare(a.dtemisped)) 
+                            :list.sort((a, b) => b.id.localeCompare(a.id))
                     }
                     renderItem={({item})=> 
                         <Section
