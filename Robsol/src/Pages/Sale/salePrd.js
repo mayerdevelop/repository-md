@@ -75,8 +75,7 @@ export default function SalePrd({route,navigation}){
     };
 
     const handleBarCodeScanned = async({type, data}) =>{
-        setScanned(true);
-        setTextScan(data+' adicionado ao carrinho!');
+        
         //console.log('Type: '+ type + '\nData: ' + data)
 
 
@@ -93,7 +92,11 @@ export default function SalePrd({route,navigation}){
 
         const item = response.data["items"][0]
 
-        if (item.length !== 0){ addProductToCart(item)} 
+        if (item.length !== 0){ 
+            addProductToCart(item);
+            setTextScan(data+' adicionado ao carrinho!');
+            setScanned(true);
+        } 
     };
 
     if (hasPermission === null){

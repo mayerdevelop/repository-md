@@ -50,6 +50,10 @@ export default function SalePay({route,navigation}){
         const copyCart = [...cart];
         const copyClient = {...cliente};
 
+        let endereco1 = !!copyClient.endereco1?copyClient.endereco1:''
+        let cep1 = !!copyClient.cep1?copyClient.cep1:''
+        let bairro1 = !!copyClient.bairro1?copyClient.bairro1:''
+
         let paramPed = {
             CLIENTE: copyClient,
             CONDPAGTO: payment,
@@ -57,14 +61,15 @@ export default function SalePay({route,navigation}){
             FORCE: 'FALSE',
             ITEMS: copyCart,
             VENDEDOR: vendedor,
-            OBSERVATION: txtObs
+            OBSERVATION: txtObs,
+            ENDERECO_ENTREGA: endereco1,
+            BAIRRO_ENTREGA: bairro1,
+            CEP_ENTREGA: cep1,
         }
-
         
         await api.post("/prtl003", { body: JSON.stringify(paramPed) })
         .then(async (item) => {
-            if (item.data.code == "200") {
-                
+            if (item.data.code == "200") {             
                 if(continuaP){
                     const response = await AsyncStorage.getItem('@OpenOrders')
                     const copyResponse = [...JSON.parse(response)]
@@ -81,6 +86,7 @@ export default function SalePay({route,navigation}){
             } else if(item.data.codigo == "410"){
                 setItensErrSld(item.data)
             }
+            
         })
         .catch((err) => {
             //alert("Erro na geração do pedido")
@@ -88,8 +94,10 @@ export default function SalePay({route,navigation}){
             navigation.navigate('Home')
         });
         
+        
 
         setLoad2(false)
+        
     };
 
 
@@ -137,7 +145,6 @@ export default function SalePay({route,navigation}){
             if(continuaP){
 
                 var remove = copyResponse.filter((item) => item.id !== ItensContinua.id);
-                console.log(remove);
 
                 let updPed = {
                     id: ItensContinua.id,
@@ -153,7 +160,8 @@ export default function SalePay({route,navigation}){
                     cliItm: ItensContinua.cliItm,
                     desconto: desconto,
                     qtdTotal: qtdTotalCart,
-                    vlrTotal: vlrTotalCart
+                    vlrTotal: vlrTotalCart,
+                    dtemisped:ItensContinua.dtemisped,
                 };
 
                 remove.push(updPed)
@@ -168,12 +176,6 @@ export default function SalePay({route,navigation}){
         } else {
             await AsyncStorage.setItem('@OpenOrders',JSON.stringify([pedido]))
         }
-
-        
-        const response2 = await AsyncStorage.getItem('@OpenOrders')
-        
-        //console.log('***-------***')
-        //console.log(JSON.stringify(JSON.parse(response2)))
 
         setLoad1(false)
 

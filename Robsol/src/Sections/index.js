@@ -1,22 +1,15 @@
 import React, {useState,useContext} from 'react';
-import {Text,View,TouchableOpacity,Image,FlatList,ActivityIndicator,TextInput,ScrollView,KeyboardAvoidingView,Platform,SafeAreaView,StatusBar} from 'react-native';
+import {Text,View,TouchableOpacity,Image,FlatList,ActivityIndicator,SafeAreaView,StatusBar} from 'react-native';
 
 import styles from './styles';
 
 import ModPreview from '../Modal/modPreview'
 import ModSale from '../Modal/modSale'
-import ModCli from '../Modal/modCli'
 
 import api from '../services/api';
 import { Ionicons } from '@expo/vector-icons';
 
-import axios from "axios";
-
 import _ from 'underscore';
-
-import { useForm, Controller, set } from 'react-hook-form';
-import {yupResolver} from '@hookform/resolvers/yup'
-import * as yup from 'yup'
 
 import {CartContext} from '../Contexts/cart'
 
@@ -24,37 +17,11 @@ import { useNavigation } from '@react-navigation/native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-export async function getClientByCNPJ(cnpj) {
-    const result = await axios.get(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
-
-    console.log(JSON.stringify(result.data.logradouro))
-
-    let jsonClient = {
-        cnpj: result.data.cnpj,
-        insc_estadual: "N/A",
-        codigo: result.data.cnpj,
-        filial: "N/A",
-        razao_social: result.data.razao_social,
-        nome_fantasia: result.data.nome_fantasia,
-        endereco: result.data.logradouro,
-        bairro: result.data.bairro,
-        cidade: result.data.municipio,
-        uf: result.data.uf,
-        cep: result.data.cep,
-        contato: "",
-        email: "",
-        celular: "",
-        fone2: "",
-        id: result.data.cnpj
-    }
-
-    return jsonClient;
-}
 
 
-export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
 
-    
+export default function Sections({nameSec,item,vendedor,prdProd,dataBack,reset,handleOpenCli,handleCloseCli,loadPrdSet}){
+
     const {setCli,dataUser,addCart,totalCart,quantCart,descontoCart} = useContext(CartContext)
 
     const navigation = useNavigation();
@@ -63,32 +30,12 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
 
     const [visiblePreview, setVisiblePreview] = useState(false);
     const [visibleSale, setVisibleSale] = useState(false);
-    const [visibleCli, setVisibleCli] = useState(false);
-
+    
     const [listSearch,setListSearch] = useState([]);
     const [qtdTotal, setQtdTotal] = useState(0)
     const [vlrTotal, setVlrTotal] = useState(0)
     const [load, setLoad] = useState(false)
-    const [loadPrd, setLoadPrd] = useState(false)
 
-
-    const {control,handleSubmit,formState:{errors},reset} = useForm({ 
-        resolver: yupResolver(
-            yup.object({
-                contato: yup.string().required("Informe o Contato..."),
-                razao_social: yup.string().required("Informe a Razão Social..."),
-                nome_fantasia: yup.string().required("Informe o Nome Fantasia..."),
-                email: yup.string().email('E-mail invalido').required("Informe o Email..."),
-                celular: yup.string().required("Informe o Telefone..."),
-                fone2: yup.string().required("Informe o Telefone..."),
-                cep: yup.string().required("Informe o CEP..."),
-                endereco: yup.string().required("Informe o Endereço..."),
-                bairro: yup.string().required("Informe o Bairro..."),
-                cidade: yup.string().required("Informe a Cidade..."),
-                uf: yup.string().required("Informe a UF..."),
-            })
-        )
-    });
 
 
     const searchSec = async(option) =>{
@@ -108,7 +55,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
         switch (opt_new[2]) {
             case "cli":
                 params.cnpj = opt_new[1];
-                setVisibleCli(true)
+                handleOpenCli()
                 break;
             case "ped":
                 params.codigo = opt_new[1];
@@ -146,7 +93,7 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
             console.log(error)
         }
 
-        reset(aResult[0]);
+        if(typeof reset === 'function') {reset(aResult[0])};
 
         if(opt_new[2] == 'ped'){
             let qtd = 0;
@@ -167,38 +114,24 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
     };
 
 
-    const handleSignIn = async(data) =>{ 
+    const removePedLocal = async(data) =>{
+        const response = await AsyncStorage.getItem('@OpenOrders')
+        const copyResponse = [...JSON.parse(response)]
 
-        setCli(data)
-        setLoadPrd(true)
+        var remove = copyResponse.filter((index) => index.id !== data.id);
 
-        const response = await api.get(`/Products/`,{
-            withCredentials: true,
-            headers: {
-                'Authorization': 'Basic '+authBasic,
-                'VENDEDOR': dataUser.cod_vendedor,
-                'page': 1,
-                'pageSize': 10
-            } 
-        })
-
-        navigation.navigate('SalePrd',{
-            nameSec:'Products',
-            data:response.data["items"],
-            filter:'CODIGO',
-            dataBack: dataBack,
-            prdProd:true
-        })
-
-        setLoadPrd(false)
-        setVisibleCli(false)
+        await AsyncStorage.setItem('@OpenOrders',JSON.stringify(remove))
+        
+        navigation.navigate('Home')
+        
     };
 
 
-    const continuaPed = async(data) =>{ 
+    const continuaPed = async(item) =>{ 
 
-        setCli(data.cliItm)
-        setLoadPrd(true)
+        setCli(item.cliItm);
+
+        ()=>loadPrdSet(true)
 
         const response = await api.get(`/Products/`,{
             withCredentials: true,
@@ -217,31 +150,16 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
             dataBack:dataBack,
             prdProd:true,
             continuaP:true,
-            ItensContinua:data
+            ItensContinua:item
         })
 
-        addCart(data.items)
-        totalCart(data.vlrTotal)
-        quantCart(data.qtdTotal)
-        descontoCart(data.desconto)
-        setLoadPrd(false)
-        setVisibleCli(false)
+        addCart(item.items)
+        totalCart(item.vlrTotal)
+        quantCart(item.qtdTotal)
+        descontoCart(item.desconto);
+        ()=>loadPrdSet(false);
+        ()=>handleCloseCli(false);
     };
-
-
-
-    const removePedLocal = async(data) =>{
-        const response = await AsyncStorage.getItem('@OpenOrders')
-        const copyResponse = [...JSON.parse(response)]
-
-        var remove = copyResponse.filter((index) => index.id !== data.id);
-
-        await AsyncStorage.setItem('@OpenOrders',JSON.stringify(remove))
-        
-        navigation.navigate('Home')
-        
-    };
-
 
 
     return (
@@ -391,292 +309,33 @@ export default function Sections({nameSec,item,vendedor,dataBack,prdProd}){
                 
             </ModSale>
 
-            <ModCli visibleCli={visibleCli}>
-                <View style={styles.headerPed}>
-                    <Text style={{fontSize:22, fontWeight:'bold'}}>Atualizar Cadastro</Text>
-                    <View style={styles.closeModal}>
-                        <TouchableOpacity onPress={() => setVisibleCli(false)}>
-                            <Ionicons style={{bottom:7}} name="close" size={40} color="black" />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-                    
-                <KeyboardAvoidingView style={{marginBottom:70}}
-                    behavior={Platform.OS == 'IOS' ? 'padding' : 'height'}
-                    keyboardVerticalOffset={200}
-                >
-                    <ScrollView >
-                        <Controller
-                            control={control}
-                            name='cnpj'
-                            render={({field: {onChange,onBlur,value}})=>(
-                                <View>
-                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>CNPJ *</Text>
-                                    <TextInput
-                                        onChangeText={onChange}
-                                        value={value}
-                                        onBlur={onBlur}
-                                        style={[styles.input, errors.cnpj ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8',color:'#B2ADAD'}]}
-                                        placeholder={errors.cnpj && errors.cnpj?.message}
-                                        placeholderTextColor='#FA7E7E'
-                                        editable={false}
-                                    />
-                                </View>
-                            )}
-                        />
-
-                        <Controller
-                            control={control}
-                            name='insc_estadual'
-                            render={({field: {onChange,onBlur,value}})=>(
-                                <View>
-                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Inscrição Estadual *</Text>
-                                    <TextInput
-                                        onChangeText={onChange}
-                                        value={value}
-                                        onBlur={onBlur}
-                                        style={[styles.input, errors.insc_estadual ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8',color:'#B2ADAD'}]}
-                                        placeholder={errors.insc_estadual && errors.insc_estadual?.message}
-                                        placeholderTextColor='#FA7E7E'
-                                        editable={false}
-                                    />
-                                </View>
-                            )}
-                        />
-
-                        <Controller
-                            control={control}
-                            name='filial'
-                            render={({field: {onChange,onBlur,value}})=>(
-                                <View>
-                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Filial *</Text>
-                                    <TextInput
-                                        onChangeText={onChange}
-                                        value={value}
-                                        onBlur={onBlur}
-                                        style={[styles.input, errors.filial ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8',color:'#B2ADAD'}]}
-                                        placeholder={errors.filial && errors.filial?.message}
-                                        placeholderTextColor='#FA7E7E'
-                                        editable={false}
-                                    />
-                                </View>
-                            )}
-                        />
-
-                        <Controller
-                            control={control}
-                            name='contato'
-                            render={({field: {onChange,onBlur,value}})=>(
-                                <View>
-                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Contato *</Text>
-                                    <TextInput
-                                        onChangeText={onChange}
-                                        value={value}
-                                        onBlur={onBlur}
-                                        style={[styles.input, errors.contato ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
-                                        placeholder={errors.contato && errors.contato?.message}
-                                        placeholderTextColor='#FA7E7E'
-                                    />
-                                </View>
-                            )}
-                        />
-
-                        <Controller
-                            control={control}
-                            name='razao_social'
-                            render={({field: {onChange,onBlur,value}})=>(
-                                <View>
-                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Razão Social *</Text>
-                                    <TextInput
-                                        onChangeText={onChange}
-                                        value={value}
-                                        onBlur={onBlur}
-                                        style={[styles.input, errors.razao_social ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
-                                        placeholder={errors.razao_social && errors.razao_social?.message}
-                                        placeholderTextColor='#FA7E7E'
-                                    />
-                                </View>
-                            )}
-                        />
-
-                        <Controller
-                            control={control}
-                            name='nome_fantasia'
-                            render={({field: {onChange,onBlur,value}})=>(
-                                <View>
-                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Nome Fantasia *</Text>
-                                    <TextInput
-                                        onChangeText={onChange}
-                                        value={value}
-                                        onBlur={onBlur}
-                                        style={[styles.input, errors.nome_fantasia ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
-                                        placeholder={errors.nome_fantasia && errors.nome_fantasia?.message}
-                                        placeholderTextColor='#FA7E7E'
-                                    />
-                                </View>
-                            )}
-                        />
-
-                        <Controller
-                            control={control}
-                            name='email'
-                            render={({field: {onChange,onBlur,value}})=>(
-                                <View>
-                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>E-mail *</Text>
-                                    <TextInput
-                                        onChangeText={onChange}
-                                        value={value}
-                                        onBlur={onBlur}
-                                        style={[styles.input, errors.email ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
-                                        placeholder={errors.email && errors.email?.message}
-                                        placeholderTextColor='#FA7E7E'
-                                    />
-                                </View>
-                            )}
-                        />
-                        
-                        <Controller
-                            control={control}
-                            name='celular'
-                            render={({field: {onChange,onBlur,value}})=>(
-                                <View>
-                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Telefone Contato 1 *</Text>
-                                    <TextInput
-                                        onChangeText={onChange}
-                                        value={value}
-                                        onBlur={onBlur}
-                                        style={[styles.input, errors.celular ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
-                                        placeholder={errors.celular && errors.celular?.message}
-                                        placeholderTextColor='#FA7E7E'
-                                    />
-                                </View>
-                            )}
-                        />
-
-                        <Controller
-                            control={control}
-                            name='fone2'
-                            render={({field: {onChange,onBlur,value}})=>(
-                                <View>
-                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Telefone Contato 2 *</Text>
-                                    <TextInput
-                                        onChangeText={onChange}
-                                        value={value}
-                                        onBlur={onBlur}
-                                        style={[styles.input, errors.fone2 ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
-                                        placeholder={errors.fone2 && errors.fone2?.message}
-                                        placeholderTextColor='#FA7E7E'
-                                    />
-                                </View>
-                            )}
-                        />
-
-                        <Controller
-                            control={control}
-                            name='cep'
-                            render={({field: {onChange,onBlur,value}})=>(
-                                <View>
-                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>CEP *</Text>
-                                    <TextInput
-                                        onChangeText={onChange}
-                                        value={value}
-                                        onBlur={onBlur}
-                                        style={[styles.input, errors.cep ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
-                                        placeholder={errors.cep && errors.cep?.message}
-                                        placeholderTextColor='#FA7E7E'
-                                    />
-                                </View>
-                            )}
-                        />
-
-                        <Controller
-                            control={control}
-                            name='endereco'
-                            render={({field: {onChange,onBlur,value}})=>(
-                                <View>
-                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Endereço *</Text>
-                                    <TextInput
-                                        onChangeText={onChange}
-                                        value={value}
-                                        onBlur={onBlur}
-                                        style={[styles.input, errors.endereco ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
-                                        placeholder={errors.endereco && errors.endereco?.message}
-                                        placeholderTextColor='#FA7E7E'
-                                    />
-                                </View>
-                            )}
-                        />
-                        
-                        <Controller
-                            control={control}
-                            name='bairro'
-                            render={({field: {onChange,onBlur,value}})=>(
-                                <View>
-                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Bairro *</Text>
-                                    <TextInput
-                                        onChangeText={onChange}
-                                        value={value}
-                                        onBlur={onBlur}
-                                        style={[styles.input, errors.bairro ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
-                                        placeholder={errors.bairro && errors.bairro?.message}
-                                        placeholderTextColor='#FA7E7E'
-                                    />
-                                </View>
-                            )}
-                        />
-
-                        <Controller
-                            control={control}
-                            name='cidade'
-                            render={({field: {onChange,onBlur,value}})=>(
-                                <View>
-                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Cidade *</Text>
-                                    <TextInput
-                                        onChangeText={onChange}
-                                        value={value}
-                                        onBlur={onBlur}
-                                        style={[styles.input, errors.cidade ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
-                                        placeholder={errors.cidade && errors.cidade?.message}
-                                        placeholderTextColor='#FA7E7E'
-                                    />
-                                </View>
-                            )}
-                        />
-
-                        <Controller
-                            control={control}
-                            name='uf'
-                            render={({field: {onChange,onBlur,value}})=>(
-                                <View>
-                                    <Text style={{color:'#AAADAE',fontWeight:'bold'}}>UF *</Text>
-                                    <TextInput
-                                        onChangeText={onChange}
-                                        value={value}
-                                        onBlur={onBlur}
-                                        style={[styles.input, errors.uf ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
-                                        placeholder={errors.uf && errors.uf?.message}
-                                        placeholderTextColor='#FA7E7E'
-                                    />
-                                </View>
-                            )}
-                        />
-
-                        <TouchableOpacity style={styles.submitAtualizar} onPress={handleSubmit(handleSignIn)}>
-                            { loadPrd ?
-                                <View style={{flex:1,justifyContent:'center'}}>
-                                    <ActivityIndicator color={'#fff'} size={35}/>
-                                </View>
-                                :
-                                <Text style={styles.submitTxtAtualizar}>Atualizar</Text>
-                            }
-                        </TouchableOpacity>
-
-                    </ScrollView>
-                </KeyboardAvoidingView>
-                
-            </ModCli>
-
         </SafeAreaView>
         
     )
+}
+
+
+export async function getClientByCNPJ(cnpj) {
+    const result = await axios.get(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
+
+    let jsonClient = {
+        cnpj: result.data.cnpj,
+        insc_estadual: "N/A",
+        codigo: result.data.cnpj,
+        filial: "N/A",
+        razao_social: result.data.razao_social,
+        nome_fantasia: result.data.nome_fantasia,
+        endereco: result.data.logradouro,
+        bairro: result.data.bairro,
+        cidade: result.data.municipio,
+        uf: result.data.uf,
+        cep: result.data.cep,
+        contato: "",
+        email: "",
+        celular: "",
+        fone2: "",
+        id: result.data.cnpj
+    }
+
+    return jsonClient;
 }

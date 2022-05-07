@@ -251,6 +251,60 @@ buttonBack:{
   alignItems:'center'
 },
 
+
+
+
+    //formulario
+
+    inputForm:{
+        height:35,
+        borderBottomWidth:2,
+        marginBottom:20,
+        paddingHorizontal:5,
+        fontSize:16
+    },
+
+    submitAtualizar:{
+        backgroundColor:'#2F8BD8',
+        justifyContent:'center',
+        alignItems:'center',
+        height:50,
+        marginHorizontal:70,
+        borderRadius:15
+    },
+
+    submitTxtAtualizar:{
+        fontSize:18,
+        fontWeight:'bold',
+        color:'#fff'
+    },
+
+    buttonAddInitial:{
+        backgroundColor:'#2F8BD8',
+        justifyContent:'center',
+        alignItems:'center',
+        marginHorizontal:100,
+        marginTop:20,
+        height:40,
+        borderRadius:10
+    },
+
+    txtAddInitial:{
+        color:'#fff',
+        fontSize:16,
+        fontWeight:'bold'
+    },
+
+    buttonEnt:{
+      height:50,
+      padding:10,
+      borderRadius:10,
+      width:'35%',
+      justifyContent:'center',
+      alignItems:'center',
+  },
+
+
 });
 
 export default styles;

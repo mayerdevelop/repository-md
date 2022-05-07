@@ -18,7 +18,7 @@ import styles from './styles';
 
 export default function Home({navigation}){
 
-    const { addCart,dataUser } = useContext(CartContext)
+    const { addCart,dataUser,totalCart,quantCart } = useContext(CartContext)
 
     const authBasic = 'YWRtaW46QVZTSTIwMjI';
 
@@ -58,12 +58,14 @@ export default function Home({navigation}){
 
         let icon = null
 
-       // await AsyncStorage.clear()
+        //await AsyncStorage.clear()
 
 
         if(sec == 'Sales'){
             icon = 'add' 
             addCart([])
+            totalCart(0);
+            quantCart(0);
 
             const openOrders = await AsyncStorage.getItem('@OpenOrders')
 

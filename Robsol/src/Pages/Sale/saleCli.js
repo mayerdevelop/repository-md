@@ -1,4 +1,4 @@
-import React,{useState,useContext} from 'react';
+import React,{useState,useContext,useRef} from 'react';
 import {
     SafeAreaView,
     View,
@@ -9,7 +9,9 @@ import {
     FlatList,
     Keyboard,
     ActivityIndicator,
-    StatusBar
+    ScrollView,
+    KeyboardAvoidingView,
+    Platform,
 } from 'react-native';
 
 import { RadioButton } from 'react-native-paper';
@@ -25,15 +27,20 @@ import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api'
 import axios from "axios";
 
-import ModFilter from '../../Modal/modFilter'
+import ModFilter from '../../Modal/modFilter';
+
+import { useForm, Controller, set } from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 import Section from '../../Sections/index';
 
-import {CartContext} from '../../Contexts/cart'
+import {CartContext} from '../../Contexts/cart';
+
+import {Modalize} from 'react-native-modalize'
 
 if (!global.btoa) { global.btoa = encode }
 if (!global.atob) { global.atob = decode }
-
 
 
 export async function getClientByCNPJ(cnpj) {
@@ -44,7 +51,7 @@ export async function getClientByCNPJ(cnpj) {
 
 export default function SaleCli({route,navigation}){
 
-    const {dataUser} = useContext(CartContext)
+    const {setCli,dataUser} = useContext(CartContext)
 
     const { nameSec,data,filter,dataBack } = route.params;
 
@@ -54,10 +61,14 @@ export default function SaleCli({route,navigation}){
     const [list, setList] = useState(data);
     const [page, setPage] = useState(2);
     const [visibleFilter, setVisibleFilter] = useState(false);
+    const [loadPrd, setLoadPrd] = useState(false)
     const [checked, setChecked] = useState(filter);
     const [load, setLoad] = useState(false);
 
     const authBasic = 'YWRtaW46QVZTSTIwMjI';
+
+    const modalizeRefCli = useRef(null);
+    const modalizeRefEnt = useRef(null);
 
 
     function buttomSearch(option){
@@ -155,6 +166,96 @@ export default function SaleCli({route,navigation}){
         setLoad(false)
     };
 
+    const {control,handleSubmit,formState:{errors},reset,resetField,getValues,setValue} = useForm({ 
+        resolver: yupResolver(
+            yup.object({
+                contato: yup.string().required("Informe o Contato..."),
+                razao_social: yup.string().required("Informe a Razão Social..."),
+                nome_fantasia: yup.string().required("Informe o Nome Fantasia..."),
+                email: yup.string().email('E-mail invalido').required("Informe o Email..."),
+                celular: yup.string().required("Informe o Telefone..."),
+                fone2: yup.string().required("Informe o Telefone..."),
+                cep: yup.string().required("Informe o CEP..."),
+                endereco: yup.string().required("Informe o Endereço..."),
+                bairro: yup.string().required("Informe o Bairro..."),
+                cidade: yup.string().required("Informe a Cidade..."),
+                uf: yup.string().required("Informe a UF..."),
+                cep1: yup.string()
+            })
+        )
+    });
+
+    const handleSignIn = async(dataCad) =>{
+
+        setCli(dataCad)
+        setLoadPrd(true)
+
+        const response = await api.get(`/Products/`,{
+            withCredentials: true,
+            headers: {
+                'Authorization': 'Basic '+authBasic,
+                'VENDEDOR': dataUser.cod_vendedor,
+                'page': 1,
+                'pageSize': 10
+            } 
+        })
+
+        navigation.navigate('SalePrd',{
+            nameSec:'Products',
+            data:response.data["items"],
+            filter:'CODIGO',
+            dataBack: [nameSec,list,dataUser,filter],
+            prdProd:true
+        })
+
+        setLoadPrd(false)
+        handleCloseCli(false)
+        
+    };
+
+
+    const handleOpenCli = ()=>{modalizeRefCli.current?.open()};
+    const handleCloseCli = ()=>{modalizeRefCli.current?.close()};
+
+    const handleOpenEnt = ()=>{
+        modalizeRefEnt.current?.open()
+        modalizeRefCli.current?.close()
+    };
+    const handleCloseEnt = ()=>{
+        modalizeRefEnt.current?.close()
+        modalizeRefCli.current?.open()
+    };
+
+    function setReset(receive){reset(receive)}
+
+    function limparEnt(){
+        resetField('cep1');
+        resetField('endereco1');
+        resetField('bairro1');
+        resetField('cidade1');
+        resetField('uf1');        
+        handleCloseEnt();
+    };
+
+    const getCep = async(cep) =>{
+        if (!!cep){
+            try{
+                const result = await axios.get(`https:/viacep.com.br/ws/${cep}/json/`);
+                
+                if(result.status === 200){
+                    setValue('endereco1',result["data"].logradouro)
+                    setValue('bairro1',result["data"].bairro)
+                    setValue('cidade1',result["data"].localidade)
+                    setValue('uf1',result["data"].uf)
+                }
+
+            }catch(err){}
+        }
+    
+    };
+
+    function loadPrdSet(receive){setLoadPrd(receive)};
+
 
     return( 
         <>
@@ -214,8 +315,12 @@ export default function SaleCli({route,navigation}){
                             item={item}
                             nameSec={nameSec}
                             vendedor={dataUser.cod_vendedor}
-                            dataBack={[nameSec,list,dataUser,filter]}
                             prdProd={true}
+                            dataBack={[nameSec,list,dataUser,filter]}
+                            reset={setReset}
+                            handleOpenCli={handleOpenCli}
+                            handleCloseCli={handleCloseCli}
+                            loadPrdSet={loadPrdSet}
                         />
                     }
 
@@ -282,8 +387,451 @@ export default function SaleCli({route,navigation}){
                 </View>
             </ModFilter>
 
+
+            <Modalize
+                adjustToContentHeight={600}
+                ref={modalizeRefCli}
+                snapPoint={600}
+                withHandle={false}
+            >
+                <View style={{height:600,margin:20}}>
+                    
+                    <View style={styles.headerPed}>
+                        <Text style={{fontSize:22, fontWeight:'bold'}}>Atualizar Cadastro</Text>
+
+                        <View style={styles.closeModal}>
+                            <TouchableOpacity onPress={handleCloseCli}>
+                                <Ionicons style={{bottom:7}} name="close" size={40} color="black" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+
+                    <KeyboardAvoidingView style={{marginBottom:70}}
+                        behavior={Platform.OS == 'IOS' ? 'padding' : 'height'}
+                        keyboardVerticalOffset={200}
+                    >
+                        <ScrollView >
+                            <Controller
+                                control={control}
+                                name='cnpj'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>CNPJ *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.cnpj ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8',color:'#B2ADAD'}]}
+                                            placeholder={errors.cnpj && errors.cnpj?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                            editable={false}
+                                        />
+                                    </View>
+                                )}
+                            />
+
+                            <Controller
+                                control={control}
+                                name='insc_estadual'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Inscrição Estadual *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.insc_estadual ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8',color:'#B2ADAD'}]}
+                                            placeholder={errors.insc_estadual && errors.insc_estadual?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                            editable={false}
+                                        />
+                                    </View>
+                                )}
+                            />
+
+                            <Controller
+                                control={control}
+                                name='filial'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Filial *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.filial ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8',color:'#B2ADAD'}]}
+                                            placeholder={errors.filial && errors.filial?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                            editable={false}
+                                        />
+                                    </View>
+                                )}
+                            />
+
+                            <Controller
+                                control={control}
+                                name='contato'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Contato *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.contato ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                            placeholder={errors.contato && errors.contato?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                        />
+                                    </View>
+                                )}
+                            />
+
+                            <Controller
+                                control={control}
+                                name='razao_social'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Razão Social *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.razao_social ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                            placeholder={errors.razao_social && errors.razao_social?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                        />
+                                    </View>
+                                )}
+                            />
+
+                            <Controller
+                                control={control}
+                                name='nome_fantasia'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Nome Fantasia *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.nome_fantasia ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                            placeholder={errors.nome_fantasia && errors.nome_fantasia?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                        />
+                                    </View>
+                                )}
+                            />
+
+                            <Controller
+                                control={control}
+                                name='email'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>E-mail *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.email ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                            placeholder={errors.email && errors.email?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                        />
+                                    </View>
+                                )}
+                            />
+                            
+                            <Controller
+                                control={control}
+                                name='celular'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Telefone Contato 1 *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.celular ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                            placeholder={errors.celular && errors.celular?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                        />
+                                    </View>
+                                )}
+                            />
+
+                            <Controller
+                                control={control}
+                                name='fone2'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Telefone Contato 2 *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.fone2 ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                            placeholder={errors.fone2 && errors.fone2?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                        />
+                                    </View>
+                                )}
+                            />
+
+                            <Controller
+                                control={control}
+                                name='cep'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>CEP *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.cep ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                            placeholder={errors.cep && errors.cep?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                        />
+                                    </View>
+                                )}
+                            />
+
+                            <Controller
+                                control={control}
+                                name='endereco'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Endereço *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.endereco ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                            placeholder={errors.endereco && errors.endereco?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                        />
+                                    </View>
+                                )}
+                            />
+                            
+                            <Controller
+                                control={control}
+                                name='bairro'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Bairro *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.bairro ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                            placeholder={errors.bairro && errors.bairro?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                        />
+                                    </View>
+                                )}
+                            />
+
+                            <Controller
+                                control={control}
+                                name='cidade'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Cidade *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.cidade ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                            placeholder={errors.cidade && errors.cidade?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                        />
+                                    </View>
+                                )}
+                            />
+
+                            <Controller
+                                control={control}
+                                name='uf'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>UF *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.uf ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                            placeholder={errors.uf && errors.uf?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                        />
+                                    </View>
+                                )}
+                            />
+
+                            <TouchableOpacity style={styles.submitAtualizar} onPress={handleSubmit(handleSignIn)}>
+                                { loadPrd ?
+                                    <View style={{flex:1,justifyContent:'center'}}>
+                                        <ActivityIndicator color={'#fff'} size={35}/>
+                                    </View>
+                                    :
+                                    <Text style={styles.submitTxtAtualizar}>Atualizar</Text>
+                                }
+                            </TouchableOpacity>
+
+                            <TouchableOpacity 
+                                style={{marginTop:35,justifyContent:'center',alignItems:'center'}}
+                                onPress={handleOpenEnt}
+                            >
+                                <Text style={{color:'tomato', fontSize:18}}>Outro endereço de entrega</Text>
+                            </TouchableOpacity>
+
+                        </ScrollView>
+                    </KeyboardAvoidingView>
+
+                </View>
+            </Modalize>
+
+            <Modalize
+                adjustToContentHeight={600}
+                ref={modalizeRefEnt}
+                snapPoint={600}
+                withHandle={false}
+            >
+                <View style={{height:600,margin:20}}>
+                    
+                    <View style={styles.headerPed}>
+                        <Text style={{fontSize:22,marginBottom:30,fontWeight:'bold'}}>Outro Endereço</Text>
+                    </View>
+
+
+                    <KeyboardAvoidingView style={{marginBottom:70}}
+                        behavior={Platform.OS == 'IOS' ? 'padding' : 'height'}
+                        keyboardVerticalOffset={200}
+                    >
+                        <ScrollView >
+
+                            <View style={{flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                                
+                                <View style={{width:'90%',justifyContent:'center'}}>
+                                    <Controller
+                                        control={control}
+                                        name='cep1'
+                                        render={({field: {onChange,onBlur,value}})=>(
+                                            <View>
+                                                <Text style={{color:'#AAADAE',fontWeight:'bold'}}>CEP *</Text>
+                                                <TextInput
+                                                    onChangeText={onChange}
+                                                    value={value}
+                                                    onBlur={onBlur}
+                                                    style={[styles.inputForm, errors.cep1 ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'},{width:'100%'}]}
+                                                    placeholder={errors.cep1 && errors.cep1?.message}
+                                                    placeholderTextColor='#FA7E7E'
+                                                />
+                                            </View>
+                                        )}
+                                    />
+                                </View>
+                                
+                                <TouchableOpacity style={{justifyContent:'center'}} onPress={()=>getCep(getValues('cep1'))}>
+                                    <Ionicons name={searchT?"close":"search"} size={32} color='#175A93' />
+                                </TouchableOpacity>
+                            </View>
+
+                            <Controller
+                                control={control}
+                                name='endereco1'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Endereço *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.endereco1 ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                            placeholder={errors.endereco1 && errors.endereco1?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                        />
+                                    </View>
+                                )}
+                            />
+                            
+                            <Controller
+                                control={control}
+                                name='bairro1'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Bairro *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.bairro1 ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                            placeholder={errors.bairro1 && errors.bairro1?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                        />
+                                    </View>
+                                )}
+                            />
+
+                            <Controller
+                                control={control}
+                                name='cidade1'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>Cidade *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.cidade1 ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                            placeholder={errors.cidade1 && errors.cidade1?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                        />
+                                    </View>
+                                )}
+                            />
+
+                            <Controller
+                                control={control}
+                                name='uf1'
+                                render={({field: {onChange,onBlur,value}})=>(
+                                    <View>
+                                        <Text style={{color:'#AAADAE',fontWeight:'bold'}}>UF *</Text>
+                                        <TextInput
+                                            onChangeText={onChange}
+                                            value={value}
+                                            onBlur={onBlur}
+                                            style={[styles.inputForm, errors.uf1 ? { borderColor:'#D13434' } : { borderColor:'#2F8BD8'}]}
+                                            placeholder={errors.uf1 && errors.uf1?.message}
+                                            placeholderTextColor='#FA7E7E'
+                                        />
+                                    </View>
+                                )}
+                            />
+
+                            <View style={{flexDirection:'row',justifyContent:'space-around',marginTop:50}}>
+                                <TouchableOpacity 
+                                    style={[styles.buttonEnt,{backgroundColor:'tomato'}]}
+                                    onPress={handleSubmit(limparEnt)}
+                                >
+                                    <Text style={styles.submitTxtAtualizar}>Limpar</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity 
+                                    style={[styles.buttonEnt,{backgroundColor:'black'}]}
+                                    onPress={handleSubmit(handleCloseEnt)}
+                                >
+                                    <Text style={styles.submitTxtAtualizar}>Confirmar</Text>
+                                </TouchableOpacity>
+                            </View>
+
+
+                        </ScrollView>
+                    </KeyboardAvoidingView>
+
+                </View>
+            </Modalize>
+
         </SafeAreaView>
         </>
     )
 }
-
