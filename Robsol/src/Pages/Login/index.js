@@ -134,7 +134,7 @@ export default function Login({navigation}){
                     }
                 ]
                 }>
-                <TextInput
+            <TextInput
                     style={styles.input}
                     placeholder="Login"
                     autoCorrect={false}
@@ -166,7 +166,12 @@ export default function Login({navigation}){
                     <Text style={styles.buttonText}>Entrar</Text>
                     }
                 </TouchableOpacity>
+                
+                <View style={{marginTop:40}}>
+                    <Text>v220220508</Text>
+                </View>
             </Animated.View>
+            
         </KeyboardAvoidingView>
     )
 }
