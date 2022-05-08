@@ -168,7 +168,7 @@ export default function Login({navigation}){
                 </TouchableOpacity>
                 
                 <View style={{marginTop:40}}>
-                    <Text>v220220508</Text>
+                    <Text>v320220508</Text>
                 </View>
             </Animated.View>
             
