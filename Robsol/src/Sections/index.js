@@ -7,6 +7,8 @@ import ModPreview from '../Modal/modPreview'
 import ModSale from '../Modal/modSale'
 
 import api from '../services/api';
+import axios from "axios";
+
 import { Ionicons } from '@expo/vector-icons';
 
 import _ from 'underscore';
@@ -74,8 +76,6 @@ export default function Sections({nameSec,item,vendedor,prdProd,dataBack,reset,h
 
                 if(opt_new[2] === 'cli'){
                     let responseSefaz = await getClientByCNPJ(opt_new[1]);
-
-                    console.log(JSON.stringify(responseSefaz))
                     aResult.push(responseSefaz)
                 };
 
@@ -335,6 +335,14 @@ export async function getClientByCNPJ(cnpj) {
         celular: "",
         fone2: "",
         id: result.data.cnpj
+    }
+
+    if(!!result.data.numero){
+        jsonClient.endereco = jsonClient.endereco +', '+result.data.numero
+    }
+
+    if(!!result.data.complemento){
+        jsonClient.endereco = jsonClient.endereco +' - '+result.data.complemento
     }
 
     return jsonClient;
