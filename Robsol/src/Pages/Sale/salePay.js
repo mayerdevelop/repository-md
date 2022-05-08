@@ -70,18 +70,7 @@ export default function SalePay({route,navigation}){
         await api.post("/prtl003", { body: JSON.stringify(paramPed) })
         .then(async (item) => {
             if (item.data.code == "200") {             
-                if(continuaP){
-                    const response = await AsyncStorage.getItem('@OpenOrders')
-                    const copyResponse = [...JSON.parse(response)]
-
-                    var remove = copyResponse.filter((item) => item.id !== ItensContinua.id);
-   
-                    await AsyncStorage.setItem('@OpenOrders',JSON.stringify(remove))
-                };
-                
-                
                 alert('Seu pedido foi enviado com sucesso');
-                navigation.navigate('Home')
 
             } else if(item.data.codigo == "410"){
                 setItensErrSld(item.data)
@@ -91,14 +80,23 @@ export default function SalePay({route,navigation}){
         .catch((err) => {
             //alert("Erro na geração do pedido")
             console.log(err);
-            navigation.navigate('Home')
         });
         
-        
+        if(continuaP){
+            const response = await AsyncStorage.getItem('@OpenOrders')
+            const copyResponse = [...JSON.parse(response)]
+
+            var remove = copyResponse.filter((item) => item.id !== ItensContinua.id);
+
+            await AsyncStorage.setItem('@OpenOrders',JSON.stringify(remove))
+        };
 
         setLoad2(false)
+
+        navigation.navigate('Home')
         
     };
+
 
 
 
