@@ -20,7 +20,7 @@ import styles from './styles';
 import {decode, encode} from 'base-64';
 
 import typeIcons from '../../utils/typeIcons';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons,FontAwesome } from '@expo/vector-icons';
 
 import api from '../../services/api'
 
@@ -51,6 +51,7 @@ export default function SalePrd({route,navigation}){
     const [page, setPage] = useState(2);
     const [checked, setChecked] = useState(filter);
     const [load, setLoad] = useState(false);
+    const [selectBenef, setSelectBenef] = useState(false);
 
     const [visibleFilter, setVisibleFilter] = useState(false);
     const [visibleScan, setVisibleScan] = useState(false);
@@ -93,7 +94,7 @@ export default function SalePrd({route,navigation}){
         const item = response.data["items"][0]
 
         if (item.length !== 0){ 
-            addProductToCart(item);
+            addProductToCart(item,false,false);
             setTextScan(data+' adicionado ao carrinho!');
             setScanned(true);
         } 
@@ -207,7 +208,7 @@ export default function SalePrd({route,navigation}){
         setLoad(false)
     };
 
-    function addProductToCart(item,initial){
+    function addProductToCart(item,initial,benef){
 
         if(initial){setVisibleCart(true)}
         
@@ -226,36 +227,44 @@ export default function SalePrd({route,navigation}){
                 PRODUTO: item.codigo.trim(),
                 DESCRICAO: item.descricao.trim(), 
                 VALOR: item.preco.trim(),
-                TOTAL: vlrTotal
+                TOTAL: vlrTotal,
+                BENEF: benef?'B':'N'
             });
             
             const sumall =  vlrTotalCart + parseInt(item.preco)
             totalCart(sumall)
 
         }else {
-            copyCart.forEach((list) => { 
-                if(list.id === item.id){
-                    vlrTotal += parseFloat(list.VALOR.replace(',', '.')) 
-                }
-            });
 
-            result.QUANTIDADE = result.QUANTIDADE + 1;
-
-            if(vlrTotal !== 0){
-                result.TOTAL = vlrTotal * result.QUANTIDADE;
-            } else{
-                result.TOTAL = parseFloat(result.VALOR.replace(',', '.')) * result.QUANTIDADE;
-            }
-
-            const sumall = copyCart.map(item => item.TOTAL).reduce((prev, curr) => prev + curr, 0);
+            if(result.BENEF === 'B'){
             
-            totalCart(sumall)
+                alert('Não é possível incluir mais de 1 item de beneficiamento')
+            
+            }else{
+                copyCart.forEach((list) => { 
+                    if(list.id === item.id){ vlrTotal += parseFloat(list.VALOR.replace(',', '.'))}
+                });
+
+                result.QUANTIDADE = result.QUANTIDADE + 1;
+
+                if(vlrTotal !== 0){
+                    result.TOTAL = vlrTotal * result.QUANTIDADE;
+                } else{
+                    result.TOTAL = parseFloat(result.VALOR.replace(',', '.')) * result.QUANTIDADE;
+                }
+    
+                const sumall = copyCart.map(item => item.TOTAL).reduce((prev, curr) => prev + curr, 0);
+                
+                totalCart(sumall)
+            }
         };
 
         addCart(copyCart)
 
         const sumQtd = copyCart.map(item => item.QUANTIDADE).reduce((prev, curr) => prev + curr, 0);
         quantCart(sumQtd)
+
+        if(benef){setSelectBenef(true)}
 
     };
 
@@ -289,6 +298,8 @@ export default function SalePrd({route,navigation}){
 
             const quantSub = qtdTotalCart - 1
             quantCart(quantSub)
+
+            if(result.BENEF === 'B'){setSelectBenef(false)}
         }
  
     };
@@ -299,6 +310,7 @@ export default function SalePrd({route,navigation}){
         quantCart(0)
         descontoCart('')
         setVisibleCart(false)
+        setSelectBenef(false)
     };
 
     function backCart(retorna){
@@ -428,12 +440,34 @@ export default function SalePrd({route,navigation}){
                                 </View>
                             </View>
 
-                            <TouchableOpacity 
-                                style={styles.buttonAddInitial} 
-                                onPress={()=>{addProductToCart(item, true)}}
-                            >
-                                <Text style={styles.txtAddInitial}>Adicionar +</Text>
-                            </TouchableOpacity>
+                            <View style={{
+                                flexDirection:'row',
+                                justifyContent:'center',
+                                marginTop:20,
+                            }}>
+                                <TouchableOpacity 
+                                    style={styles.buttonAddInitial} 
+                                    onPress={()=>{addProductToCart(item, true, false)}}
+                                >
+                                    <Text style={styles.txtAddInitial}>Adicionar +</Text>
+                                </TouchableOpacity>
+
+                                { !selectBenef && verifyBenef(item,cart) &&
+                                    <TouchableOpacity 
+                                    style={{
+                                        width: 40,
+                                        height: 40,
+                                        borderRadius: 40/2,
+                                        backgroundColor:'#F4C619',
+                                        alignItems:'center',
+                                        justifyContent:'center',
+                                        marginHorizontal:10
+                                      }} 
+                                    onPress={()=>{addProductToCart(item, true, true)}}
+                                >
+                                    <FontAwesome name="bold" size={20} color="black" />
+                                </TouchableOpacity>}
+                            </View>
                         </View>
                     }
 
@@ -557,7 +591,7 @@ export default function SalePrd({route,navigation}){
                             alignItems:'center'
                         }}>
                             <View>
-                                <Text style={styles.txtBold}>{item.PRODUTO.trim()}</Text>
+                                <Text style={[styles.txtBold, item.BENEF === 'B'&&{color:'#F4B619'}]}>{item.PRODUTO.trim()}</Text>
                                 <Text >{item.DESCRICAO.trim().substr(0,19)}</Text>
                                 <Text >{item.VALOR.trim()}</Text>
                             </View>
@@ -566,7 +600,11 @@ export default function SalePrd({route,navigation}){
                             <View style={{justifyContent:'center',alignItems:'center'}}>
                                 <Text>{item.TOTAL.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</Text>
                                 <View style={{flexDirection:'row',alignItems:'center',marginTop:5}}>
-                                    <TouchableOpacity onPress={()=>{removeProductToCart(item)}} style={styles.buttonQty}>
+
+                                    <TouchableOpacity 
+                                        onPress={()=>{removeProductToCart(item)}} 
+                                        style={[styles.buttonQty, item.BENEF === 'B'&&{backgroundColor:'#F4C619'}]}
+                                    >
                                         <Text style={styles.txtButtonQty}>-</Text>
                                     </TouchableOpacity>
 
@@ -574,7 +612,10 @@ export default function SalePrd({route,navigation}){
                                         {item.QUANTIDADE}
                                     </Text>
 
-                                    <TouchableOpacity onPress={()=>{addProductToCart(item, false)}} style={styles.buttonQty}>
+                                    <TouchableOpacity 
+                                        onPress={()=>{item.BENEF !== 'B' && addProductToCart(item, false, false)}} 
+                                        style={[styles.buttonQty, item.BENEF === 'B'&&{backgroundColor:'#F4C619'}]}
+                                    >
                                         <Text style={styles.txtButtonQty}>+</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -751,3 +792,21 @@ export default function SalePrd({route,navigation}){
     )
 }
 
+
+export function verifyBenef(item,cart) {
+
+    let lRet = true
+
+    const copyCart = [...cart];
+    const result = copyCart.find((product) => product.id === parseInt(item.id));
+
+    if(result){
+        lRet = false
+    }
+
+
+
+    
+
+    return lRet
+}

@@ -251,7 +251,30 @@ buttonBack:{
   alignItems:'center'
 },
 
+buttonAddInitial:{
+  backgroundColor:'#2F8BD8',
+  justifyContent:'center',
+  alignItems:'center',
+  height:40,
+  borderRadius:10,
+  padding:10,
+  marginHorizontal:10
+},
 
+txtAddInitial:{
+  color:'#fff',
+  fontSize:16,
+  fontWeight:'bold'
+},
+
+buttonEnt:{
+height:50,
+padding:10,
+borderRadius:10,
+width:'35%',
+justifyContent:'center',
+alignItems:'center',
+},
 
 
     //formulario
@@ -279,30 +302,7 @@ buttonBack:{
         color:'#fff'
     },
 
-    buttonAddInitial:{
-        backgroundColor:'#2F8BD8',
-        justifyContent:'center',
-        alignItems:'center',
-        marginHorizontal:100,
-        marginTop:20,
-        height:40,
-        borderRadius:10
-    },
 
-    txtAddInitial:{
-        color:'#fff',
-        fontSize:16,
-        fontWeight:'bold'
-    },
-
-    buttonEnt:{
-      height:50,
-      padding:10,
-      borderRadius:10,
-      width:'35%',
-      justifyContent:'center',
-      alignItems:'center',
-  },
 
 
 });
