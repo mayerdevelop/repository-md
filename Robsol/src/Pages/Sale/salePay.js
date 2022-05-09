@@ -66,6 +66,8 @@ export default function SalePay({route,navigation}){
             BAIRRO_ENTREGA: bairro1,
             CEP_ENTREGA: cep1,
         }
+
+        let lSaldo = true
         
         await api.post("/prtl003", { body: JSON.stringify(paramPed) })
         .then(async (item) => {
@@ -74,6 +76,7 @@ export default function SalePay({route,navigation}){
 
             } else if(item.data.codigo == "410"){
                 setItensErrSld(item.data)
+                lSaldo = false
             }
             
         })
@@ -82,18 +85,18 @@ export default function SalePay({route,navigation}){
             console.log(err);
         });
         
-        if(continuaP){
+        if(continuaP && lSaldo){
             const response = await AsyncStorage.getItem('@OpenOrders')
             const copyResponse = [...JSON.parse(response)]
 
             var remove = copyResponse.filter((item) => item.id !== ItensContinua.id);
 
             await AsyncStorage.setItem('@OpenOrders',JSON.stringify(remove))
+
+            navigation.navigate('Home')
         };
 
         setLoad2(false)
-
-        navigation.navigate('Home')
         
     };
 
