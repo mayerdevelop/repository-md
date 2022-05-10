@@ -22,7 +22,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 
-export default function Sections({nameSec,item,vendedor,prdProd,dataBack,reset,handleOpenCli,handleCloseCli,loadPrdSet}){
+export default function Sections({nameSec,item,vendedor,prdProd,dataBack,reset,handleOpenCli,handleCloseCli,handleOpenTit,loadPrdSet}){
 
     const {setCli,dataUser,addCart,totalCart,quantCart,descontoCart} = useContext(CartContext)
 
@@ -180,24 +180,20 @@ export default function Sections({nameSec,item,vendedor,prdProd,dataBack,reset,h
 
                     <Text style={styles.cardDescP}>{item.descricao.trim().substr(0,35)}</Text>
 
-                    
-                    <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                        <View>
-                            <Text style={styles.cardSubTitleP}>{'R$ '+item.preco.trim()}</Text>
-                            <Text style={styles.cardSubTitleP}>{'Saldo '+item.saldo.trim()}</Text>
-                            <Text style={styles.cardSubTitleP}>{'Linha: '+item.linha.trim()}</Text>
-                        </View>
-                        <View>
-                            <Text style={styles.cardSubTitleP}>{'Marca: '+item.marca.trim()}</Text>
-                            <Text style={styles.cardSubTitleP}>{'Material: '+item.material.trim()}</Text>
-                        </View>
-                    </View>
-
+                    <Text style={styles.cardSubTitleP}>{'R$ '+item.preco.trim()}</Text>
+                    <Text style={styles.cardSubTitleP}>{'Saldo '+item.saldo.trim()}</Text>
+                    <Text style={styles.cardSubTitleP}>{'Linha: '+item.linha.trim()}</Text>
+                    <Text style={styles.cardSubTitleP}>{'Marca: '+item.marca.trim()}</Text>
+                    <Text style={styles.cardSubTitleP}>{'Material: '+item.material.trim()}</Text>
                 </TouchableOpacity>
             }
 
             { nameSec == 'Customers' &&
-                <TouchableOpacity onPress={()=>{prdProd&&searchSec(`cnpj:${item.cnpj}:cli`)}} style={styles.cardP}>
+                <TouchableOpacity 
+                    onPress={()=>{prdProd&&searchSec(`cnpj:${item.cnpj}:cli`)}} 
+                    style={styles.cardP}
+                    onLongPress={()=>{handleOpenTit(item.razao_social)}}
+                >
 
                     <Text style={styles.cardDescP}>{item.nome_fantasia.trim()}</Text>
                     <Text style={styles.cardSubTitleP}>{item.razao_social.trim()}</Text>

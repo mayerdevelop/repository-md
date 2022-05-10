@@ -57,10 +57,7 @@ export default function Home({navigation}){
         const dataItens = response.data["items"]
 
         let icon = null
-
-        //await AsyncStorage.clear()
-
-
+        
         if(sec == 'Sales'){
             icon = 'add' 
             addCart([])
@@ -86,7 +83,6 @@ export default function Home({navigation}){
             icon:icon,
             prdProd:false
         })
-
         
     };
 

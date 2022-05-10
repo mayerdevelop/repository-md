@@ -75,6 +75,7 @@ export default function SalePay({route,navigation}){
                 alert('Seu pedido foi enviado com sucesso');
 
             } else if(item.data.codigo == "410"){
+                alert(JSON.stringify(item.data))
                 setItensErrSld(item.data)
                 lSaldo = false
             }
@@ -85,18 +86,20 @@ export default function SalePay({route,navigation}){
             console.log(err);
         });
         
-        if(continuaP && lSaldo){
+        if(continuaP){
             const response = await AsyncStorage.getItem('@OpenOrders')
             const copyResponse = [...JSON.parse(response)]
 
             var remove = copyResponse.filter((item) => item.id !== ItensContinua.id);
 
             await AsyncStorage.setItem('@OpenOrders',JSON.stringify(remove))
-
-            navigation.navigate('Home')
         };
 
         setLoad2(false)
+
+        if(lSaldo){
+            navigation.navigate('Home')
+        }
         
     };
 

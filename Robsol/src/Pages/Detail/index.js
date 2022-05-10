@@ -1,4 +1,4 @@
-import React,{useState,useContext} from 'react';
+import React,{useState,useContext, useEffect} from 'react';
 import {
     SafeAreaView,
     View,
@@ -41,7 +41,7 @@ export default function Detail({route,navigation}){
     const [searchT,setSearchT] = useState(false);
     const [listSearch,setListSearch] = useState([]);
     const [list, setList] = useState(data);
-    const [page, setPage] = useState(2);
+    const [page, setPage] = useState(1);
     const [footerEnable,setFooterEnable] = useState(true)
     const [visibleFilter, setVisibleFilter] = useState(false);
     const [checked, setChecked] = useState(filter);
@@ -74,7 +74,9 @@ export default function Detail({route,navigation}){
             } 
         })
 
-        setList([...list, ...response.data["items"]])
+        const aResult = getNewList(list,response.data["items"])
+
+        setList(aResult)
         setPage(page+1)
     };
     
@@ -184,6 +186,17 @@ export default function Detail({route,navigation}){
         })
     };
 
+
+    function getNewList(current, data) {
+        const newList = {}
+        
+        const listAux = [...current, ...data]
+
+        listAux.forEach(item => {newList[item.id] = item})
+
+        return Object.values(newList)
+      }
+
     return( 
 
         <SafeAreaView style={styles.contSafe}>
@@ -234,9 +247,9 @@ export default function Detail({route,navigation}){
                         />
                     }
 
-                    onEndReached={searchT?null:loadSec}
+                    onEndReached={!searchT&&loadSec}
                     onEndReachedThreshold={0.1}
-                    keyExtractor={(item, index) => String(index)}
+                    keyExtractor={(item) => item.id}
                     ListEmptyComponent={
                         <View style={styles.emptyContainer}>
                             <Text style={styles.emptyText}>Registro não encontrado</Text>

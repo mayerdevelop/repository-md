@@ -6,11 +6,12 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent:'center',
         flexDirection: 'row',
-        flexWrap:'wrap-reverse',
+        flexWrap:'wrap',
+        marginHorizontal:15
     },
 
     cardP: {
-        width:'95%',
+        width:'100%',
         padding:10,
         borderColor:'#2F8BD8',
         borderWidth:2,

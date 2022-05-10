@@ -7,12 +7,12 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         width:'100%',
         backgroundColor: '#fff',
-        flex:1
+        flex:1,
     },
 
     contScrow:{
         flex:1,
-        top:15
+        top:15,
     },
 
 
@@ -105,6 +105,32 @@ const styles = StyleSheet.create({
         fontSize:20,
         fontWeight:'bold',
     },
+
+    //formulario
+
+    inputForm:{
+      height:35,
+      borderBottomWidth:2,
+      marginBottom:20,
+      paddingHorizontal:5,
+      fontSize:16
+    },
+
+    submitAtualizar:{
+      backgroundColor:'#2F8BD8',
+      justifyContent:'center',
+      alignItems:'center',
+      height:50,
+      marginHorizontal:70,
+      borderRadius:15
+    },
+
+    submitTxtAtualizar:{
+      fontSize:18,
+      fontWeight:'bold',
+      color:'#fff'
+    },
+
 
 
     //footer
@@ -268,39 +294,26 @@ txtAddInitial:{
 },
 
 buttonEnt:{
-height:50,
-padding:10,
-borderRadius:10,
-width:'35%',
-justifyContent:'center',
-alignItems:'center',
+  height:50,
+  padding:10,
+  borderRadius:10,
+  width:'35%',
+  justifyContent:'center',
+  alignItems:'center',
+},
+
+buttonDownload:{
+  backgroundColor:'#2F8BD8',
+  height:30,
+  justifyContent:'center',
+  alignItems:'center',
+  marginHorizontal:5,
+  paddingHorizontal:10,
+  borderRadius:5
 },
 
 
-    //formulario
 
-    inputForm:{
-        height:35,
-        borderBottomWidth:2,
-        marginBottom:20,
-        paddingHorizontal:5,
-        fontSize:16
-    },
-
-    submitAtualizar:{
-        backgroundColor:'#2F8BD8',
-        justifyContent:'center',
-        alignItems:'center',
-        height:50,
-        marginHorizontal:70,
-        borderRadius:15
-    },
-
-    submitTxtAtualizar:{
-        fontSize:18,
-        fontWeight:'bold',
-        color:'#fff'
-    },
 
 
 

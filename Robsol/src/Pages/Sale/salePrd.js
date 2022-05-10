@@ -803,10 +803,6 @@ export function verifyBenef(item,cart) {
     if(result){
         lRet = false
     }
-
-
-
     
-
     return lRet
 }
