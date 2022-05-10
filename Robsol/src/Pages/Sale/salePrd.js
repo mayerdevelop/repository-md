@@ -9,6 +9,7 @@ import {
     FlatList,
     Keyboard,
     ActivityIndicator,
+    Alert
 } from 'react-native';
 
 import { RadioButton } from 'react-native-paper';
@@ -64,9 +65,7 @@ export default function SalePrd({route,navigation}){
     const authBasic = 'YWRtaW46QVZTSTIwMjI';
 
 
-    useEffect(()=> {
-        askForCameraPermission();
-    },[])
+    useEffect(()=> {askForCameraPermission()},[])
     
     const askForCameraPermission = () =>{
         (async () =>{
@@ -76,9 +75,6 @@ export default function SalePrd({route,navigation}){
     };
 
     const handleBarCodeScanned = async({type, data}) =>{
-        
-        //console.log('Type: '+ type + '\nData: ' + data)
-
 
         const response = await api.get(`/Products/`,{
             withCredentials: true,
@@ -271,6 +267,7 @@ export default function SalePrd({route,navigation}){
     function removeProductToCart(item){
 
         let vlrTotal = 0
+        let lRemove = false
 
         const copyCart = [...cart];
         const result = copyCart.find((product) => product.id === parseInt(item.id));
@@ -280,8 +277,8 @@ export default function SalePrd({route,navigation}){
             addCart(copyCart)
 
         }else {
-            const arrayFilter = copyCart.filter(product => product.id !== item.id);
-            addCart(arrayFilter)
+           showConfirmDialog(item.id)
+           lRemove = true
         }
 
         if(result && result.QUANTIDADE >= 1){
@@ -291,13 +288,15 @@ export default function SalePrd({route,navigation}){
                 }
             });
 
-            result.TOTAL = vlrTotal * result.QUANTIDADE;
-            const totalSub = vlrTotalCart - parseFloat(result.VALOR)
+            if(!lRemove){
+                result.TOTAL = vlrTotal * result.QUANTIDADE;
+                const totalSub = vlrTotalCart - parseFloat(result.VALOR)
 
-            totalCart(totalSub)
+                totalCart(totalSub)
 
-            const quantSub = qtdTotalCart - 1
-            quantCart(quantSub)
+                const quantSub = qtdTotalCart - 1
+                quantCart(quantSub)
+            }
 
             if(result.BENEF === 'B'){setSelectBenef(false)}
         }
@@ -341,8 +340,6 @@ export default function SalePrd({route,navigation}){
         setVisibleBack(false)
     }
 
-
-
     const apiPayment = async() =>{
         
         const response = await api.get(`/CondPgto/`,{
@@ -362,6 +359,44 @@ export default function SalePrd({route,navigation}){
             continuaP:continuaP,
             ItensContinua:ItensContinua
         })
+    };
+
+    const showConfirmDialog = (idRemove) => {
+        return Alert.alert(
+          "Atenção",
+          "Deseja remover o produto do carrinho?",
+          [ 
+            {text: "Não"},
+            {text: "Sim", onPress: () => {buttomRemoveItem(idRemove)}}
+          ]
+        );
+    };
+
+    function buttomRemoveItem(idRemove){
+
+        let vlrTotal = 0
+        
+        const copyCart = [...cart];
+        const result = copyCart.find((product) => product.id === parseInt(idRemove));
+        
+        if(result && result.QUANTIDADE == 1){ 
+            const arrayFilter = copyCart.filter(product => product.id !== idRemove);
+            addCart(arrayFilter)
+
+            copyCart.forEach((list) => { 
+                if(list.id === idRemove){
+                    vlrTotal += parseFloat(list.VALOR.replace(',', '.')) 
+                }
+            });
+
+            result.TOTAL = vlrTotal * result.QUANTIDADE;
+            const totalSub = vlrTotalCart - parseFloat(result.VALOR)
+
+            totalCart(totalSub)
+
+            const quantSub = qtdTotalCart - 1
+            quantCart(quantSub)
+        }
     };
 
 
@@ -786,6 +821,7 @@ export default function SalePrd({route,navigation}){
                 
 
             </ModBack>
+
 
         </SafeAreaView>
         </>
