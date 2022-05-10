@@ -195,7 +195,7 @@ export default function Detail({route,navigation}){
         listAux.forEach(item => {newList[item.id] = item})
 
         return Object.values(newList)
-      }
+    }
 
     return( 
 

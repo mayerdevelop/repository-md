@@ -98,9 +98,22 @@ export default function SaleCli({route,navigation}){
             } 
         })
 
-        setList([...list, ...response.data["items"]])
+        const aResult = getNewList(list,response.data["items"])
+
+        setList(aResult)
         setPage(page+1)
     };
+
+
+    function getNewList(current, data) {
+        const newList = {}
+        
+        const listAux = [...current, ...data]
+
+        listAux.forEach(item => {newList[item.id] = item})
+
+        return Object.values(newList)
+    }
     
     const searchSec = async(option) =>{
         if (searchText==='') return;
@@ -361,9 +374,9 @@ export default function SaleCli({route,navigation}){
                         />
                     }
 
-                    onEndReached={searchT?null:loadSec}
+                    onEndReached={!searchT&&loadSec}
                     onEndReachedThreshold={0.1}
-                    keyExtractor={(item, index) => String(index)}
+                    keyExtractor={(item) => item.id}
                     ListEmptyComponent={
                         <View style={styles.emptyContainer}>
                             <Text style={styles.emptyText}>Registro não encontrado</Text>
