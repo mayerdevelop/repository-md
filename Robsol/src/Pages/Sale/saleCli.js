@@ -260,7 +260,10 @@ export default function SaleCli({route,navigation}){
         modalizeRefTit.current?.open()
     };
 
-    const handleCloseTit = ()=>{modalizeRefTit.current?.close()};
+    const handleCloseTit = ()=>{
+        setCliTit('Nenhum titulo localizado')
+        modalizeRefTit.current?.close()
+    };
 
     const handleOpenEnt = ()=>{
         modalizeRefEnt.current?.open()
