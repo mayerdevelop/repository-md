@@ -1,4 +1,4 @@
-import React,{useState,useEffect,useContext} from 'react';
+import React,{useState,useContext,useEffect} from 'react';
 import {Text,SafeAreaView,View,Image,TouchableOpacity,ActivityIndicator} from 'react-native';
 import typeIcons from '../../utils/typeIcons';
 import {decode, encode} from 'base-64';
@@ -9,7 +9,7 @@ import {CartContext} from '../../Contexts/cart';
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-import {Ionicons,MaterialIcons,MaterialCommunityIcons} from '@expo/vector-icons';
+import {Ionicons,MaterialIcons} from '@expo/vector-icons';
 
 if (!global.btoa) { global.btoa = encode }
 if (!global.atob) { global.atob = decode }
@@ -18,7 +18,7 @@ import styles from './styles';
 
 export default function Home({navigation}){
 
-    const { addCart,dataUser,totalCart,quantCart } = useContext(CartContext)
+    const { addCart,dataUser,totalCart,quantCart,addImageProfile,imageProfile } = useContext(CartContext)
 
     const authBasic = 'YWRtaW46QVZTSTIwMjI';
 
@@ -83,8 +83,16 @@ export default function Home({navigation}){
             icon:icon,
             prdProd:false
         })
-        
     };
+
+    useEffect(() => {
+        getImageProfile();
+    }, []);
+
+    const getImageProfile = async () => {
+        const response = await AsyncStorage.getItem('@ImageProfile')
+        addImageProfile(response);
+      };
 
 
     return(
@@ -102,9 +110,23 @@ export default function Home({navigation}){
                         </Text>
                     </View>
 
-                    <TouchableOpacity style={styles.logout} onPress={()=>{navigation.navigate('Login')}}>
-                    <MaterialCommunityIcons name="logout" size={30} color="white" />
-                    </TouchableOpacity>
+                    <View style={{position:'absolute',right:20}}>
+                        {imageProfile 
+                            ?
+                            <Image 
+                                source={{ uri: imageProfile }} 
+                                style={{ 
+                                    width: 50, 
+                                    height: 50, 
+                                    borderRadius:50/2,
+                                    borderWidth:1,
+                                    borderColor:'white',
+                                }} 
+                            />
+                            :
+                            <Ionicons name="person-circle" size={50} color="white" />
+                        }
+                    </View>
                 </View>
 
                 <View style={{marginVertical:45,width:'100%'}}>
@@ -170,7 +192,7 @@ export default function Home({navigation}){
                         <Text style={styles.titleButtom}>Home</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.imageContent} onPress={()=>{ }}>
+                    <TouchableOpacity style={styles.imageContent} onPress={()=>{navigation.navigate('Profile')}}>
                         <Ionicons style={{marginBottom:3}} name="person" size={35} color="white" />
                         <Text style={styles.titleButtom}>Perfil</Text>
                     </TouchableOpacity>

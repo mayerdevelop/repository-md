@@ -13,6 +13,8 @@ function CartProvider({children}){
     const [dataUser,setDataUser] = useState();
     const [cliente, setCliente] = useState([]);
 
+    const [imageProfile, setImageProfile] = useState(null);
+
     function addCart(cartReceive){
         setCart(cartReceive)
     };
@@ -39,6 +41,10 @@ function CartProvider({children}){
         setDataUser(receive)
     };
 
+    function addImageProfile(receive){
+        setImageProfile(receive)
+    };
+
 
     return(
         <CartContext.Provider value={{
@@ -47,7 +53,8 @@ function CartProvider({children}){
             setCli,cliente,
             quantCart,qtdTotalCart,
             setUserData,dataUser,
-            descontoCart,desconto
+            descontoCart,desconto,
+            addImageProfile,imageProfile,
         }}>
             {children}
         </CartContext.Provider>

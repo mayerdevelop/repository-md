@@ -273,7 +273,7 @@ export default function Detail({route,navigation}){
                         : 
                         <></>
                     }
-                    <TouchableOpacity style={styles.imageContent} onPress={()=>{ }}>
+                    <TouchableOpacity style={styles.imageContent} onPress={()=>{navigation.navigate('Profile')}}>
                         <Ionicons style={{marginBottom:3}} name="person" size={35} color="white" />
                         <Text style={styles.titleButtom}>Perfil</Text>
                     </TouchableOpacity>

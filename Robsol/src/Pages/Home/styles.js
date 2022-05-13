@@ -19,15 +19,6 @@ const styles = StyleSheet.create({
         borderBottomEndRadius:20
     },
 
-    logout:{
-        position:'absolute',
-        right: 20,
-    },
-
-    logoutImage:{
-        resizeMode:'contain'
-    },
-
     contTextHeader:{
         flex:1,
         flexDirection:'row',
