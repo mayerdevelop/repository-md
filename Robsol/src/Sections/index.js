@@ -192,7 +192,7 @@ export default function Sections({nameSec,item,vendedor,prdProd,dataBack,reset,h
                 <TouchableOpacity 
                     onPress={()=>{prdProd&&searchSec(`cnpj:${item.cnpj}:cli`)}} 
                     style={styles.cardP}
-                    onLongPress={()=>{handleOpenTit(item.razao_social)}}
+                    onLongPress={()=>{handleOpenTit(item.codigo.trim())}}
                 >
 
                     <Text style={styles.cardDescP}>{item.nome_fantasia.trim()}</Text>

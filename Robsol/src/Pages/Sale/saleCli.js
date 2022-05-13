@@ -233,29 +233,18 @@ export default function SaleCli({route,navigation}){
     const handleOpenCli = ()=>{modalizeRefCli.current?.open()};
     const handleCloseCli = ()=>{modalizeRefCli.current?.close()};
 
-    const handleOpenTit = async(razao)=>{
+    const handleOpenTit = async(codigo)=>{
 
         const response = await api.get('/Financial',{
             withCredentials: true,
             headers: {
                 'Authorization': 'Basic '+authBasic,
-                'VENDEDOR': dataUser.cod_vendedor,            } 
+                'VENDEDOR': dataUser.cod_vendedor,
+                'codigo': codigo
+            } 
         })
 
-
-        const aResult = []
-
-        response.data["items"].forEach((element, index) => {
-
-            if(element.cliente.trim() === razao.trim()){
-                aResult.push({index: index, ...element});                
-            }
-
-        });
-
-        if(aResult.length !== 0){setCliTit(aResult[0].cliente)}
-
-        setListTit(aResult)
+        setListTit(response.data["items"])
 
         modalizeRefTit.current?.open()
     };
