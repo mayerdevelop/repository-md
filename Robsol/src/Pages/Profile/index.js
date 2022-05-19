@@ -55,10 +55,10 @@ export default function Profile ({route,navigation}){
         <SafeAreaView style={styles.contSafe}>
             <View style={styles.container}>
 
-                <View style={{alignItems:'flex-end',width:'85%'}}>
-                <TouchableOpacity style={{}} onPress={()=>{navigation.navigate('Login')}}>
-                    <MaterialCommunityIcons name="logout" size={35} color="#175A93" />
-                </TouchableOpacity>
+                <View style={{alignItems:'flex-end',width:'85%',marginTop:20}}>
+                    <TouchableOpacity style={{}} onPress={()=>{navigation.navigate('Login')}}>
+                        <MaterialCommunityIcons name="logout" size={35} color="#175A93" />
+                    </TouchableOpacity>
                 </View>
 
                 {image 
