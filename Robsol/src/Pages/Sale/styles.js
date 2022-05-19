@@ -135,16 +135,15 @@ const styles = StyleSheet.create({
 
     //footer
 
-    footerContent:{
-      flexDirection:'row',
-      alignItems:'center',
-      justifyContent:'space-around',
-      backgroundColor:'#175A93',
-      width:'94%',
-      height:90,
-      borderRadius:12,
-      position:'absolute',
-      bottom: 0,
+  footerContent:{
+    flexDirection:'row',
+    alignItems:'center',
+    justifyContent:'space-around',
+    backgroundColor:'#175A93',
+    width:'100%',
+    height:90,
+    position:'absolute',
+    bottom: 0,
   },
 
   footerContentS:{
@@ -180,6 +179,7 @@ const styles = StyleSheet.create({
     width:'100%',
     paddingHorizontal:30,
     paddingVertical:15,
+    paddingTop:30,
     backgroundColor:'#175A93',
     justifyContent:'space-between',
     flexDirection:'row',
