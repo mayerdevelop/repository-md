@@ -65,6 +65,8 @@ export default function SalePay({route,navigation}){
             ENDERECO_ENTREGA: endereco1,
             BAIRRO_ENTREGA: bairro1,
             CEP_ENTREGA: cep1,
+            ORCAMENTO: 'N',
+            NUMORC: ''
         }
 
         let lSaldo = true
@@ -75,7 +77,6 @@ export default function SalePay({route,navigation}){
                 alert('Seu pedido foi enviado com sucesso');
 
             } else if(item.data.codigo == "410"){
-                alert(JSON.stringify(item.data))
                 setItensErrSld(item.data)
                 lSaldo = false
             }
@@ -113,7 +114,34 @@ export default function SalePay({route,navigation}){
         const copyCart = [...cart]
         const copyClient = {...cliente};
 
-        const codigoId = Math.floor(Math.random() * (999999 - 900000 + 1) + 900000);
+        let idResponse = ''
+        let codigoId = ''
+
+        let paramPed = {
+            CLIENTE: copyClient,
+            CONDPAGTO: payment,
+            DESCONTO: desconto,
+            FORCE: 'FALSE',
+            ITEMS: copyCart,
+            VENDEDOR: vendedor,
+            OBSERVATION: txtObs,
+            ENDERECO_ENTREGA: !!copyClient.endereco1?copyClient.endereco1:'',
+            BAIRRO_ENTREGA: !!copyClient.bairro1?copyClient.bairro1:'',
+            CEP_ENTREGA: !!copyClient.cep1?copyClient.cep1:'',
+            ORCAMENTO: 'S',
+            NUMORC: continuaP?ItensContinua.codigo:''
+        }
+
+        await api.post("/prtl003", { body: JSON.stringify(paramPed) })
+        .then(async (item) => {
+            idResponse = item.data.pedido
+        });
+
+        if(!!idResponse){
+            codigoId = idResponse
+        }else {
+            codigoId = Math.floor(Math.random() * (999999 - 900000 + 1) + 900000);
+        }
 
         const data = new Date()
 
@@ -122,7 +150,7 @@ export default function SalePay({route,navigation}){
         let ano = data.getFullYear().toString()
 
         let pedido = {
-            id: codigoId.toString(),
+            id: '9'+codigoId.toString(),
             cliente: copyClient.nome_fantasia,
             cnpj: copyClient.cnpj,
             codigo: codigoId.toString(),
@@ -174,8 +202,7 @@ export default function SalePay({route,navigation}){
             } else{
                 copyResponse.push(pedido)
                 await AsyncStorage.setItem('@OpenOrders',JSON.stringify(copyResponse))
-        }
-
+            }
 
         } else {
             await AsyncStorage.setItem('@OpenOrders',JSON.stringify([pedido]))
