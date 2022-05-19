@@ -66,7 +66,7 @@ export default function SaleCli({route,navigation}){
     const [checked, setChecked] = useState(filter);
     const [load, setLoad] = useState(false);
     const [listTit, setListTit] = useState([]);
-    const [cliTit, setCliTit] = useState('Nenhum titulo localizado');
+    const [cliTit, setCliTit] = useState('');
 
     const authBasic = 'YWRtaW46QVZTSTIwMjI';
 
@@ -163,7 +163,6 @@ export default function SaleCli({route,navigation}){
                     aResult.push({index: 1, ...responseSefaz});
                 }
 
-                
             }else{
                 if(response.data.items){
                     response.data["items"].forEach((element, index) => {
@@ -177,7 +176,7 @@ export default function SaleCli({route,navigation}){
         }catch(error){
             alert('Cliente não localizado na Sefaz')
         }
-        
+
         setListSearch(aResult)
         setSearchT(true)
         setLoad(false)
@@ -244,13 +243,20 @@ export default function SaleCli({route,navigation}){
             } 
         })
 
-        setListTit(response.data["items"])
 
+        const aResult = [...response.data["items"]]
+
+        if (aResult.length !== 0){
+            setCliTit(aResult[0].cliente)
+        }else {
+            setCliTit('Nenhum titulo localizado')
+        }
+
+        setListTit(aResult)
         modalizeRefTit.current?.open()
     };
 
     const handleCloseTit = ()=>{
-        setCliTit('Nenhum titulo localizado')
         modalizeRefTit.current?.close()
     };
 
