@@ -208,7 +208,7 @@ export default function SalePrd({route,navigation}){
             }
             
         }catch(error){
-            alert(error)
+            console.log(error)
         }
         
         setListSearch(aResult)
