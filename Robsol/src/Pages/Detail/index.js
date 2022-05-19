@@ -154,7 +154,7 @@ export default function Detail({route,navigation}){
             }
             
         }catch(error){
-            alert(error)
+            console.log(error)
         }
         
         setListSearch(aResult)
@@ -246,7 +246,6 @@ export default function Detail({route,navigation}){
                             dataBack={[nameSec,data,filter,icon,prdProd]}
                         />
                     }
-
                     onEndReached={!searchT&&loadSec}
                     onEndReachedThreshold={0.1}
                     keyExtractor={(item) => item.id}

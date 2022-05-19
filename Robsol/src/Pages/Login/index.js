@@ -55,7 +55,8 @@ export default function Login({navigation}){
             } 
         
         } catch(error){
-            alert(error)
+            console.log(error)
+            alert('Usuário ou senha incorretos')
         }
         setLoad(false)
     };
@@ -158,7 +159,7 @@ export default function Login({navigation}){
 
 
                 <TouchableOpacity style={styles.button} onPress={loadUser}>
-                    {load ? 
+                    {load ?
                     <View style={{flex:1,justifyContent:'center'}}>
                         <ActivityIndicator color={'#fff'} size={35}/>
                     </View>
@@ -168,7 +169,7 @@ export default function Login({navigation}){
                 </TouchableOpacity>
                 
                 <View style={{marginTop:40}}>
-                    <Text>v220220513</Text>
+                    <Text>v120220519</Text>
                 </View>
             </Animated.View>
             
