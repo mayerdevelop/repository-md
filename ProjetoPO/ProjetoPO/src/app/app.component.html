@@ -1,0 +1,14 @@
+<div class="po-wrapper">
+  <po-toolbar p-title="Portal Teste"></po-toolbar>
+
+  <po-menu [p-menus]="menus"></po-menu>
+  <po-page-dynamic-table
+  p-title="Titulos"
+  [p-table-custom-actions]="tableCustomActions"
+  [p-service-api]="serviceApi"
+  [p-load]="onLoad.bind(this)"
+></po-page-dynamic-table>
+
+</div>
+
+

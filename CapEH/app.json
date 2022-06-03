@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "CapEH",
+    "slug": "CapEH",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
