@@ -4,18 +4,22 @@ import {Agenda} from 'react-native-calendars';
 import {Card} from 'react-native-paper';
 import styles from './styles';
 import Footer from '../../Components/Footer';
+import calendar from '../../Components/Calendar/index';
 
 import pelicano from '../../Assets/pelicano.png'
 
+const items = calendar.reduce(
+  (obj, item) => Object.assign(obj, { [item.data]: [{name:item.name}] }), {});
+
+const data = new Date()
+
+let dia = data.getDate().toString().padStart(2, '0')
+let mes = (data.getMonth()+1).toString().padStart(2, '0')
+let ano = data.getFullYear().toString()
+
+const dataSelected = ano+'-'+mes+'-'+dia
 
 export default function Calendar({navigation}){
-
-const items = ({
-    '2022-06-04': [{name: 'Filantropia - Instituto Kuaile'}],
-    '2022-06-11': [{name: 'Reuniao Ritualistica'}],
-    '2022-06-18': [{name: 'Reuniao Ritualistica'}, {name: 'Eleição Proxima Gestão'}]
-  });
-
 
   const renderItem = (item) => {
     return (
@@ -34,8 +38,6 @@ const items = ({
     );
   };
 
-  
-
     return(
         <>
         <SafeAreaView edges={["top"]} style={{ flex:0, backgroundColor: "#96250C" }}/>
@@ -46,7 +48,7 @@ const items = ({
                 <View style={{flex:1,marginBottom:50}}>
                     <Agenda
                         items={items}
-                        selected={'2022-06-01'}
+                        selected={dataSelected}
                         renderItem={renderItem}
                         minDate={'2022-06-01'}
                         maxDate={'2022-12-31'}
@@ -57,10 +59,8 @@ const items = ({
                             </View>;
                         }}
                         pastScrollRange={0}
-                        futureScrollRange={7}
-                        rowHasChanged={(r1, r2) => {
-                            return r1.name !== r2.name;
-                          }}
+                        futureScrollRange={6}
+                        rowHasChanged={(r1, r2) => { return r1.name !== r2.name; }}
                     />
                 </View>
 
