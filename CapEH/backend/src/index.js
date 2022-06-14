@@ -6,6 +6,7 @@ server.use(express.json());
 
 const CalendarRoutes = require('./routes/CalendarRoutes');
 server.use('/calendar', CalendarRoutes);
+server.use('/paramcalendar', CalendarRoutes);
 
 server.listen(3000, () =>{
     console.log('API ONLINE')
