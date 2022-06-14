@@ -13,7 +13,7 @@ server.listen(3000, () =>{
 
 
 mongoose.connection.on("connected", ()=>{
-    console.log("connected sucsess v20220613")
+    console.log("connected sucsess v120220613")
 })
 
 mongoose.connection.on("error", (err)=>{
