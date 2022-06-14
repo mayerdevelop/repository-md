@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect, useState} from 'react';
 import {Text,SafeAreaView,View,Image,TouchableOpacity,FlatList} from 'react-native';
 
 import styles from './styles';
@@ -6,26 +6,39 @@ import logo from '../../Assets/logo.png'
 import maps from '../../Assets/maps.png'
 
 import Footer from '../../Components/Footer';
-import calendar from '../../Components/Calendar/index';
+import api from '../../Services/api';
 
 import { FontAwesome5 } from '@expo/vector-icons';
 
 export default function Home({navigation}){
 
-const data = new Date()
+    const [calendar, setCalendar] = useState([]);
 
-let dia = data.getDate().toString().padStart(2, '0')
-let mes = (data.getMonth()+1).toString().padStart(2, '0')
-let ano = data.getFullYear().toString()
+    useEffect(() => {
+        (async function(){
+        try{
+            const response = await api.get('/calendar/all');
+            setCalendar(response.data)
+        }catch(error){
+            alert(JSON.stringify(error))
+        }
+        })();
+    }, []);
 
-const dataSelected = ano+'-'+mes+'-'+dia
+    const data = new Date()
 
-const itemCalend = []
-  
-for (var i = 0; i < calendar.length; i++) {
-    if(calendar[i].data >= dataSelected && itemCalend.length <= 3){
-    itemCalend.push(calendar[i])
-}}
+    let dia = data.getDate().toString().padStart(2, '0')
+    let mes = (data.getMonth()+1).toString().padStart(2, '0')
+    let ano = data.getFullYear().toString()
+
+    const dataSelected = ano+'-'+mes+'-'+dia
+
+    const itemCalend = []
+    
+    for (var i = 0; i < calendar.length; i++) {
+        if(calendar[i].data >= dataSelected && itemCalend.length <= 3){
+        itemCalend.push(calendar[i])
+    }}
 
     return(
         <>
@@ -87,10 +100,10 @@ for (var i = 0; i < calendar.length; i++) {
                 
                             }
                             
-                            keyExtractor={(item) => item.id}
+                            keyExtractor={(item) => item._id}
                             ListEmptyComponent={
                                 <View style={styles.emptyContainer}>
-                                    <Text style={styles.emptyText}>Registro não encontrado</Text>
+                                    <Text style={styles.emptyText}>Não há próximos eventos cadastrados.</Text>
                                 </View>
                             }
                         />

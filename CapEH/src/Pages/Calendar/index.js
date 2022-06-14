@@ -4,22 +4,38 @@ import {Agenda} from 'react-native-calendars';
 import {Card} from 'react-native-paper';
 import styles from './styles';
 import Footer from '../../Components/Footer';
-import calendar from '../../Components/Calendar/index';
+import api from '../../Services/api';
 
 import pelicano from '../../Assets/pelicano.png'
 
-const items = calendar.reduce(
-  (obj, item) => Object.assign(obj, { [item.data]: [{name:item.name}] }), {});
-
-const data = new Date()
-
-let dia = data.getDate().toString().padStart(2, '0')
-let mes = (data.getMonth()+1).toString().padStart(2, '0')
-let ano = data.getFullYear().toString()
-
-const dataSelected = ano+'-'+mes+'-'+dia
 
 export default function Calendar({navigation}){
+
+  const [calendar, setCalendar] = useState([]);
+
+  useEffect(() => {
+    (async function(){
+      try{
+        const response = await api.get('/calendar/all');
+        setCalendar(response.data)
+
+      }catch(error){
+        alert(JSON.stringify(error))
+      }
+    })();
+  }, []);
+
+  
+  const items = calendar.reduce(
+    (obj, item) => Object.assign(obj, { [item.data]: [{name:item.name}] }), {});
+  
+  const data = new Date()
+  
+  let dia = data.getDate().toString().padStart(2, '0')
+  let mes = (data.getMonth()+1).toString().padStart(2, '0')
+  let ano = data.getFullYear().toString()
+  
+  const dataSelected = ano+'-'+mes+'-'+dia
 
   const renderItem = (item) => {
     return (
