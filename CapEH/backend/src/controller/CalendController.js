@@ -78,6 +78,16 @@ class CalendController {
             })
     }
 
+    async getAllParam(req,res){
+        await ParamCalendModel.find({})
+        .then(response =>{
+            return res.status(200).json(response)
+        })
+        .catch(error =>{
+            return res.status(500).json(error)
+        })
+    }
+
     async deleteAllParam(req,res){
         await ParamCalendModel.deleteMany({})
         .then(response =>{
