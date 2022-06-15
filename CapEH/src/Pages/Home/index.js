@@ -10,35 +10,41 @@ import api from '../../Services/api';
 
 import { FontAwesome5 } from '@expo/vector-icons';
 
-export default function Home({navigation}){
+export default function Home({route,navigation}){
 
     const [calendar, setCalendar] = useState([]);
+    const { refreshCalend } = route.params;
 
-    useEffect(() => {
-        (async function(){
+    useEffect(() => { getCalend() }, [refreshCalend]);
+
+    async function getCalend(){
         try{
             const response = await api.get('/calendar/all');
-            setCalendar(response.data)
+
+            const result = [...response.data.sort((a, b) => a.data.localeCompare(b.data))]
+
+            const data = new Date()
+
+            let dia = data.getDate().toString().padStart(2, '0')
+            let mes = (data.getMonth()+1).toString().padStart(2, '0')
+            let ano = data.getFullYear().toString()
+        
+            const dataSelected = ano+'-'+mes+'-'+dia
+
+            const itemCalend = []
+    
+            for (var i = 0; i < result.length; i++) {
+                if(result[i].data >= dataSelected && i <= 3){
+                itemCalend.push(result[i])
+            }}
+
+            setCalendar([...itemCalend])
+
         }catch(error){
             alert(JSON.stringify(error))
         }
-        })();
-    }, []);
+    }
 
-    const data = new Date()
-
-    let dia = data.getDate().toString().padStart(2, '0')
-    let mes = (data.getMonth()+1).toString().padStart(2, '0')
-    let ano = data.getFullYear().toString()
-
-    const dataSelected = ano+'-'+mes+'-'+dia
-
-    const itemCalend = []
-    
-    for (var i = 0; i < calendar.length; i++) {
-        if(calendar[i].data >= dataSelected && itemCalend.length <= 3){
-        itemCalend.push(calendar[i])
-    }}
 
     return(
         <>
@@ -62,7 +68,7 @@ export default function Home({navigation}){
                         <Text style={{fontSize:18,fontWeight:'bold'}}>Próximos Eventos</Text>
                             
                         <FlatList
-                            data={itemCalend.sort((a, b) => a.data.localeCompare(b.data))}
+                            data={calendar.sort((a, b) => a.data.localeCompare(b.data))}
                             renderItem={({item})=>
 
                             <TouchableOpacity 

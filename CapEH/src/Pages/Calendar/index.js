@@ -12,12 +12,20 @@ import pelicano from '../../Assets/pelicano.png'
 export default function Calendar({navigation}){
 
   const [calendar, setCalendar] = useState([]);
+  const [minDate, setMinDate] = useState('');
+  const [maxDate, setMaxDate] = useState('');
 
   useEffect(() => {
     (async function(){
       try{
-        const response = await api.get('/calendar/all');
-        setCalendar(response.data)
+        const calendResponse = await api.get('/calendar/all');
+        setCalendar(calendResponse.data)
+
+        const paramsResponse = await api.get('/paramcalendar/get/all');
+        paramsResponse.data.forEach((element) => {
+          setMinDate(element.minDate)
+          setMaxDate(element.maxDate)
+        });
 
       }catch(error){
         alert(JSON.stringify(error))
@@ -66,8 +74,8 @@ export default function Calendar({navigation}){
                         items={items}
                         selected={dataSelected}
                         renderItem={renderItem}
-                        minDate={'2022-06-01'}
-                        maxDate={'2022-12-31'}
+                        minDate={minDate}
+                        maxDate={maxDate}
                         renderEmptyData={() => {
                             return <View style={{flex:1,alignItems:'center',marginTop:40}}>
                                 <Text style={{fontWeight:'bold',fontSize:18,marginBottom:20}}>Não há compromissos para esse dia, caro Pelicaninho.</Text>

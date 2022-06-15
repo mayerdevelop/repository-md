@@ -9,7 +9,7 @@ export default function Footer({navigation}){
 
     return(
         <View style={styles.footerContent}>
-            <TouchableOpacity style={styles.imageContent} onPress={()=>{navigation.navigate('Home')}}>
+            <TouchableOpacity style={styles.imageContent} onPress={()=>{navigation.navigate('Home',{refreshCalend:true})}}>
                 <Ionicons name="home" size={30} color="white" />
                 <Text style={styles.titleButtom}>Home</Text>
             </TouchableOpacity>
