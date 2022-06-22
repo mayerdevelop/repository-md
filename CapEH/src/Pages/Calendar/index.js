@@ -28,7 +28,7 @@ export default function Calendar({navigation}){
         });
 
       }catch(error){
-        alert(JSON.stringify(error))
+        console.log(JSON.stringify(error))
       }
     })();
   }, []);

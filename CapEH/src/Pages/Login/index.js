@@ -34,14 +34,17 @@ export default function Login({route,navigation}){
         Keyboard.dismiss()
         setLoad(true)
         
-    
-        const response = await api.get(`/login/auth/${user+'&'+pass}`);
+        try{
+            const response = await api.get(`/login/auth/${user+'&'+pass}`);
 
-        if(response.data.length === 0){
-            alert('Usuário ou senha incorretos')
-            
-        }else{
-            navigation.navigate('Home',{refreshCalend:true})
+            if(response.data.length === 0){
+                alert('Usuário ou senha incorretos')
+                
+            }else{
+                navigation.navigate('Home',{refreshCalend:true})
+            }
+        }catch(error){
+            console.log(error)
         }
 
         setLoad(false)
@@ -107,12 +110,14 @@ export default function Login({route,navigation}){
             >
                 <Animated.Image
                     source={require('../../Assets/pelicano.png')}
-                    style={[{transform: [{scaleX: logo.x}, {scaleY: logo.y} ]},{marginTop:100}]}
+                    style={[{transform: [{scaleX: logo.x}, {scaleY: logo.y} ]}]}
                 />
 
-                <Text style={{fontSize:26}}>Bem vindo Pelicaninho!</Text>
-                <Text style={{fontSize:16}}>Entre com a sua conta fornecida pelo capítulo</Text>
-
+                <View style={{marginTop:20,alignItems:'center'}}>
+                    <Text style={{fontSize:26}}>Bem vindo Pelicaninho!</Text>
+                    <Text style={{fontSize:16}}>Entre com a sua conta fornecida pelo capítulo</Text>
+                </View>
+                
                 <Animated.View style={[styles.containerInput,{opacity:opacity,transform:[{ translateY: offSet.y }]}]}>
                     
                     <View style={styles.containerInpuID}>

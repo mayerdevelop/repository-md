@@ -24,7 +24,7 @@ export default function Footer({navigation}){
                 <Text style={styles.titleButtom}>Aprendizado</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.imageContent}>
+            <TouchableOpacity style={styles.imageContent} onPress={()=>{navigation.navigate('Profile')}}>
                 <Ionicons style={{marginBottom:1}} name="person" size={30} color="white" />
                 <Text style={styles.titleButtom}>Perfil</Text>
             </TouchableOpacity>

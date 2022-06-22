@@ -6,7 +6,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         justifyContent: 'center',
-        alignItems:'center'
+        alignItems:'center',
+        marginTop:40
     },
 
     safeView:{
@@ -80,6 +81,7 @@ const styles = StyleSheet.create({
         shadowOpacity:0.30,
         shadowRadius:3.5,
         elevation:5,
+        marginTop:10
     },
 
     buttonText:{
