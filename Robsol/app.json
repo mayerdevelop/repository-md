@@ -19,6 +19,9 @@
     ],
     "android": {
       "package": "com.mayerdev.robsolapp"
+    },
+    "ios": {
+      "bundleIdentifier": "com.mayerdev.robsolapp"
     }
   },
   "ios": {
