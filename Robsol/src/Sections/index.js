@@ -101,9 +101,9 @@ export default function Sections({nameSec,item,vendedor,prdProd,dataBack,reset,h
     
             aResult.forEach((item) => {
                 qtd += parseInt(item.quantidade)
-                vlr += parseFloat(item.valor_total.trim().replace(',', '.'))
+                vlr += parseFloat(item.valor_total.trim().replace('.','').replace(',','.'))
             })
-    
+
             setQtdTotal(qtd)
             setVlrTotal(vlr)
         };
