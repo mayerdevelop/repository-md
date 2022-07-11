@@ -110,7 +110,7 @@ export default function Sections({nameSec,item,vendedor,prdProd,dataBack,reset,h
 
         setLoad(false)
         setListSearch(aResult)
-        
+                
     };
 
 

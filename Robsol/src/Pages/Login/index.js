@@ -46,6 +46,8 @@ export default function Login({navigation}){
             });
 
             if (response.data.statusrequest[0].code === '#200') {
+                console.log(response.data.statusrequest[0])
+
                 setUserData(response.data.statusrequest[0])
 
                 navigation.navigate('Home');
