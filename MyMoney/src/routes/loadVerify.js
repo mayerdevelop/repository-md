@@ -4,12 +4,13 @@ import {SafeAreaView} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {numberToReal,sumTotals} from '../utils/numberToReal';
+import { useNavigation } from '@react-navigation/native';
 
 import Home from '../pages/home';
 import SignUp from '../pages/signUp';
 
 import {AppContext} from '../contexts/index'
-export default function LoadVerify({navigation}){
+export default function LoadVerify(){
 
   const {
     setNameContext,
@@ -19,10 +20,12 @@ export default function LoadVerify({navigation}){
     setMonthContext,
     setYearContext,
     setMovementsContext,
+    filterDate,
   } = useContext(AppContext)
 
-  const [list, setList] = useState([]);
   const [page, setPage] = useState(0); /* 0-signup / 1-home */
+
+  const navigation = useNavigation(); 
 
   const meses = [null,"Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
@@ -98,29 +101,14 @@ export default function LoadVerify({navigation}){
   function fSetPage(value){ setPage(value)}
 
 
-  async function filterDate(mov,newMes,ano){
-    const newList = []
-
-    let mes = meses.indexOf(newMes) + "";
-    while (mes.length < 2) mes = "0" + mes;
-
-    mov.forEach((item) => {
-      if (item.date.substring(0,6) === ano+mes){
-        newList.push(item)
-      }
-    })
-
-    setList(newList)
-  }
-
-
   return (
     <SafeAreaView style={{flex: 1,backgroundColor: '#171719'}}>
-      {page === 0 &&
+    
+    {page === 0 &&
         <SignUp fSetPage={fSetPage} meses={meses}/>
       }
       {page === 1 &&
-        <Home filterDate={filterDate} list={list} meses={meses}/>
+        <Home meses={meses} navigation={navigation}/>
       }
     </SafeAreaView>
     

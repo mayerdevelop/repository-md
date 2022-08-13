@@ -1,4 +1,4 @@
-import {StyleSheet,Platform} from 'react-native'
+import {StyleSheet} from 'react-native'
 
 const styles = StyleSheet.create({
 
@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
         backgroundColor:'#24232A',
         width:'94%',
         height:70,
-        bottom:Platform.OS === 'ios'?40:15,
+        bottom:15,
         position:'absolute',
         borderRadius:12,
         shadowColor:'#000',

@@ -16,19 +16,10 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize'
   },
 
-  modalContainer:{
-    flex:1,
-    height:560,
-    padding:20,
-    backgroundColor:'#232229',
-    borderTopStartRadius:10,
-    borderTopEndRadius:10,
-  },
-
   headerModal: {
-    flexDirection:'row',
-    justifyContent:'space-between',
-    marginBottom:15
+    width:'100%',
+    height:130,
+    paddingHorizontal:20
   },
 
   typeIcon:{
@@ -38,23 +29,13 @@ const styles = StyleSheet.create({
     borderRadius:50/2,
     justifyContent:'center',
     alignItems:'center',
-    marginHorizontal:10
+    marginHorizontal:12
   },
 
   typeOff:{
     opacity:0.5
   },
 
-  elipseCheck:{
-    width:38,
-    height:38,
-    borderRadius:38/2,
-    justifyContent:'center',
-    alignItems:'center',
-    borderWidth:1,
-    borderColor:'#fff',
-    marginTop:10,
-  }
 
 });
 
