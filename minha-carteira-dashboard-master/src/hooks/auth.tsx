@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext } from 'react';
+import { api } from "../services/api";
 
 interface IAuthContext {
     logged: boolean;
@@ -8,6 +9,12 @@ interface IAuthContext {
 
 const AuthContext = createContext<IAuthContext>({} as IAuthContext);
 
+const teste = async(email: string, password: string) => {
+    alert(email)
+    const { data } = await api.post("/PRTL001", { USUARIO: email, SENHA: password });
+    console.log(JSON.stringify(data))
+}
+
 const AuthProvider: React.FC = ({ children }) => {
     const [logged, setLogged] = useState<boolean>(() => {
         const isLogged = localStorage.getItem('@minha-carteira:logged');
@@ -16,12 +23,18 @@ const AuthProvider: React.FC = ({ children }) => {
     });
 
     const signIn = (email: string, password: string) => {
-        if(email === 'felipemayer00@gmail.com' && password === '1234'){
+        
+        teste(email,password)
+        
+
+
+
+       /* if(email === 'felipemayer00@gmail.com' && password === '1234'){
             localStorage.setItem('@minha-carteira:logged', 'true');
             setLogged(true);
         }else{
             alert('Senha ou usuário inválidos!');
-        }
+        }*/
     }
 
     const signOut = () => {
