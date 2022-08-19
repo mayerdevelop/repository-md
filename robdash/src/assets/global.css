@@ -7,6 +7,9 @@
 
 body, html {
   font-family: 'Roboto', sans-serif;
+  width: 100vw;
+  height: 100vh;
+  background-color: #111;
 }
 
 .login-form {
@@ -19,6 +22,12 @@ body, html {
   color: azure;
   line-height: 1.2;
   text-align: center;
+}
+
+.logo-Home{
+  width: 80%;
+  align-items: center;
+  justify-content: center;
 }
 
 .login-form-title img {

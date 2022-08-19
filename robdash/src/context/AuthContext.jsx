@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
           "Authorization"
         ] = `Bearer ${response.user_token}`;
 
-        localStorage.setItem("@Auth:user", response.Cod_Usuario);
+        localStorage.setItem("@Auth:user", response.nome_usuario);
         localStorage.setItem("@Auth:token", response.user_token);
         setUser(response.Cod_Usuario)
 
