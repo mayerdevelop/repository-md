@@ -1,6 +1,7 @@
 export { default as Dashboard } from './Dashboard';
 export { default as Clientes } from './Clientes';
 export { default as Pedidos } from './Pedidos';
+export { default as Login } from './Login';
 export { default as Area } from './Charts/Area';
 export { default as Bar } from './Charts/Bar';
 export { default as ColorMapping } from './Charts/ColorMapping';
