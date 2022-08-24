@@ -4,7 +4,8 @@ import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 
 import { Navbar, Sidebar, ThemeSettings } from './components';
-import { Dashboard, Pedidos, Clientes, Stacked, Pyramid, Line, Area, Bar, Pie, Financial, ColorMapping, Login } from './pages';
+import * as pages from './pages';
+
 import './App.css';
 
 import { useStateContext } from './contexts/ContextProvider';
@@ -16,7 +17,8 @@ const App = () => {
     activeMenu, 
     currentColor, 
     themeSettings, 
-    setThemeSettings 
+    setThemeSettings,
+    signed
   } = useStateContext();
 
   useEffect(() => {
@@ -47,41 +49,37 @@ const App = () => {
             {themeSettings && (<ThemeSettings />)}
           </div>
 
-          {activeMenu
+          {signed && activeMenu
             ? <div className="w-72 fixed sidebar dark:bg-secondary-dark-bg bg-white"><Sidebar /></div>
             : <div className="w-0 dark:bg-secondary-dark-bg"><Sidebar /></div>
           }
 
-          <div className={activeMenu
+          <div className={signed && activeMenu
                 ? 'dark:bg-main-dark-bg  bg-main-bg min-h-screen md:ml-72 w-full'
                 : 'bg-main-bg dark:bg-main-dark-bg  w-full min-h-screen flex-2'
             }
           >
-            <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full "><Navbar /></div>
-            
+            { signed &&<div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full "><Navbar /></div>}
 
-            <Routes>
-              {/* dashboard  */}
-              <Route path="/" element={(<Login />)} />
-              <Route path="/dashboard" element={(<Dashboard />)} />
+            { signed ?
+              <Routes>
+                <Route path="*" element={(<pages.Dashboard />)} />
+                <Route path="/dashboard" element={(<pages.Dashboard />)} />
+                <Route path="/clientes" element={<pages.Clientes />} />
+                <Route path="/pedidos" element={<pages.Pedidos />} />
+                <Route path="/line" element={<pages.Line />} />
+                <Route path="/area" element={<pages.Area />} />
+                <Route path="/bar" element={<pages.Bar />} />
+                <Route path="/pie" element={<pages.Pie />} />
+                <Route path="/financial" element={<pages.Financial />} />
+                <Route path="/color-mapping" element={<pages.ColorMapping />} />
+                <Route path="/pyramid" element={<pages.Pyramid />} />
+                <Route path="/stacked" element={<pages.Stacked />} />
+              </Routes>
+            : 
+              <Routes><Route path="*" element={(<pages.Login />)} /></Routes>
+            }
 
-              {/* cadastros  */}
-              <Route path="/clientes" element={<Clientes />} />
-
-              {/* vendas  */}
-              <Route path="/pedidos" element={<Pedidos />} />
-
-              {/* graficos  */}
-              <Route path="/line" element={<Line />} />
-              <Route path="/area" element={<Area />} />
-              <Route path="/bar" element={<Bar />} />
-              <Route path="/pie" element={<Pie />} />
-              <Route path="/financial" element={<Financial />} />
-              <Route path="/color-mapping" element={<ColorMapping />} />
-              <Route path="/pyramid" element={<Pyramid />} />
-              <Route path="/stacked" element={<Stacked />} />
-
-            </Routes>
           </div>
         </div>
       </BrowserRouter>
