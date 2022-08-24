@@ -24,6 +24,7 @@ const App = () => {
   useEffect(() => {
     const currentThemeColor = localStorage.getItem('colorMode');
     const currentThemeMode = localStorage.getItem('themeMode');
+
     if (currentThemeColor && currentThemeMode) {
       setCurrentColor(currentThemeColor);
       setCurrentMode(currentThemeMode);
@@ -46,7 +47,6 @@ const App = () => {
               </button>
             </TooltipComponent>
             
-            {themeSettings && (<ThemeSettings />)}
           </div>
 
           {signed && activeMenu
@@ -60,8 +60,9 @@ const App = () => {
             }
           >
             { signed &&<div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full "><Navbar /></div>}
-
+            {themeSettings && (<ThemeSettings />)}
             { signed ?
+            
               <Routes>
                 <Route path="*" element={(<pages.Dashboard />)} />
                 <Route path="/dashboard" element={(<pages.Dashboard />)} />

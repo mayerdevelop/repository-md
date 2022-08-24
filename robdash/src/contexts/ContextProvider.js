@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useEffect, useContext, useState } from 'react';
+import api from '../services/api';
 
 const StateContext = createContext();
 
@@ -13,44 +14,49 @@ export const ContextProvider = ({ children }) => {
   const [themeSettings, setThemeSettings] = useState(false);
   const [activeMenu, setActiveMenu] = useState(true);
   const [isClicked, setIsClicked] = useState(initialState);
-  const [user, setUser] = useState(null);
+  const [vendedor, setVendedor] = useState(null);
 
-  /*
+  
   useEffect(() => {
     const loadingStoreData = () => {
-      const storageUser = localStorage.getItem("@Auth:user");
+      const storageUser = localStorage.getItem("@Auth:vendedor");
       const storageToken = localStorage.getItem("@Auth:token");
 
       if (storageUser && storageToken) {
-        setUser(storageUser);
+        setVendedor(storageUser);
       }
     };
     loadingStoreData();
   }, []);
-*/
 
-  const signIn = async ({ email, password }) => {
+
+  const signIn = async ({ login, password }) => {
     try {
-      const response = await api.post("/auth", { email, password });
-      if (response.data.error) {
-        alert(response.data.error);
-      } else {
-        setUser(response.data);
-        api.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${response.data.token}`;
+      const response = await api.post("/PRTL001", { USUARIO: login, SENHA: password });
+      const res = response.data.statusrequest[0]
 
-        localStorage.setItem("@Auth:user", JSON.stringify(response.data.user));
-        localStorage.setItem("@Auth:token", response.data.token);
+      if(res.code === '#200'){
+        localStorage.setItem("@Auth:vendedor", res.cod_vendedor);
+        localStorage.setItem("@Auth:nomeuser", res.nome_usuario);
+        localStorage.setItem("@Auth:token", res.user_token);
+        
+        setVendedor(res.cod_vendedor)
+
+      }else{
+        if(!!res.Cod_Usuario){
+          alert(JSON.stringify(res.Cod_Usuario))
+        }
       }
+
     } catch (error) {
       console.log(error);
+      alert('Erro na comunicação com a API, contate um administrador')
     }
   };
 
-  const singOut = () => {
+  const signOut = () => {
     localStorage.clear();
-    setUser(null);
+    setVendedor(null);
     return <Navigate to="/" />;
   };
 
@@ -84,10 +90,10 @@ export const ContextProvider = ({ children }) => {
         setColor,
         themeSettings,
         setThemeSettings,
-        user,
-        signed: !!user,
+        vendedor,
+        signed: !!vendedor,
         signIn,
-        singOut
+        signOut
       }}>
       {children}
     </StateContext.Provider>

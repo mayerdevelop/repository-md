@@ -1,56 +1,52 @@
-import {React,useState,useContext} from "react";
-import { Link, Navigate } from "react-router-dom";
-import { Header } from '../components';
+import { React, useState } from "react";
+import { Navigate } from "react-router-dom";
 import { useStateContext } from '../contexts/ContextProvider';
 import logo from '../assets/logo.svg'
 
 const Login = () => {
-
-    const [email, setEmail] = useState("");
+    const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
-    const {signed,signIn} = useStateContext();
+    const {signed,signIn,currentColor,currentMode} = useStateContext();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const data = {
-          email,
-          password,
-        };
-        await signIn(data);
+
+        await signIn({login,password});
       };
 
     if (!signed) {
         return (
-            <div className="container-login">
-                <div className="wrap-login">
+            <div  className={currentMode === 'Dark' ? 'dark container-login ' : 'container-login'}>
+                <div className="wrap-login" style={{backgroundColor:currentMode === 'Dark' ? '#333' : '#fff'}}>
                     <form onSubmit={handleSubmit} className="login-form">
                         <span className="login-form-title">
                             <img src={logo} alt="logo" />
                         </span>
 
-                        <span className="login-form-title"> Bem vindo </span>
+                        <span className="login-form-title" style={{color:currentMode === 'Dark' ? '#fff' : '#444'}}> Bem vindo </span>
 
                         <div className="wrap-input">
                             <input
-                            className={email !== "" ? "has-val input" : "input"}
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                                style={{color:currentMode === 'Dark' ? '#fff' : '#444'}}
+                                className={login !== "" ? "has-val input" : "input" }
+                                value={login}
+                                onChange={(e) => setLogin(e.target.value)}
                             />
-                            <span className="focus-input" data-placeholder="Email"></span>
+                            <span className="focus-input" data-placeholder="Login"></span>
                         </div>
 
                         <div className="wrap-input">
                             <input
-                            className={password !== "" ? "has-val input" : "input"}
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                                style={{color:currentMode === 'Dark' ? '#fff' : '#444'}}
+                                className={password !== "" ? "has-val input" : "input"}
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                             />
-                            <span className="focus-input" data-placeholder="Password"></span>
+                            <span className="focus-input" data-placeholder="Senha"></span>
                         </div>
 
-                        <div className="container-login-form-btn">
+                        <div className="container-login-form-btn" style={{ backgroundColor: currentColor }}>
                             <button type="submit" className="login-form-btn">Login</button>
                         </div>
                     </form>

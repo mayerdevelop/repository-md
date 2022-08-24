@@ -1,25 +1,18 @@
 import React from 'react';
-import api from '../services/api';
 
 import { useStateContext } from '../contexts/ContextProvider';
 
 const Button = ({icon,bgColor,color,bgHoverColor,size,text,borderRadius,width,option}) => {
-  const { setIsClicked, initialState } = useStateContext();
+  const { setIsClicked, initialState, signOut } = useStateContext();
 
   async function handleButtom(){
     /*  options
-      1- login
+      1- signout
       2- close profile
     */
 
     if(option === 1){
-      try{
-        const response = await api.post('/PRTL001',{"USUARIO": "TIM", "SENHA": "r"})
-        
-        alert(JSON.stringify(response.data.statusrequest[0]))
-      }catch(error){
-        alert(error)
-      }
+      signOut()
     }
 
     if(option === 2){
