@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { PoBreadcrumb, PoModalComponent, PoPageAction } from '@po-ui/ng-components';
 
-import { PoMenuItem } from '@po-ui/ng-components';
+import { PoPageDynamicTableOptions } from '@po-ui/ng-templates';
 
-import {  PoPageDynamicTableCustomTableAction, PoPageDynamicTableOptions } from '@po-ui/ng-templates';
 
 @Component({
   selector: 'app-root',
@@ -10,39 +11,48 @@ import {  PoPageDynamicTableCustomTableAction, PoPageDynamicTableOptions } from 
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  @ViewChild(PoModalComponent, { static: true })
+  poModal!: PoModalComponent;
+  quickSearchWidth: number = 3;
+  detailedChamado: Array<any> = []
 
-  readonly menus: Array<PoMenuItem> = [
-    { label: 'Home', action: this.onClick.bind(this) },
-    { label: 'Teste', action: this.onClick.bind(this) }
+  serviceApi = `http://200.98.81.201:40160/rest/EnvChamdo/?cod_cliente=${localStorage.getItem('cod_cliente')}&loja_cliente=${localStorage.getItem('loja_cliente')}`;
+
+  public readonly actions: Array<PoPageAction> = [
+    { label: 'Formulário', url: '/FORMULARIO', icon: 'po-icon po-icon-cart' },
   ];
+  public readonly breadcrumb: PoBreadcrumb = {
+    items: [{ label: 'Home', link: '/' }, { label: 'Garantia' }]
+  };
 
-  serviceApi = `http://200.98.81.201:40160/rest/Financial/?CODIGO=03463964`;
-
-
-  tableCustomActions: Array<PoPageDynamicTableCustomTableAction> = [];
+  constructor(public http: HttpClient) { }
 
   onLoad(): PoPageDynamicTableOptions {
     return {
       fields: [
-        { property: 'titulo', label: 'Título', gridLgColumns: 4 , filter: true},
-        { property: 'prefixo', label: 'Prefixo', gridLgColumns: 4, filter: true },
-        { property: 'filial', label: 'Filial', gridLgColumns: 4, filter: true },
+        { property: 'chamado', label: 'Chamado', gridLgColumns: 6 , filter: true},
+        { property: 'nota', label: 'Nota', gridLgColumns: 4 , filter: true},
+        { property: 'item', label: 'Item', gridLgColumns: 4, filter: true },
         { property: 'emissao', label: 'Emissão', gridLgColumns: 4, filter: true },
-        { property: 'cliente', label: 'Cliente', gridLgColumns: 12 , filter: true},
-        { property: 'vencimento', label: 'Vencimento', gridLgColumns: 4, filter: true },
-        { property: 'valor', label: 'Valor', gridLgColumns: 4, filter: true },
-        { property: 'parcela', allowColumnsManager: true, label: 'Parcela', gridLgColumns: 4, filter: true },
+        { property: 'produto', label: 'Produto', gridLgColumns: 4, filter: true },
+        { property: 'descricao', label: 'Descrição', gridLgColumns: 20, filter: true },
+        { property: 'quantidade', label: 'Quantidade', gridLgColumns: 4 , filter: true},
+        { property: 'preco', label: 'Valor', gridLgColumns: 4, filter: true },
+        { property: 'defeito', label: 'Defeito', gridLgColumns: 4, filter: true },
+        { property: 'tipodefeito', label: 'Tipo Defeito', gridLgColumns: 4, filter: true },
         { property: 'status', type: 'label', labels:[
-          { value: 'Pago', color: 'color-11', label: 'Pago' },
-          { value: 'Em Aberto', color: 'color-08', label: 'Em Aberto' },
-          { value: 'Atrasado', color: 'color-07', label: 'Atrasado' },
+          { value: '2', color: 'color-11', label: 'Atendido' },
+          { value: '1', color: 'color-08', label: 'Em Aberto' },
+          { value: '3', color: 'color-07', label: 'Negado' },
         ], gridLgColumns: 4, filter: true },
       ]
     };
   }
 
-  private onClick() {
-    alert('Clicked in menu item')
+  ngOnInit(): void {
+  } 
+  modalOpen() {
+    this.poModal.open();
   }
 
 }
