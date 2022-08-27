@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useContext, useState } from 'react';
-import api from '../services/api';
+import {api, apilocal} from '../services/api';
 
 const StateContext = createContext();
 
@@ -31,26 +31,12 @@ export const ContextProvider = ({ children }) => {
   }, []);
 
   const menuFormat = async (menu) =>{
-    menu ='ewfew'
     let lRet = false
     try {
-      const response = await api.get(`/MenusPrt/?CODIGOMENU=${menu}`);
+      const response = await api.get(`/menu/filter/${menu}`);
       let json = {}
-      
-      /*
-      response.data.map(function(element){
-        json = {
-          title: element.label,
-          links: element.subItems.map(function(element){
-            return {
-              name: element.label.toLowerCase()
-            }
-          })
-        }
-      })
-      */
      
-      console.log(response.data+'tst')
+      console.log(response.data)
 
   
     } catch (error) {
@@ -58,43 +44,54 @@ export const ContextProvider = ({ children }) => {
       alert('Erro na comunicação com a API, contate um administrador')
     }
   
-    /*
-  {
-    title: 'Home',
-    links: [
-      {
-        name: 'dashboard',
-        icon: <FiShoppingBag />,
-      },
-    ],
-  },
-    */
+
   
   return lRet
+  }
+
+  const tokenAuth = async (token) =>{
+    let ret = ''
+    try {
+      const response = await apilocal.get(`/token/auth/${token}`);
+
+      if(response.data.status === 'sucess'){
+        ret = response.data.menu
+
+      }else{
+        ret = response.data.status
+        alert(response.data.name)
+      }
+
+    }catch(error){
+      ret = 'error'
+      console.log(error)
+    }
+
+    return ret
   }
   
 
 
   const signIn = async ({ login, password }) => {
     try {
-      const response = await api.post("/PRTL001", { USUARIO: login, SENHA: password });
-      const res = response.data.statusrequest[0]
+      const response = await apilocal.post("/loginteste/authlogin",{user: login, pass: password});
 
-      if(res.code === '#200'){
+      if(response.data.status === 'sucess'){
+        const resToken = await tokenAuth(response.data.token)
 
-        const retMenu = await menuFormat(res.menu_acesso)
+        if(resToken !== 'error'){
+          const retMenu = await menuFormat(resToken)
 
-        if(retMenu){
-          localStorage.setItem("@Auth:vendedor", res.cod_vendedor);
-          localStorage.setItem("@Auth:nomeuser", res.nome_usuario);
-          localStorage.setItem("@Auth:token", res.user_token);
-          setVendedor(res.cod_vendedor)
+          if(retMenu){
+            localStorage.setItem("@Auth:vendedor", response.data.user);
+            localStorage.setItem("@Auth:nomeuser", response.data.name);
+            localStorage.setItem("@Auth:token", response.data.token);
+            setVendedor(res.cod_vendedor)
+          }
         }
 
       }else{
-        if(!!res.Cod_Usuario){
-          alert(JSON.stringify(res.Cod_Usuario))
-        }
+        alert(response.data.name)
       }
 
     } catch (error) {

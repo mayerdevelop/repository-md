@@ -124,27 +124,22 @@ class Controller {
     }
 
     async authLoginteste(req,res){        
-        await LogintstModel.findOne({token: req.body.token})
+        await LogintstModel.findOne({user: req.body.user})
             .then((userAuth) =>{
-                if(userAuth.user === req.body.user){
-                    if(userAuth.pass === req.body.pass){
-                        const response = {
-                            status:"sucess",
-                            token:userAuth.token,
-                            user:userAuth.user,
-                            name:userAuth.name
-                        }
-                        return res.status(200).json(response);
-                    }else{
-                        return res.status(404).json({status:"error",name:"Senha Invalida"})
+                if(userAuth.pass === req.body.pass){
+                    const response = {
+                        status:"sucess",
+                        token:userAuth.token,
+                        user:userAuth.user,
+                        name:userAuth.name
                     }
+                    return res.status(200).json(response);
                 }else{
-                    return res.status(404).json({status:"error",name:"Usuario Invalido"})
+                    return res.status(404).json({status:"error",name:"Senha Invalida"})
                 }
-                
             })
             .catch(()=>{
-                return res.status(404).json({status:"error",name:"Token de autenticacao invalido"})
+                return res.status(404).json({status:"error",name:"Usuario invalido"})
             })
     }
 
