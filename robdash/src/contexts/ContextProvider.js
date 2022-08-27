@@ -7,6 +7,7 @@ const initialState = {
   userProfile: false,
 };
 
+
 export const ContextProvider = ({ children }) => {
   const [screenSize, setScreenSize] = useState(undefined);
   const [currentColor, setCurrentColor] = useState('#03C9D7');
@@ -29,6 +30,50 @@ export const ContextProvider = ({ children }) => {
     loadingStoreData();
   }, []);
 
+  const menuFormat = async (menu) =>{
+    menu ='ewfew'
+    let lRet = false
+    try {
+      const response = await api.get(`/MenusPrt/?CODIGOMENU=${menu}`);
+      let json = {}
+      
+      /*
+      response.data.map(function(element){
+        json = {
+          title: element.label,
+          links: element.subItems.map(function(element){
+            return {
+              name: element.label.toLowerCase()
+            }
+          })
+        }
+      })
+      */
+     
+      console.log(response.data+'tst')
+
+  
+    } catch (error) {
+      console.log(error);
+      alert('Erro na comunicação com a API, contate um administrador')
+    }
+  
+    /*
+  {
+    title: 'Home',
+    links: [
+      {
+        name: 'dashboard',
+        icon: <FiShoppingBag />,
+      },
+    ],
+  },
+    */
+  
+  return lRet
+  }
+  
+
 
   const signIn = async ({ login, password }) => {
     try {
@@ -36,11 +81,15 @@ export const ContextProvider = ({ children }) => {
       const res = response.data.statusrequest[0]
 
       if(res.code === '#200'){
-        localStorage.setItem("@Auth:vendedor", res.cod_vendedor);
-        localStorage.setItem("@Auth:nomeuser", res.nome_usuario);
-        localStorage.setItem("@Auth:token", res.user_token);
-        
-        setVendedor(res.cod_vendedor)
+
+        const retMenu = await menuFormat(res.menu_acesso)
+
+        if(retMenu){
+          localStorage.setItem("@Auth:vendedor", res.cod_vendedor);
+          localStorage.setItem("@Auth:nomeuser", res.nome_usuario);
+          localStorage.setItem("@Auth:token", res.user_token);
+          setVendedor(res.cod_vendedor)
+        }
 
       }else{
         if(!!res.Cod_Usuario){
