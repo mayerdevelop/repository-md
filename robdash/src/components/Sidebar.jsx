@@ -1,11 +1,14 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { MdOutlineCancel } from 'react-icons/md';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import logo from '../assets/logo.svg'
 
-import { links } from '../data/dummy';
-import { useStateContext } from '../contexts/ContextProvider';
+import { FiShoppingBag, FiPieChart } from 'react-icons/fi';
+import { IoMdContacts } from 'react-icons/io';
+import { AiOutlineCalendar } from 'react-icons/ai';
+
+import { useStateContext } from '../contexts/ContextProvider'; 
 
 const Sidebar = () => {
   const { currentColor, activeMenu, setActiveMenu, screenSize } = useStateContext();
@@ -15,6 +18,28 @@ const Sidebar = () => {
       setActiveMenu(false);
     }
   };
+
+  const storageMenu = JSON.parse(localStorage.getItem('@menu'))
+  const menu = !storageMenu ? [] : storageMenu
+
+  const iconMenu = (name) =>{
+    let retIcon = null
+
+    if(name === 'dashboard'){
+      retIcon = <FiShoppingBag />
+    
+    }else if(name === 'pedidos'){
+      retIcon = <AiOutlineCalendar />
+
+    }else if(name === 'clientes'){
+      retIcon = <IoMdContacts />
+
+    } else{
+      retIcon = <FiPieChart />
+    }
+    
+    return retIcon
+  }
 
   const activeLink = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg  text-white  text-md m-2';
   const normalLink = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md text-gray-700 dark:text-gray-200 dark:hover:text-black hover:bg-light-gray m-2';
@@ -39,7 +64,7 @@ const Sidebar = () => {
             </TooltipComponent>
           </div>
           <div className="mt-10 ">
-            {links.map((item) => (
+            {menu.map((item) => (
               <div key={item.title}>
                 <p className="text-gray-400 dark:text-gray-400 m-3 mt-4 uppercase">
                   {item.title}
@@ -54,7 +79,7 @@ const Sidebar = () => {
                     })}
                     className={({ isActive }) => (isActive ? activeLink : normalLink)}
                   >
-                    {link.icon}
+                    {iconMenu(link.name)}
                     <span className="capitalize ">{link.name}</span>
                   </NavLink>
                 ))}

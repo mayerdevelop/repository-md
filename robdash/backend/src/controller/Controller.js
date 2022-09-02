@@ -40,7 +40,7 @@ class Controller {
         await MenuModel.find({ codigo: {'$in': req.params.codigo} })
         .then(response =>{
             if(response.length === 0){
-                return res.status(404).json({status:"error",name:"Menu invalido"})
+                return res.status(200).json({status:"error",name:"Menu invalido"})
 
             }else{
                 return res.status(200).json({status: "sucess",menu: response})
@@ -95,7 +95,7 @@ class Controller {
             return res.status(200).json(resToken)
         })
         .catch(() =>{
-            return res.status(404).json({status:"error",name:"Token de autenticacao invalido"})
+            return res.status(200).json({status:"error",name:"Token de autenticacao invalido"})
         })
     }
 
@@ -123,7 +123,7 @@ class Controller {
             })
     }
 
-    async authLoginteste(req,res){        
+    async authLoginteste(req,res){
         await LogintstModel.findOne({user: req.body.user})
             .then((userAuth) =>{
                 if(userAuth.pass === req.body.pass){
@@ -135,11 +135,11 @@ class Controller {
                     }
                     return res.status(200).json(response);
                 }else{
-                    return res.status(404).json({status:"error",name:"Senha Invalida"})
+                    return res.status(200).json({status:"error",name:"Senha Invalida"})
                 }
             })
             .catch(()=>{
-                return res.status(404).json({status:"error",name:"Usuario invalido"})
+                return res.status(200).json({status:"error",name:"Usuario invalido"})
             })
     }
 

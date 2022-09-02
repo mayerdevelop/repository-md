@@ -10,10 +10,12 @@
   "author": "Felipe Mayer",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "mongodb": "^4.7.0",
-    "mongoose": "^6.3.6"
+    "mongoose": "^6.3.6",
+    "tunnel": "^0.0.6"
   },
   "devDependencies": {
     "nodemon": "^2.0.16"

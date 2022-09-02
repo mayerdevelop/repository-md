@@ -17,6 +17,12 @@
   z-index: 1000000 !important;
 }
 
+.teste{
+  max-width: 80%;
+  position: fixed;
+}
+
+
 ::-webkit-scrollbar {
   width: 6px;
 }

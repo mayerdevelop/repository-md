@@ -1,14 +1,10 @@
 import React from 'react';
-import { AiOutlineCalendar, AiOutlineAreaChart, AiOutlineBarChart, AiOutlineStock,AiFillFileMarkdown } from 'react-icons/ai';
-import { FiShoppingBag, FiPieChart } from 'react-icons/fi';
-import { BsBarChart } from 'react-icons/bs';
-import { IoMdContacts } from 'react-icons/io';
+import { AiFillFileMarkdown } from 'react-icons/ai';
 import { IoWalletOutline } from 'react-icons/io5';
-import { RiStockLine } from 'react-icons/ri';
 import { MdRequestPage } from 'react-icons/md';
 import { HiOutlineRefresh } from 'react-icons/hi';
-import { GiLouvrePyramid } from 'react-icons/gi';
 import { GrLocation } from 'react-icons/gr';
+
 
 export const gridOrderImage = (props) => (
   <div>
@@ -295,112 +291,6 @@ export const LinePrimaryYAxis = {
 };
 
 
-export const clientesGrid = [
-  { headerText: 'Employee',
-    width: '150',
-    template: gridEmployeeProfile,
-    textAlign: 'Center' },
-  { field: 'Name',
-    headerText: '',
-    width: '0',
-    textAlign: 'Center',
-  },
-  { field: 'Title',
-    headerText: 'Designation',
-    width: '170',
-    textAlign: 'Center',
-  },
-  { headerText: 'Country',
-    width: '120',
-    textAlign: 'Center',
-    template: gridEmployeeCountry },
-
-  { field: 'HireDate',
-    headerText: 'Hire Date',
-    width: '135',
-    format: 'yMd',
-    textAlign: 'Center' },
-
-  { field: 'ReportsTo',
-    headerText: 'Reports To',
-    width: '120',
-    textAlign: 'Center' },
-  { field: 'EmployeeID',
-    headerText: 'Employee ID',
-    width: '125',
-    textAlign: 'Center' },
-];
-
-export const links = [
-  {
-    title: 'Home',
-    links: [
-      {
-        name: 'dashboard',
-        icon: <FiShoppingBag />,
-      },
-    ],
-  },
-
-  {
-    title: 'Cadastros',
-    links: [
-      {
-        name: 'clientes',
-        icon: <IoMdContacts />,
-      },
-
-    ],
-  },
-  {
-    title: 'Vendas',
-    links: [
-      {
-        name: 'pedidos',
-        icon: <AiOutlineCalendar />,
-      },
-    ],
-  },
-  {
-    title: 'Gráficos',
-    links: [
-      {
-        name: 'line',
-        icon: <AiOutlineStock />,
-      },
-      {
-        name: 'area',
-        icon: <AiOutlineAreaChart />,
-      },
-
-      {
-        name: 'bar',
-        icon: <AiOutlineBarChart />,
-      },
-      {
-        name: 'pie',
-        icon: <FiPieChart />,
-      },
-      {
-        name: 'financial',
-        icon: <RiStockLine />,
-      },
-      {
-        name: 'color-mapping',
-        icon: <BsBarChart />,
-      },
-      {
-        name: 'pyramid',
-        icon: <GiLouvrePyramid />,
-      },
-      {
-        name: 'stacked',
-        icon: <AiOutlineBarChart />,
-      },
-    ],
-  },
-];
-
 
 export const earningData = [
   {
@@ -463,86 +353,6 @@ export const themeColors = [
     color: '#FB9678',
     name: 'orange-theme',
   },
-];
-
-export const ordersGrid = [
-  {
-    headerText: 'Image',
-    template: gridOrderImage,
-    textAlign: 'Center',
-    width: '120',
-  },
-  {
-    field: 'OrderItems',
-    headerText: 'Item',
-    width: '150',
-    editType: 'dropdownedit',
-    textAlign: 'Center',
-  },
-  { field: 'CustomerName',
-    headerText: 'Customer Name',
-    width: '150',
-    textAlign: 'Center',
-  },
-  {
-    field: 'TotalAmount',
-    headerText: 'Total Amount',
-    format: 'C2',
-    textAlign: 'Center',
-    editType: 'numericedit',
-    width: '150',
-  },
-  {
-    headerText: 'Status',
-    template: gridOrderStatus,
-    field: 'OrderItems',
-    textAlign: 'Center',
-    width: '120',
-  },
-  {
-    field: 'OrderID',
-    headerText: 'Order ID',
-    width: '120',
-    textAlign: 'Center',
-  },
-
-  {
-    field: 'Location',
-    headerText: 'Location',
-    width: '150',
-    textAlign: 'Center',
-  },
-];
-
-
-export const clientesData = [
-  {
-    EmployeeID: 1,
-    Name: 'Nancy Davolio',
-    Title: 'Sales Representative',
-    HireDate: '01/02/2021',
-    Country: 'USA',
-    ReportsTo: 'Carson',
-
-  },
-  {
-    EmployeeID: 2,
-    Name: 'Nasimiyu Danai',
-    Title: 'Marketing Head',
-    HireDate: '01/02/2021',
-    Country: 'USA',
-    ReportsTo: 'Carson',
-
-  },
-  {
-    EmployeeID: 3,
-    Name: 'Iulia Albu',
-    Title: 'HR',
-    HireDate: '01/02/2021',
-    Country: 'USA',
-    ReportsTo: 'Carson',
-  },
-
 ];
 
 

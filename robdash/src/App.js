@@ -16,7 +16,7 @@ const App = () => {
     currentMode, 
     activeMenu, 
     currentColor, 
-    themeSettings, 
+    themeSettings,
     setThemeSettings,
     signed
   } = useStateContext();
@@ -50,7 +50,7 @@ const App = () => {
           </div>
 
           {signed && activeMenu
-            ? <div className="w-72 fixed sidebar dark:bg-secondary-dark-bg bg-white"><Sidebar /></div>
+            ? <div className="w-72 fixed sidebar dark:bg-secondary-dark-bg bg-white"><Sidebar  /></div>
             : <div className="w-0 dark:bg-secondary-dark-bg"><Sidebar /></div>
           }
 

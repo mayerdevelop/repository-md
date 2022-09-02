@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useContext, useState } from 'react';
 import {api, apilocal} from '../services/api';
 
+
 const StateContext = createContext();
 
 const initialState = {
@@ -16,12 +17,20 @@ export const ContextProvider = ({ children }) => {
   const [activeMenu, setActiveMenu] = useState(true);
   const [isClicked, setIsClicked] = useState(initialState);
   const [vendedor, setVendedor] = useState(null);
+  const [menu, setMenu] = useState([]);
 
   
   useEffect(() => {
     const loadingStoreData = () => {
       const storageUser = localStorage.getItem("@Auth:vendedor");
       const storageToken = localStorage.getItem("@Auth:token");
+
+      const color = localStorage.getItem('colorMode')
+      const theme = localStorage.getItem('themeMode')
+
+      localStorage.setItem('colorMode',color)
+      localStorage.setItem('themeMode',theme)
+
 
       if (storageUser && storageToken) {
         setVendedor(storageUser);
@@ -33,18 +42,34 @@ export const ContextProvider = ({ children }) => {
   const menuFormat = async (menu) =>{
     let lRet = false
     try {
-      const response = await api.get(`/menu/filter/${menu}`);
-      let json = {}
-     
-      console.log(response.data)
+      const response = await apilocal.get(`/menu/filter/${menu}`);
 
-  
+      if(response.data.status === 'sucess'){
+        let arrMnu = []
+        lRet = true
+
+        response.data.menu.map(function(menu){
+          arrMnu.push({
+            title: menu.title,
+            links: menu.links.map(function(link){
+              return {name: link.name}
+            })
+          })
+        })
+
+        setMenu(arrMnu)
+        localStorage.setItem('@menu',JSON.stringify(arrMnu))
+
+      }else {
+        alert('Nao foi possivel validar o menu de acesso')
+        lRet = false
+      }
+
     } catch (error) {
       console.log(error);
       alert('Erro na comunicação com a API, contate um administrador')
+      lRet = false
     }
-  
-
   
   return lRet
   }
@@ -86,7 +111,7 @@ export const ContextProvider = ({ children }) => {
             localStorage.setItem("@Auth:vendedor", response.data.user);
             localStorage.setItem("@Auth:nomeuser", response.data.name);
             localStorage.setItem("@Auth:token", response.data.token);
-            setVendedor(res.cod_vendedor)
+            setVendedor(response.data.user)
           }
         }
 
@@ -101,8 +126,14 @@ export const ContextProvider = ({ children }) => {
   };
 
   const signOut = () => {
+    
     localStorage.clear();
     setVendedor(null);
+
+    localStorage.setItem('colorMode',currentColor)
+    localStorage.setItem('themeMode',currentMode)
+
+    
     return <Navigate to="/" />;
   };
 
@@ -139,7 +170,8 @@ export const ContextProvider = ({ children }) => {
         vendedor,
         signed: !!vendedor,
         signIn,
-        signOut
+        signOut,
+        menu
       }}>
       {children}
     </StateContext.Provider>
