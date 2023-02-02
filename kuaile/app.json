@@ -19,7 +19,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.felipemayer00.listachamada"
     },
     "android": {
       "adaptiveIcon": {
@@ -38,6 +39,9 @@
     },
     "runtimeVersion": {
       "policy": "sdkVersion"
-    }
+    },
+    "plugins": [
+      "react-native-compressor"
+    ]
   }
 }

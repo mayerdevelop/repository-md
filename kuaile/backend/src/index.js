@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose')
 
 const server = express();
-server.use(express.json());
+server.use(express.json({limit: '50mb'}));
 
 const ListRoutes = require('./routes/ListRoutes');
 server.use('/alunos', ListRoutes);

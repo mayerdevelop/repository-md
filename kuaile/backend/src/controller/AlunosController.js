@@ -10,7 +10,7 @@ class AlunosController {
         await alunos
             .save()
             .then(response => {
-                return res.status(200).json(response);
+                return res.status(200).json({message:'sucesso', item: response});
             })
             .catch(error =>{
                 return res.status(200).json({message:'error', item: error})

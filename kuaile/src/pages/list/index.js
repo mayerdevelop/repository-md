@@ -6,7 +6,11 @@ import {
     TouchableOpacity,
     FlatList,
     ActivityIndicator,
-    TextInput
+    TextInput,
+    KeyboardAvoidingView,
+    ScrollView,
+    Platform,
+    Image
 } 
 from 'react-native'
 
@@ -21,7 +25,17 @@ import DropDownPicker from 'react-native-dropdown-picker'
 import api from '../../services/api';
 import { Audio } from 'expo-av';
 
+import { MaskedTextInput,MaskedText } from "react-native-mask-text";
+import CurrencyInput from 'react-native-currency-input';
+
+import { printToFileAsync } from 'expo-print'
+import { shareAsync } from 'expo-sharing'
+import * as FileSystem from 'expo-file-system'
+import * as ImagePicker from 'expo-image-picker';
+
 import ModObs from '../../modal/modObs';
+
+import img64 from '../../../assets/dragonmd'
 
 export default function List(){
 
@@ -50,6 +64,37 @@ export default function List(){
     const [visibleObs,setVisibleObs] = useState(false);
     const [currentStudent, setCurrentStudent] = useState('1')
     const [alunoDetail, setAlunoDetail] = useState(null)
+    const [ageForm, setAgeForm] = useState('')
+    const [incomeForm, setIncomeForm] = useState(0)
+    const [image, setImage] = useState(null);
+    
+    const [form, setForm] = useState({
+        name: '',
+        age: '',
+        core: '',
+        status: '',
+        birth: '',
+        rg: '',
+        cpf: '',
+        clothing: 0,
+        shoe: 0,
+        school: '',
+        schoolName: '',
+        guardian: '',
+        guardianCpf: '',
+        guardianCel: '',
+        guardianNis: '',
+        vaccineCard: '',
+        income: ''
+      });
+    
+      const handleForm = (key, value) => {
+        setForm((currentForm) => ({
+          ...currentForm,
+          [key]: value,
+        }));
+      };
+
 
     let pending = true
     
@@ -135,7 +180,8 @@ export default function List(){
                             guardianCel: element.guardianCel,
                             guardianNis: element.guardianNis,
                             vaccineCard: element.vaccineCard,
-                            income: element.income
+                            income: element.income,
+                            avatar: element.avatar
                         })
                     })
             
@@ -405,16 +451,19 @@ export default function List(){
 
     const onClickItemModal = () => {
         if(current === 'list'){
-            setVisibleObs(true)
             setScanned(false)
             setTextScan('')
         }
+
+        setVisibleObs(true)
     }
 
     const onClickAlunoDetal = (item) => {
+
         setCoreValue(item.core)
         setAlunoDetail(item)
         setVisibleObs(true)
+
     }
 
     const onClickCloseModal = () => {
@@ -422,11 +471,198 @@ export default function List(){
         setCoreValue(null)
         setAlunoDetail(null)
         setCurrentStudent('1')
+        setVacinaValue('1')
         setTextScan('')
         setScanned(false)
         setListId('')
+        setAgeForm('')
+        setIncomeForm(0)
+        setImage(null)
+        setForm({
+            name: '',
+            age: '',
+            core: '',
+            status: '',
+            birth: '',
+            rg: '',
+            cpf: '',
+            clothing: 0,
+            shoe: 0,
+            school: '',
+            schoolName: '',
+            guardian: '',
+            guardianCpf: '',
+            guardianCel: '',
+            guardianNis: '',
+            vaccineCard: '',
+            income: ''
+          });
+
     }
-      
+
+
+    function idade(alunoDetail) {
+
+        let retorno = 0
+
+        if(!alunoDetail.id){
+            alunoDetail.birth = alunoDetail.birth.substring(6,10)+alunoDetail.birth.substring(3,5)+alunoDetail.birth.substring(0,2)
+        }
+
+        if(alunoDetail.birth.length >= 8){
+
+            var d = new Date,
+                ano_atual = d.getFullYear(),
+                mes_atual = d.getMonth() + 1,
+                dia_atual = d.getDate(),
+        
+                ano_aniversario = +alunoDetail.birth.substring(0,4),
+                mes_aniversario = +alunoDetail.birth.substring(4,6),
+                dia_aniversario = +alunoDetail.birth.substring(6,8),
+        
+                quantos_anos = ano_atual - ano_aniversario;
+        
+            if (mes_atual < mes_aniversario || mes_atual == mes_aniversario && dia_atual < dia_aniversario) {
+                quantos_anos--;
+            }
+            
+            retorno = quantos_anos < 0 ? 0 : quantos_anos;
+            alunoDetail.age = retorno.toString()
+
+            if(!!alunoDetail.id){
+                updateStudent(alunoDetail)
+            }    
+        }
+        return retorno
+    }
+
+    
+    async function updateStudent(updateStudent) {
+
+        const objPost = {
+			name: updateStudent.name,
+			age: updateStudent.age,
+			core: updateStudent.core,
+			status: updateStudent.status,
+			birth: updateStudent.birth,
+			rg: updateStudent.rg,
+			cpf: updateStudent.cpf,
+			clothing: updateStudent.clothing,
+			shoe: updateStudent.shoe,
+			school: updateStudent.school,
+			schoolName: updateStudent.schoolName,
+			guardian: updateStudent.guardian,
+			guardianCpf: updateStudent.guardianCpf,
+			guardianCel: updateStudent.guardianCel,
+			guardianNis: updateStudent.guardianNis,
+			vaccineCard: updateStudent.vaccineCard,
+			income: updateStudent.income,
+            avatar: updateStudent.avatar
+		}
+    
+        try{
+            const response = await api.put(`/alunos/${updateStudent.id}`, objPost);
+        
+        } catch(error){
+            console.log(error)
+        }
+
+    }
+
+
+    async function createStudent(){
+
+        if(!coreValue){
+            alert('Necessário informar o núcleo')
+            return
+        }
+        
+        if(!form.income){
+            form.income = '0'
+        }
+
+        if(!form.name){
+            alert('Necessário informar o nome')
+            return
+        }
+
+        if(!form.birth){
+            alert('Necessário informar a data de nascimento')
+            return
+        }
+
+        try{
+            const objPost = {
+                name: form.name.toUpperCase(),
+                age: idade(form).toString(),
+                core: coreValue,
+                status: "1",
+                birth: form.birth,
+                rg: form.rg,
+                cpf: ((form.cpf.replace(".","")).replace(".","")).replace("-",""),
+                clothing: form.clothing,
+                shoe: form.shoe,
+                school: form.school,
+                schoolName: form.schoolName.toUpperCase(),
+                guardian: form.guardian.toUpperCase(),
+                guardianCpf: ((form.guardianCpf.replace(".","")).replace(".","")).replace("-",""),
+                guardianCel: ((form.guardianCel.replace("(","")).replace(")","")).replace("-",""),
+                guardianNis: form.guardianNis,
+                vaccineCard: vacinaValue,
+                income: parseFloat(form.income.trim().replace('.','').replace(',','.')),
+                avatar: !image ? '' : image
+            }
+
+            console.log(objPost)
+
+            const response = await api.post("/alunos", objPost);
+
+            if (response.data.message === 'sucesso') {
+                onClickCloseModal()
+                getAlunos()
+                
+            } else {
+                alert('erro ao criar cadastro, contate o administrador')
+            } 
+        
+        } catch(error){
+            console.log(error)
+            alert('erro ao criar cadastro, contate o administrador')
+        }
+    }
+
+
+    const shareStudent = async() =>{
+        const file = await printToFileAsync({
+            html: PDFHTML(alunoDetail),
+            base64: true
+        })
+
+        const pdfName = `${file.uri.slice(0,file.uri.lastIndexOf('/') + 1) + ((alunoDetail.name).split(" ").join("_")).toLowerCase()}.pdf`
+
+        await FileSystem.moveAsync({
+            from: file.uri,
+            to: pdfName,
+        })
+
+        await shareAsync(pdfName)
+    }
+
+    const pickImage = async () => {
+
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          base64: true,
+          aspect: [4, 3],
+          quality: 0.1,
+        });
+    
+    
+        if (!result.canceled) {
+          setImage('data:image/jpg;base64,'+result.assets[0].base64);
+        }
+      };
 
     return(
         <>
@@ -966,213 +1202,458 @@ export default function List(){
                 </View>
                 }
 
-                { current === 'students' && !!alunoDetail &&
-                    <View style={{
-                        flex:1,
-                        backgroundColor:'#F8FAFC',
-                        width:'90%'
-                    }}>
-                        
-                        <View style={{width:'100%',flexDirection:'row',justifyContent:'space-between'}}>
-                            <View 
+                { current === 'students' &&
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        keyboardVerticalOffset={Platform.OS === 'ios' ? 180 : 350 }
+                        style={{
+                            flex:1,
+                            backgroundColor:'#F8FAFC',
+                            width:'90%'
+                        }}
+                    >
+                        <ScrollView>
+                            <View style={{width:'100%',flexDirection:'row',justifyContent:'space-between'}}>
+                                { !alunoDetail ?                         
+
+                                    image ?
+                                        <TouchableOpacity onPress={pickImage} >
+                                            <Image 
+                                                source={{ uri: image }} 
+                                                style={{
+                                                    borderRadius:100,
+                                                    width:100,
+                                                    height:100,
+                                                    backgroundColor:'#ffffff',
+                                                    alignItems:'center',
+                                                    justifyContent:'center',
+                                                    borderColor:'#c00c0c',
+                                                    borderWidth:2,
+                                                    marginBottom:7
+                                                }}
+                                            />
+                                        </TouchableOpacity>
+                                        :
+                                        <TouchableOpacity
+                                            onPress={pickImage} 
+                                            style={{
+                                                borderRadius:100,
+                                                width:100,
+                                                height:100,
+                                                backgroundColor:'#ffffff',
+                                                alignItems:'center',
+                                                justifyContent:'center',
+                                                borderColor:'#c00c0c',
+                                                borderWidth:2,
+                                            }}
+                                        >
+                                        </TouchableOpacity>
+            
+                                    :
+                                        !alunoDetail.avatar ?
+                                            <View
+                                                style={{
+                                                    borderRadius:100,
+                                                    width:100,
+                                                    height:100,
+                                                    backgroundColor:'#ffffff',
+                                                    alignItems:'center',
+                                                    justifyContent:'center',
+                                                    borderColor:'#c00c0c',
+                                                    borderWidth:2,
+                                                }}
+                                            >
+                                            </View>
+                                        :
+                                            <Image 
+                                                source={{ uri: alunoDetail.avatar }} 
+                                                style={{
+                                                    borderRadius:100,
+                                                    width:100,
+                                                    height:100,
+                                                    backgroundColor:'#ffffff',
+                                                    alignItems:'center',
+                                                    justifyContent:'center',
+                                                    borderColor:'#c00c0c',
+                                                    borderWidth:2,
+                                                    marginBottom:7
+                                                }}
+                                            />
+                                }
+                                
+                                <View style={{
+                                    marginLeft:20,
+                                    justifyContent:'space-between',
+                                    flex:1
+                                }}>
+
+                                    <View>
+                                        <Text>Nome:</Text>
+                                        { !!alunoDetail
+                                            ? <Text style={{fontWeight:'bold',fontSize:14}}>{alunoDetail.name}</Text>
+                                            : <TextInput style={{fontWeight:'bold',fontSize:14}} autoCorrect={false} onChangeText={(value) => handleForm('name', value)} value={form.name}/>
+                                        }
+                                    </View>
+
+                                    <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                                        <View>
+                                            <Text>Idade:</Text>
+                                            
+                                            { !!alunoDetail
+                                                ? <Text style={{fontWeight:'bold',fontSize:14,textAlign:'center'}}>{idade(alunoDetail)} anos</Text>
+                                                : <Text style={{fontWeight:'bold',fontSize:14,textAlign:'center'}}>{ageForm} anos</Text>
+                                            }
+                                        </View>
+
+                                        <View>
+                                            <Text>Nascimento:</Text>
+                                            
+                                            { !!alunoDetail
+                                                ?   <Text style={{fontWeight:'bold',fontSize:14,textAlign:'center'}}>{alunoDetail.birth.substring(6,8)+'/'+alunoDetail.birth.substring(4,6)+'/'+alunoDetail.birth.substring(0,4)}</Text>
+                                                :   <MaskedTextInput
+                                                        mask="99/99/9999"
+                                                        onChangeText={(value) => {handleForm('birth', value), setAgeForm(idade({birth: value}))}}
+                                                        keyboardType="numeric"
+                                                        maxLength={10}
+                                                        textBold={true}
+                                                        value={form.birth}
+                                                    />
+                                            }
+                                        </View>
+                                    </View>
+                                </View>
+                            </View>
+
+
+                            <View style={{
+                                marginTop:40,
+                                paddingHorizontal:25,
+                                justifyContent:'space-around',
+                                flexDirection:'row'
+                            }}>
+                                
+                                <TouchableOpacity
+                                    onPress={()=>{setCurrentStudent('1')}}
+                                    style={{
+                                        borderBottomWidth:currentStudent === '1' ? 2 : 0,
+                                        borderBottomColor:'#c00c0c',
+                                        width:'35%',
+                                        alignItems:'center'
+                                    }}>
+                                    <Text style={{fontWeight:'bold',color:currentStudent === '1' ? '#000000' : '#6C6C6C',fontSize:16}}>Aluno</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    onPress={()=>{setCurrentStudent('2')}}
+                                    style={{
+                                        borderBottomWidth:currentStudent === '2' ? 2 : 0,
+                                        borderBottomColor:'#c00c0c',
+                                        width:'35%',
+                                        alignItems:'center'
+                                    }}>
+                                    <Text style={{fontWeight:'bold',color:currentStudent === '2' ? '#000000' : '#6C6C6C',fontSize:16}}>Responsável</Text>
+                                </TouchableOpacity>
+                            </View>
+                            { currentStudent === '1' &&
+                            <>
+                                <View style={{
+                                    marginTop:45,
+                                    flexDirection:'row',
+                                    paddingHorizontal:20,
+                                }}>
+                                    <View style={{width:'60%'}}>
+                                        <Text style={{fontSize:12}}>RG:</Text>
+                                        
+                                        { !!alunoDetail
+                                            ? <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.rg}</Text>
+                                            : <TextInput autoCorrect={false} onChangeText={(value) => handleForm('rg', value)} value={form.rg} keyboardType="numeric"/>
+                                        }
+                                    </View>
+
+                                    <View style={{width:'50%'}}>
+                                        <Text style={{fontSize:12}}>CPF:</Text>
+                                        
+                                        { !!alunoDetail
+                                            ?   <MaskedText style={{fontSize:16}} textBold={true} mask="999.999.999-99">{alunoDetail.cpf}</MaskedText>
+                                            :   <MaskedTextInput
+                                                    mask="999.999.999-99"
+                                                    onChangeText={(value) => handleForm('cpf', value)}
+                                                    keyboardType="numeric"
+                                                    maxLength={14}
+                                                    defaultValue={form.cpf}
+                                                />
+                                        }
+                                    </View>
+                                </View>
+
+                                <View style={{
+                                    marginTop:30,
+                                    justifyContent:'space-between',
+                                    flexDirection:'row',
+                                    paddingHorizontal:20
+                                }}>
+                                    <View style={{width:'60%'}}>
+                                        <Text style={{fontSize:12}}>Tam. Roupa:</Text>
+                                        
+                                        { !!alunoDetail
+                                            ? <Text style={{fontWeight:'bold',fontSize:16,left:20}}>{alunoDetail.clothing}</Text>
+                                            : <TextInput autoCorrect={false} onChangeText={(value) => handleForm('clothing', parseInt(value))} keyboardType='numeric' maxLength={2} value={form.clothing.toString()}/>
+                                        }
+                                    </View>
+
+                                    <View style={{width:'50%'}}>
+                                        <Text style={{fontSize:12}}>Tam. Sapato:</Text>
+                                        
+                                        { !!alunoDetail
+                                            ? <Text style={{fontWeight:'bold',fontSize:16,left:20}}>{alunoDetail.shoe}</Text>
+                                            : <TextInput autoCorrect={false} onChangeText={(value) => handleForm('shoe', parseInt(value))} keyboardType='numeric' maxLength={2} value={form.shoe.toString()}/>
+                                        }
+                                    </View>
+                                </View>
+
+                                <View style={{
+                                    marginTop:30,
+                                    paddingHorizontal:20
+                                }}>
+                                    <View>
+                                        <Text style={{fontSize:12}}>Escola:</Text>
+                                        
+                                        { !!alunoDetail
+                                            ? <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.schoolName}</Text>
+                                            : <TextInput autoCorrect={false} onChangeText={(value) => handleForm('schoolName', value)} value={form.schoolName}/>
+                                        }
+                                    </View>
+                                </View>
+
+                                <View style={{
+                                    marginTop:30,
+                                    justifyContent:'space-between',
+                                    flexDirection:'row',
+                                    paddingHorizontal:20
+                                }}>
+                                    <View>
+                                        <Text style={{fontSize:12}}>Ano escolar:</Text>
+                                        
+                                        { !!alunoDetail
+                                            ? <Text style={{fontWeight:'bold',fontSize:16,textAlign:'center'}}>{alunoDetail.school}</Text>
+                                            : <TextInput autoCorrect={false} onChangeText={(value) => handleForm('school', value)} value={form.school}/>
+                                        }
+                                    </View>
+
+                                    <View style={{alignItems:'flex-end',right:30}}>
+                                        <Text style={{fontSize:12}}>Cart. Vacinação:</Text>
+                                        
+                                        <View>
+                                            <DropDownPicker
+                                                open={vacinaOpen}
+                                                value={vacinaValue}
+                                                items={vacina}
+                                                setOpen={setVacinaOpen}
+                                                setValue={setVacinaValue}
+                                                setItems={setVacina}
+                                                placeholder="-"
+                                                zIndex={1000}
+                                                zIndexInverse={3000}
+                                                style={{borderWidth:0,backgroundColor:'#F8FAFC',width:'45%',alignItems:'flex-start'}}
+                                                dropDownContainerStyle={{borderWidth:0,backgroundColor:'#F8FAFC',width:'45%'}}
+                                                textStyle={{fontWeight:'bold', fontSize:16}}
+                                                theme="LIGHT"
+                                            />
+                                        </View>
+                                    </View>
+                                </View>
+                            </>
+                            }
+                            { currentStudent === '2' &&
+                            <>
+                                <View style={{
+                                    marginTop:45,
+                                    paddingHorizontal:20
+                                }}>
+                                    <View>
+                                        <Text style={{fontSize:12}}>Nome:</Text>
+                                        
+                                        { !!alunoDetail
+                                            ? <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.guardian}</Text>
+                                            : <TextInput autoCorrect={false} onChangeText={(value) => handleForm('guardian', value)} value={form.guardian}/>
+                                        }
+                                    </View>
+                                </View>
+
+                                <View style={{
+                                    marginTop:30,
+                                    flexDirection:'row',
+                                    paddingHorizontal:20,
+                                }}>
+                                    <View style={{width:'60%'}}>
+                                        <Text style={{fontSize:12}}>CPF:</Text>
+                                        
+                                        { !!alunoDetail
+                                            ?   <MaskedText style={{fontSize:16}} textBold={true} mask="999.999.999-99">{alunoDetail.guardianCpf}</MaskedText>
+                                            :   <MaskedTextInput
+                                                    mask="999.999.999-99"
+                                                    onChangeText={(value) => handleForm('guardianCpf', value)}
+                                                    keyboardType="numeric"
+                                                    maxLength={14}
+                                                    defaultValue={form.guardianCpf}
+                                                />
+                                        }
+                                    </View>
+
+                                    <View style={{width:'50%'}}>
+                                        <Text style={{fontSize:12}}>NIS:</Text>
+                                        
+                                        { !!alunoDetail
+                                            ? <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.guardianNis}</Text>
+                                            : <TextInput onChangeText={(value) => handleForm('guardianNis', value)} keyboardType="numeric" value={form.guardianNis}/>
+                                        }
+                                    </View>
+                                </View>
+
+                                <View style={{
+                                    marginTop:30,
+                                    flexDirection:'row',
+                                    paddingHorizontal:20,
+                                }}>
+                                    <View style={{width:'60%'}}>
+                                        <Text style={{fontSize:12}}>Celular:</Text>
+                                        
+                                        { !!alunoDetail
+                                            ?   <MaskedText style={{fontSize:16}} textBold={true} mask="(99)99999-9999">{alunoDetail.guardianCel}</MaskedText>
+                                            :   <MaskedTextInput
+                                                    mask="(99)99999-9999"
+                                                    onChangeText={(value) => handleForm('guardianCel', value)}
+                                                    keyboardType="numeric"
+                                                    maxLength={14}
+                                                    defaultValue={form.guardianCel}
+                                                />
+                                        }
+                                    </View>
+
+                                    <View style={{width:'50%'}}>
+                                        <Text style={{fontSize:12}}>Renda Familiar:</Text>
+    
+                                        { !!alunoDetail
+                                            ?   <Text style={{fontWeight:'bold',fontSize:16}}>R$ {parseFloat(alunoDetail.income)}</Text>
+                                            :   <CurrencyInput
+                                                    value={incomeForm}
+                                                    onChangeText={(value) => handleForm('income', value)}
+                                                    onChangeValue={setIncomeForm}
+                                                    unit="R$"
+                                                    delimiter="."
+                                                    separator=","
+                                                    precision={2}
+                                                />
+                                        }
+                                    </View>
+                                </View>
+                            
+                            </>
+                            }
+
+                            <TouchableOpacity
+                                onPress={()=>{ !alunoDetail && currentStudent === '1' ? createStudent() : shareStudent()}}
                                 style={{
-                                    borderRadius:100,
-                                    width:100,
-                                    height:100,
-                                    backgroundColor:'#ffffff',
+                                    backgroundColor:'#c00c0c',
                                     alignItems:'center',
+                                    opacity:0.85,
                                     justifyContent:'center',
-                                    borderColor:'#c00c0c',
-                                    borderWidth:2,
+                                    marginTop:30,
+                                    marginBottom:30,
+                                    height:55,
+                                    marginHorizontal:'25%',
+                                    borderRadius:40,
+                                    shadowColor: "#000",
+                                    shadowOffset: {width: 0,height: 2},
+                                    shadowOpacity: 0.25,
+                                    shadowRadius: 3.84,
+                                    elevation: 5,
                                 }}
                             >
-                            </View>
-                            
-                            <View style={{
-                                marginLeft:20,
-                                justifyContent:'space-between',
-                                flex:1
-                            }}>
-
-                                <View>
-                                    <Text>Nome:</Text>
-                                    <Text style={{fontWeight:'bold',fontSize:14}}>{alunoDetail.name}</Text>
-                                </View>
-
-                                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                                    <View>
-                                        <Text>Idade:</Text>
-                                        <Text style={{fontWeight:'bold',fontSize:14,textAlign:'center'}}>{alunoDetail.age} anos</Text>
-                                    </View>
-
-                                    <View>
-                                        <Text>Nascimento:</Text>
-                                        <Text style={{fontWeight:'bold',fontSize:14,textAlign:'center'}}>{alunoDetail.birth.substring(6,8)+'/'+alunoDetail.birth.substring(4,6)+'/'+alunoDetail.birth.substring(0,4)}</Text>
-                                    </View>
-                                </View>
-                            </View>
-                        </View>
-
-
-                        <View style={{
-                            marginTop:40,
-                            paddingHorizontal:25,
-                            justifyContent:'space-around',
-                            flexDirection:'row'
-                        }}>
-                            
-                            <TouchableOpacity
-                                onPress={()=>{setCurrentStudent('1')}}
-                                style={{
-                                    borderBottomWidth:currentStudent === '1' ? 2 : 0,
-                                    borderBottomColor:'#c00c0c',
-                                    width:'35%',
-                                    alignItems:'center'
-                                }}>
-                                <Text style={{fontWeight:'bold',color:currentStudent === '1' ? '#000000' : '#6C6C6C',fontSize:16}}>Aluno</Text>
+                                <Text style={{fontSize:22,fontWeight:'600',color:'white'}}>{!alunoDetail && currentStudent === '1' ? 'Salvar' : 'Compartilhar'}</Text>
                             </TouchableOpacity>
-
-                            <TouchableOpacity
-                                onPress={()=>{setCurrentStudent('2')}}
-                                style={{
-                                    borderBottomWidth:currentStudent === '2' ? 2 : 0,
-                                    borderBottomColor:'#c00c0c',
-                                    width:'35%',
-                                    alignItems:'center'
-                                }}>
-                                <Text style={{fontWeight:'bold',color:currentStudent === '2' ? '#000000' : '#6C6C6C',fontSize:16}}>Responsável</Text>
-                            </TouchableOpacity>
-                        </View>
-                        { currentStudent === '1' &&
-                        <>
-                            <View style={{
-                                marginTop:45,
-                                flexDirection:'row',
-                                paddingHorizontal:20,
-                            }}>
-                                <View style={{width:'60%'}}>
-                                    <Text style={{fontSize:12}}>RG:</Text>
-                                    <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.rg}</Text>
-                                </View>
-
-                                <View style={{width:'50%'}}>
-                                    <Text style={{fontSize:12}}>CPF:</Text>
-                                    <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.cpf}</Text>
-                                </View>
-                            </View>
-
-                            <View style={{
-                                marginTop:30,
-                                justifyContent:'space-between',
-                                flexDirection:'row',
-                                paddingHorizontal:20
-                            }}>
-                                <View style={{width:'60%'}}>
-                                    <Text style={{fontSize:12}}>Tam. Roupa:</Text>
-                                    <Text style={{fontWeight:'bold',fontSize:16,left:20}}>{alunoDetail.clothing}</Text>
-                                </View>
-
-                                <View style={{width:'50%'}}>
-                                    <Text style={{fontSize:12}}>Tam. Sapato:</Text>
-                                    <Text style={{fontWeight:'bold',fontSize:16,left:20}}>{alunoDetail.shoe}</Text>
-                                </View>
-                            </View>
-
-                            <View style={{
-                                marginTop:30,
-                                paddingHorizontal:20
-                            }}>
-                                <View>
-                                    <Text style={{fontSize:12}}>Escola:</Text>
-                                    <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.schoolName}</Text>
-                                </View>
-                            </View>
-
-                            <View style={{
-                                marginTop:30,
-                                justifyContent:'space-between',
-                                flexDirection:'row',
-                                paddingHorizontal:20
-                            }}>
-                                <View>
-                                    <Text style={{fontSize:12}}>Ano escolar:</Text>
-                                    <Text style={{fontWeight:'bold',fontSize:16,textAlign:'center'}}>{alunoDetail.school}</Text>
-                                </View>
-
-                                <View style={{alignItems:'flex-end',right:30}}>
-                                    <Text style={{fontSize:12}}>Cart. Vacinação:</Text>
-                                    
-                                    <View>
-                                        <DropDownPicker
-                                            open={vacinaOpen}
-                                            value={vacinaValue}
-                                            items={vacina}
-                                            setOpen={setVacinaOpen}
-                                            setValue={setVacinaValue}
-                                            setItems={setVacina}
-                                            placeholder="-"
-                                            zIndex={1000}
-                                            zIndexInverse={3000}
-                                            style={{borderWidth:0,backgroundColor:'#F8FAFC',width:'45%',alignItems:'flex-start'}}
-                                            dropDownContainerStyle={{borderWidth:0,backgroundColor:'#F8FAFC',width:'45%'}}
-                                            textStyle={{fontWeight:'bold', fontSize:16}}
-                                            theme="LIGHT"
-                                        />
-                                    </View>
-                                </View>
-                            </View>
-                        </>
-                        }
-                        { currentStudent === '2' &&
-                        <>
-                            <View style={{
-                                marginTop:45,
-                                paddingHorizontal:20
-                            }}>
-                                <View>
-                                    <Text style={{fontSize:12}}>Nome:</Text>
-                                    <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.guardian}</Text>
-                                </View>
-                            </View>
-
-                            <View style={{
-                                marginTop:30,
-                                flexDirection:'row',
-                                paddingHorizontal:20,
-                            }}>
-                                <View style={{width:'60%'}}>
-                                    <Text style={{fontSize:12}}>CPF:</Text>
-                                    <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.guardianCpf}</Text>
-                                </View>
-
-                                <View style={{width:'50%'}}>
-                                    <Text style={{fontSize:12}}>NIS:</Text>
-                                    <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.guardianNis}</Text>
-                                </View>
-                            </View>
-
-                            <View style={{
-                                marginTop:30,
-                                flexDirection:'row',
-                                paddingHorizontal:20,
-                            }}>
-                                <View style={{width:'60%'}}>
-                                    <Text style={{fontSize:12}}>Celular:</Text>
-                                    <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.guardianCel}</Text>
-                                </View>
-
-                                <View style={{width:'50%'}}>
-                                    <Text style={{fontSize:12}}>Renda Familiar:</Text>
-                                    <Text style={{fontWeight:'bold',fontSize:16}}>R$ {alunoDetail.income},00</Text>
-                                </View>
-                            </View>
                         
-                        </>
-                        }
-                    </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
                 }
+                
              </View>
         </ModObs>
         </>
     )
+
+    function PDFHTML(alunoDetail){
+        return `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+        <html>
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+            </head>
+            <style>
+                html, body {
+                    margin: 0;
+                    padding: 20;
+                    font-family: Arial, Helvetica, sans-serif;
+                    flex: 1;
+                }
+                .arredondar {
+                    display: inline-block;
+                    background-color: #C00C0C;
+                    padding: 2px;
+                    font-size: 0;
+                }
+                .arredondar, .arredondar img {
+                    max-width: 200;
+                    -webkit-clip-path: circle(50% at 50% 50%);
+                            clip-path: circle(50% at 50% 50%);
+                }
+                .avatar {
+                    text-align: center;
+                    margin-top: 40;
+                    margin-bottom: 40;
+                }
+                .grid-container {
+                    display: grid;
+                    grid-template-columns: auto auto;
+                    justify-content: space-between;
+                    margin-left: 80; 
+                    margin-right: 80;
+                    text-align: center;
+                }       
+            </style>
+            <body>
+                <div style="z-index: -1; position: absolute; right: -50; bottom: 0;">
+                    <img height="800" src="data:image/png;base64, ${img64}" />
+                </div>
+                <div style="height: 100%;">
+                    <h2 style="margin-left: 80; margin-right: 80;"">${alunoDetail.core === '1' ? 'Padroeira' : 'Piratininga'}</h2>
+                    <div class="avatar">
+                        <div class="arredondar">
+                            <img src="${alunoDetail.avatar}">
+                        </div>
+                        <div style="margin-right: 100; margin-left: 100">
+                            <div style="margin-top: 40; font-size: 26; color: #C00C0C; font-weight: bold; text-align: left">${alunoDetail.name}</div>
+                            <div style="margin-top: 4; font-size: 22; font-weight: 600; text-align: left;">${alunoDetail.age} anos</div>
+                            <hr style="text-align:left;margin-left:0">
+                        </div>
+                    </div>
+                    <div class="grid-container">
+                        <div style="width:100%; opacity: 0.6; font-weight: 550;">Tamanho da Roupa:</div>
+                        <div style="width:100%; opacity: 0.6; font-weight: 550;">Tamanho Calçado</div>
+                        <div style="width:100%; font-size: 22; margin-top: 5; font-weight: bold;">${(alunoDetail.clothing).toString()}</div>
+                        <div style="width:100%; font-size: 22; margin-top: 5; font-weight: bold;">${(alunoDetail.shoe).toString()}</div>
+                    </div>
+                    <div style="margin-top: 50;">
+                        <div style="margin-left: 80; margin-right: 80; margin-bottom: 4; opacity: 0.6; font-weight: 550;">Escola:</div>
+                        <div style="margin-left: 80; margin-right: 80; font-size: 22; margin-top: 5; font-weight: bold">${alunoDetail.schoolName}</div>
+                    </div>
+                    <div style="margin-top: 50;">
+                        <div style="margin-left: 80; margin-right: 80; margin-bottom: 4; opacity: 0.6; font-weight: 550;">Ano escolar:</div>
+                        <div style="margin-left: 80; margin-right: 80; font-size: 22; margin-top: 5; font-weight: bold">${alunoDetail.school}</div>
+                    </div>
+                </div>
+            </body>
+        </html>`
+    }
 }

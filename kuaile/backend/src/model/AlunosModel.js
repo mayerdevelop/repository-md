@@ -6,7 +6,7 @@ const AlunosSchema = new Schema({
     name: {type: String, required: true},
     age: {type: String, required: true},
     core: {type: String, required: true},
-    status: {type: String, required: true},
+    status: {type: String, required: false},
     birth: {type: String, required: true},
     rg: {type: String, required: false},
     cpf: {type: String, required: false},
@@ -19,7 +19,8 @@ const AlunosSchema = new Schema({
     guardianCel: {type: String, required: false},
     guardianNis: {type: String, required: false},
     vaccineCard: {type: String, required: false},
-    income: {type: Number, required: false}
+    income: {type: Number, required: false},
+    avatar: {type: String, required: false}
 });
 
 module.exports = mongoose.model("alunos", AlunosSchema);
