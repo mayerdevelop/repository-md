@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Controle kuàilè",
-    "slug": "listachamada",
+    "slug": "kuaile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -12,36 +12,28 @@
       "backgroundColor": "#ED1B24"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0,
-      "url": "https://u.expo.dev/5e315c44-ce81-4ce5-967b-1678a8161400"
+      "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.felipemayer00.listachamada"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FF0000"
+        "backgroundColor": "#ED1B24"
       },
-      "package": "com.felipemayer00.listachamada"
+      "package": "com.felipemayer00.kuaile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "5e315c44-ce81-4ce5-967b-1678a8161400"
+        "projectId": "6e6b54ff-307f-4357-a487-f875d7931c3a"
       }
-    },
-    "runtimeVersion": {
-      "policy": "sdkVersion"
-    },
-    "plugins": [
-      "react-native-compressor"
-    ]
+    }
   }
 }

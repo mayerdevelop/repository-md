@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { SafeAreaView,View,Text,Image,TextInput,TouchableOpacity,Keyboard,TouchableWithoutFeedback,ActivityIndicator,StyleSheet,Dimensions } from "react-native";
 import api from '../../services/api';
-import Wave from '../../../assets/@svg/wave.svg'
 import Svg, { Path } from 'react-native-svg';
 
 export default function Login({navigation}){
@@ -106,7 +105,7 @@ export default function Login({navigation}){
                     </View>
                     }
 
-                    <View style={{marginHorizontal:30,marginTop:50}}>
+                    <View style={{marginHorizontal:30,marginTop:30}}>
                         <Text style={{fontSize:30,fontWeight:'bold',color:'#c00c0c'}}>Login</Text>
                         <Text style={{fontSize:24,fontWeight:'500',color:'#c00c0c',bottom:20}}>_______</Text>
                     </View>

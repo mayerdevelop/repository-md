@@ -25,7 +25,6 @@ import DropDownPicker from 'react-native-dropdown-picker'
 import api from '../../services/api';
 import { Audio } from 'expo-av';
 
-import { MaskedTextInput,MaskedText } from "react-native-mask-text";
 import CurrencyInput from 'react-native-currency-input';
 
 import { printToFileAsync } from 'expo-print'
@@ -37,7 +36,22 @@ import ModObs from '../../modal/modObs';
 
 import img64 from '../../../assets/dragonmd'
 
-export default function List(){
+function formatarCPF(cpf) {
+    return cpf
+      .replace(/\D/g, '')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+}
+
+function formatarTelefone(telefone) {
+    return telefone
+      .replace(/\D/g, '')
+      .replace(/(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{5})(\d{1,4})?$/, '$1-$2');
+}
+  
+export default function List(props){
 
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
@@ -86,15 +100,104 @@ export default function List(){
         guardianNis: '',
         vaccineCard: '',
         income: ''
-      });
-    
-      const handleForm = (key, value) => {
-        setForm((currentForm) => ({
-          ...currentForm,
-          [key]: value,
-        }));
-      };
+    });
 
+    const handleForm = (key, value) => {
+    setForm((currentForm) => ({
+        ...currentForm,
+        [key]: value,
+    }));
+    };
+
+    function formatarData(valor) {
+    // Remove tudo que não for número
+    let numero = valor.replace(/[^0-9]/g, '');
+
+    // Separa a data em dia, mês e ano
+    let dia = numero.substring(0, 2);
+    let mes = numero.substring(2, 4);
+    let ano = numero.substring(4, 8);
+
+    // Formata a data no formato desejado
+    let dataFormatada = '';
+    if (dia) {
+        dataFormatada += dia;
+        if (dia.length === 2 && mes) {
+        dataFormatada += `/${mes}`;
+        if (mes.length === 2 && ano) {
+            dataFormatada += `/${ano}`;
+        }
+        }
+    }
+
+    return dataFormatada;
+    }
+
+    function handleChangeDate(text) {
+
+    handleForm('birth', formatarData(text))
+    setAgeForm(idade({birth: formatarData(text)}))
+    }
+
+
+    function validarData(data) {
+    // Verifica se a string possui 10 caracteres (dd/mm/yyyy)
+    if (data.length !== 10) {
+        return false;
+    }
+    
+    // Extrai o dia, mês e ano da string
+    const dia = Number(data.substring(0, 2));
+    const mes = Number(data.substring(3, 5)) - 1; // Os meses começam em 0 (janeiro) na classe Date
+    const ano = Number(data.substring(6, 10));
+    
+    // Cria uma nova data com os valores extraídos
+    const novaData = new Date(ano, mes, dia);
+    
+    // Verifica se a data criada é igual à data passada como argumento
+    // e se ela é uma data válida (ou seja, o mês e o dia são iguais aos valores informados)
+    return novaData.getDate() === dia && novaData.getMonth() === mes && novaData.getFullYear() === ano;
+    }
+
+     const inputRef = useRef(null);
+     const [, setCpf] = useState('');
+
+     function handleChangeCPF(text,guardian) {
+        const cpfSemMascara = text.replace(/\D/g, '');
+        const cpfFormatado = formatarCPF(cpfSemMascara);
+
+        setCpf(cpfFormatado);
+
+        if(!!guardian){
+            form.guardianCpf = cpfFormatado
+        }else{
+            form.cpf = cpfFormatado
+        }
+        
+        inputRef.current.setNativeProps({ text: cpfFormatado });
+    
+        if (props.onChangeText) {
+          props.onChangeText(cpfSemMascara);
+        }
+    }
+
+
+    const inputRefTel = useRef(null);
+    const [, setTelefone] = useState('');
+  
+    function handleChangeTel(text) {
+      const telefoneSemMascara = text.replace(/\D/g, '');
+      const telefoneFormatado = formatarTelefone(telefoneSemMascara);
+
+      form.guardianCel = telefoneFormatado
+      setTelefone(telefoneSemMascara);
+  
+      inputRefTel.current.setNativeProps({ text: telefoneFormatado });
+  
+      if (props.onChangeText) {
+        props.onChangeText(telefoneSemMascara);
+      }
+    }
 
     let pending = true
     
@@ -476,6 +579,8 @@ export default function List(){
         setScanned(false)
         setListId('')
         setAgeForm('')
+        setCpf('')
+        setTelefone('')
         setIncomeForm(0)
         setImage(null)
         setForm({
@@ -572,6 +677,8 @@ export default function List(){
 
     async function createStudent(){
 
+        console.log(form)
+
         if(!coreValue){
             alert('Necessário informar o núcleo')
             return
@@ -588,6 +695,11 @@ export default function List(){
 
         if(!form.birth){
             alert('Necessário informar a data de nascimento')
+            return
+        }
+
+        if(!validarData(form.birth)){
+            alert('Data de nascimento inválida')
             return
         }
 
@@ -612,8 +724,6 @@ export default function List(){
                 income: parseFloat(form.income.trim().replace('.','').replace(',','.')),
                 avatar: !image ? '' : image
             }
-
-            console.log(objPost)
 
             const response = await api.post("/alunos", objPost);
 
@@ -1310,14 +1420,13 @@ export default function List(){
                                             
                                             { !!alunoDetail
                                                 ?   <Text style={{fontWeight:'bold',fontSize:14,textAlign:'center'}}>{alunoDetail.birth.substring(6,8)+'/'+alunoDetail.birth.substring(4,6)+'/'+alunoDetail.birth.substring(0,4)}</Text>
-                                                :   <MaskedTextInput
-                                                        mask="99/99/9999"
-                                                        onChangeText={(value) => {handleForm('birth', value), setAgeForm(idade({birth: value}))}}
-                                                        keyboardType="numeric"
-                                                        maxLength={10}
-                                                        textBold={true}
-                                                        value={form.birth}
-                                                    />
+                                                : <TextInput
+                                                    value={form.birth}
+                                                    onChangeText={handleChangeDate}
+                                                    placeholder={'DD/MM/YYYY'}
+                                                    keyboardType={'numeric'}
+                                                    maxLength={10}
+                                                />
                                             }
                                         </View>
                                     </View>
@@ -1374,13 +1483,17 @@ export default function List(){
                                         <Text style={{fontSize:12}}>CPF:</Text>
                                         
                                         { !!alunoDetail
-                                            ?   <MaskedText style={{fontSize:16}} textBold={true} mask="999.999.999-99">{alunoDetail.cpf}</MaskedText>
-                                            :   <MaskedTextInput
-                                                    mask="999.999.999-99"
-                                                    onChangeText={(value) => handleForm('cpf', value)}
+                                            ?   
+                                                <Text style={{fontSize:16, fontWeight:'bold'}}>{formatarCPF(alunoDetail.cpf)}</Text>
+
+                                            :   
+                                                <TextInput
+                                                    {...props}
                                                     keyboardType="numeric"
                                                     maxLength={14}
-                                                    defaultValue={form.cpf}
+                                                    onChangeText={(value) => {handleChangeCPF(value)}}
+                                                    ref={inputRef}
+                                                    value={form.cpf}
                                                 />
                                         }
                                     </View>
@@ -1489,14 +1602,18 @@ export default function List(){
                                         <Text style={{fontSize:12}}>CPF:</Text>
                                         
                                         { !!alunoDetail
-                                            ?   <MaskedText style={{fontSize:16}} textBold={true} mask="999.999.999-99">{alunoDetail.guardianCpf}</MaskedText>
-                                            :   <MaskedTextInput
-                                                    mask="999.999.999-99"
-                                                    onChangeText={(value) => handleForm('guardianCpf', value)}
+                                            ?   
+                                                <Text style={{fontSize:16, fontWeight:'bold'}}>{formatarCPF(alunoDetail.guardianCpf)}</Text>
+                                            :  
+                                                <TextInput
+                                                    {...props}
                                                     keyboardType="numeric"
                                                     maxLength={14}
-                                                    defaultValue={form.guardianCpf}
+                                                    onChangeText={(value) => {handleChangeCPF(value,'guardian')}}
+                                                    ref={inputRef}
+                                                    value={form.guardianCpf}
                                                 />
+                                                
                                         }
                                     </View>
 
@@ -1519,13 +1636,15 @@ export default function List(){
                                         <Text style={{fontSize:12}}>Celular:</Text>
                                         
                                         { !!alunoDetail
-                                            ?   <MaskedText style={{fontSize:16}} textBold={true} mask="(99)99999-9999">{alunoDetail.guardianCel}</MaskedText>
-                                            :   <MaskedTextInput
-                                                    mask="(99)99999-9999"
-                                                    onChangeText={(value) => handleForm('guardianCel', value)}
-                                                    keyboardType="numeric"
-                                                    maxLength={14}
-                                                    defaultValue={form.guardianCel}
+                                            ?   <Text style={{fontSize:16, fontWeight:'bold'}}>{formatarTelefone(alunoDetail.guardianCel)}</Text>
+                                            :   
+                                                <TextInput
+                                                    {...props}
+                                                    keyboardType="phone-pad"
+                                                    maxLength={15}
+                                                    onChangeText={(value) => {handleChangeTel(value)}}
+                                                    ref={inputRefTel}
+                                                    value={form.guardianCel}
                                                 />
                                         }
                                     </View>
@@ -1551,27 +1670,57 @@ export default function List(){
                             </>
                             }
 
-                            <TouchableOpacity
-                                onPress={()=>{ !alunoDetail && currentStudent === '1' ? createStudent() : shareStudent()}}
-                                style={{
-                                    backgroundColor:'#c00c0c',
-                                    alignItems:'center',
-                                    opacity:0.85,
-                                    justifyContent:'center',
-                                    marginTop:30,
-                                    marginBottom:30,
-                                    height:55,
-                                    marginHorizontal:'25%',
-                                    borderRadius:40,
-                                    shadowColor: "#000",
-                                    shadowOffset: {width: 0,height: 2},
-                                    shadowOpacity: 0.25,
-                                    shadowRadius: 3.84,
-                                    elevation: 5,
-                                }}
-                            >
-                                <Text style={{fontSize:22,fontWeight:'600',color:'white'}}>{!alunoDetail && currentStudent === '1' ? 'Salvar' : 'Compartilhar'}</Text>
-                            </TouchableOpacity>
+
+                            { !alunoDetail && currentStudent === '1' &&
+                                <TouchableOpacity
+                                    onPress={()=>{ currentStudent === '1' && createStudent() }}
+                                    style={{
+                                        backgroundColor:'#c00c0c',
+                                        alignItems:'center',
+                                        opacity:0.85,
+                                        justifyContent:'center',
+                                        marginTop:30,
+                                        marginBottom:30,
+                                        height:55,
+                                        marginHorizontal:'25%',
+                                        borderRadius:40,
+                                        shadowColor: "#000",
+                                        shadowOffset: {width: 0,height: 2},
+                                        shadowOpacity: 0.25,
+                                        shadowRadius: 3.84,
+                                        elevation: 5,
+                                    }}
+                                >
+                                    <Text style={{fontSize:22,fontWeight:'600',color:'white'}}>Salvar</Text>
+                       
+                                </TouchableOpacity>
+                            }
+
+                            { alunoDetail && currentStudent === '1' &&
+                                <TouchableOpacity
+                                    onPress={()=>{ currentStudent === '1' && shareStudent() }}
+                                    style={{
+                                        backgroundColor:'#c00c0c',
+                                        alignItems:'center',
+                                        opacity:0.85,
+                                        justifyContent:'center',
+                                        marginTop:30,
+                                        marginBottom:30,
+                                        height:55,
+                                        marginHorizontal:'25%',
+                                        borderRadius:40,
+                                        shadowColor: "#000",
+                                        shadowOffset: {width: 0,height: 2},
+                                        shadowOpacity: 0.25,
+                                        shadowRadius: 3.84,
+                                        elevation: 5,
+                                    }}
+                                >
+                                    <Text style={{fontSize:22,fontWeight:'600',color:'white'}}>Compartilhar</Text>
+                       
+                                </TouchableOpacity>
+                            }
+                        
                         
                         </ScrollView>
                     </KeyboardAvoidingView>
