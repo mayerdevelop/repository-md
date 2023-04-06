@@ -49,3 +49,30 @@ export const Filters = styled.div`
        opacity: 1;
     }
 `;
+
+
+export const Create = styled.div`
+
+    display: flex;
+    justify-content: center;
+    
+    margin-bottom: 30px;
+
+    .tag-filter {
+        font-size: 16px;
+        font-weight: 500;
+
+        background: none;
+        color: ${props => props.theme.colors.white};
+
+        margin: 0 10px;
+        
+        opacity: 1;
+        transition: opacity .3s;
+
+        &:hover {
+            opacity: .7;
+        }
+    }
+    
+`;

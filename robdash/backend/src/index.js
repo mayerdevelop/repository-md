@@ -13,7 +13,7 @@ server.use('/menu', Routes);
 server.use('/token', Routes);
 server.use('/loginteste', Routes);
 
-server.listen(3000, () =>{
+server.listen(3333, () =>{
     console.log('API ONLINE')
 
 

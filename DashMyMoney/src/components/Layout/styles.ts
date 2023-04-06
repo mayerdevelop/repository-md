@@ -13,8 +13,13 @@ export const Grid = styled.div`
     grid-template-rows: 70px auto;
 
     grid-template-areas:
-    'AS MH'
-    'AS CT';
+    'MH MH'
+    'CT CT';
+
+    /*
+      'AS MH'
+      'AS CT';
+    */
 
     height: 100vh;
     min-width: 315px;

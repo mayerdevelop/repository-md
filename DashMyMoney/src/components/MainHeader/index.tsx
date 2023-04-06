@@ -3,18 +3,30 @@ import Toggle from '../Toggle';
 
 import emojis from '../../utils/emojis';
 
+import {
+    MdDashboard,
+    MdArrowDownward,
+    MdArrowUpward,
+    MdExitToApp,
+    
+} from 'react-icons/md';
+
+import { useAuth } from '../../hooks/auth';
 import { useTheme } from '../../hooks/theme';
 
 import { 
     Container, 
     Profile, 
     Welcome, 
-    UserName, 
+    MenuItemLink,
+    MenuContainer,
+    MenuItemButton
 }  from './styles';
 
 
 const MainHeader: React.FC = () => {
     const { toggleTheme, theme } = useTheme();
+    const { signOut } = useAuth();
 
     const [darkTheme, setDarkTheme] = useState(() => theme.title === 'dark' ? true : false);
 
@@ -36,10 +48,30 @@ const MainHeader: React.FC = () => {
                 checked={darkTheme}
                 onChange={handleChangeTheme}
             />
+            <MenuContainer>
+                <MenuItemLink href="/">
+                    <MdDashboard />
+                    Dashboard
+                </MenuItemLink>
+
+                <MenuItemLink href="/list/entry-balance">
+                    <MdArrowUpward />
+                    Entradas
+                </MenuItemLink>
+
+                <MenuItemLink href="/list/exit-balance">
+                    <MdArrowDownward />
+                    Saídas
+                </MenuItemLink>
+
+                <MenuItemButton onClick={signOut}>
+                    <MdExitToApp />
+                    Sair
+                </MenuItemButton>
+            </MenuContainer>
 
             <Profile>
-                <Welcome>Olá, {emoji}</Welcome>
-                <UserName>Felipe Mayer</UserName>
+                <Welcome>Olá, Felipe Mayer  {emoji} </Welcome>
             </Profile>
         </Container>
     );

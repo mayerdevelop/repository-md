@@ -1,5 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
-
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 
 import ContentHeader from '../../components/ContentHeader';
 import SelectInput from '../../components/SelectInput';
@@ -10,7 +9,6 @@ import HistoryBox from '../../components/HistoryBox';
 import BarChartBox from '../../components/BarChartBox'
 
 import expenses from '../../repositories/expenses';
-import gains from '../../repositories/gains';
 import listOfMonths from '../../utils/months';
 
 import happyImg from '../../assets/happy.svg';
@@ -18,17 +16,36 @@ import sadImg from '../../assets/sad.svg';
 import grinningImg from '../../assets/grinning.svg';
 import opsImg from '../../assets/ops.svg';
 
+import GetGains from '../../repositories/gains';
 
 import { 
     Container,
     Content, 
 } from './styles';
 
+interface Gain {
+    id: number;
+    description: string;
+    amount: string;
+    date: string;
+    type: string;
+    frequency: string
+}
 
 const Dashboard: React.FC = () => {
     const [monthSelected, setMonthSelected] = useState<number>(new Date().getMonth() + 1);
     const [yearSelected, setYearSelected] = useState<number>(new Date().getFullYear());
 
+    const [gains, setGains] = useState<Gain[]>([]);
+
+    useEffect(() => {
+        const fetchGains = async () => {
+          const data = await GetGains()
+
+          setGains(data)
+        };
+        fetchGains();
+      }, []);
 
     const years = useMemo(() => {
         let uniqueYears: number[] = [];
@@ -48,7 +65,7 @@ const Dashboard: React.FC = () => {
                 label: year,
             }
         });
-    },[]);
+    },[gains]);
 
 
     const months = useMemo(() => {
@@ -100,7 +117,7 @@ const Dashboard: React.FC = () => {
         });
 
         return total;
-    },[monthSelected, yearSelected]);
+    },[gains, monthSelected, yearSelected]);
 
     const totalBalance = useMemo(() => {
         return totalGains - totalExpenses;
@@ -213,7 +230,7 @@ const Dashboard: React.FC = () => {
             const currentYear = new Date().getFullYear();
             return (yearSelected === currentYear && item.monthNumber <= currentMonth) || (yearSelected < currentYear)
         });
-    },[yearSelected]);
+    },[gains, yearSelected]);
 
     const relationExpensevesRecurrentVersusEventual = useMemo(() => {
         let amountRecurrent = 0;
@@ -300,7 +317,7 @@ const Dashboard: React.FC = () => {
                 color: "#E44C4E"
             }
         ];
-    },[monthSelected, yearSelected]);
+    },[gains, monthSelected, yearSelected]);
 
     const handleMonthSelected = useCallback((month: string) => {
         try {
@@ -326,7 +343,7 @@ const Dashboard: React.FC = () => {
 
     return (
         <Container>
-            <ContentHeader title="Dashboard" lineColor="#F7931B">
+            <ContentHeader title="Dashboard" lineColor="#8257e5">
                 <SelectInput 
                     options={months}
                     onChange={(e) => handleMonthSelected(e.target.value)} 

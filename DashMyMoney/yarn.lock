@@ -1294,6 +1294,49 @@
     "@svgr/plugin-svgo" "^4.3.1"
     "loader-utils" "^1.2.3"
 
+"@syncfusion/ej2-base@~20.4.48", "@syncfusion/ej2-base@~20.4.51":
+  "integrity" "sha512-nVyqylTXFuEMZARmqAtGQVadqDwwqgKSC4r1IYwSEc8FoEa2mBxlhQWPjBN7SucwAGAh9aQvnkqIJjSCy8jZiA=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-base/-/ej2-base-20.4.51.tgz"
+  "version" "20.4.51"
+  dependencies:
+    "@syncfusion/ej2-icons" "~20.4.48"
+
+"@syncfusion/ej2-buttons@~20.4.53":
+  "integrity" "sha512-o3/Blcs9VisB7oAoLd6x2jFGIHGY7COzMpEj9jWOdHZMtxj9tCqeqgT8A2NHRzHFFsJSAA/G3+lZs8Hh2SZNOw=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-buttons/-/ej2-buttons-20.4.53.tgz"
+  "version" "20.4.53"
+  dependencies:
+    "@syncfusion/ej2-base" "~20.4.51"
+
+"@syncfusion/ej2-icons@~20.4.48":
+  "integrity" "sha512-uPV4RzwxQ3cj6Zx4h6VvsEmrCGL9ssKG62Pa12k1fow915QSSQkJ0WZ6dBHIdXbk5nSDp2J2wDlV+5h3Ici+sg=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-icons/-/ej2-icons-20.4.48.tgz"
+  "version" "20.4.48"
+
+"@syncfusion/ej2-popups@20.4.53":
+  "integrity" "sha512-EtRwPk8e+rDpdUxoHQtP43JMT67130bM58GK6bby6amrMBdcTMtQ6Iuv2sXBpdP+hp/0QvfNM49xjaEJD4JnsQ=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-popups/-/ej2-popups-20.4.53.tgz"
+  "version" "20.4.53"
+  dependencies:
+    "@syncfusion/ej2-base" "~20.4.51"
+    "@syncfusion/ej2-buttons" "~20.4.53"
+
+"@syncfusion/ej2-react-base@~20.4.48":
+  "integrity" "sha512-hm12BxvIFkdArD/v7w+yeymY4tQl/8lGQcXp3cgja/RLSjt5FNTVYS3mRRmy++HIocqdiYGhTXnEW8V4PLy+QQ=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-react-base/-/ej2-react-base-20.4.48.tgz"
+  "version" "20.4.48"
+  dependencies:
+    "@syncfusion/ej2-base" "~20.4.48"
+
+"@syncfusion/ej2-react-popups@^20.4.53":
+  "integrity" "sha512-6l3ojsBRAx+vuSl5DaNa7e7OQagVM9eLSIYowH9hff8KPagFYdHNaFK2g+GL5cKZqoFV0NUQfduAit5NS7w6YA=="
+  "resolved" "https://registry.npmjs.org/@syncfusion/ej2-react-popups/-/ej2-react-popups-20.4.53.tgz"
+  "version" "20.4.53"
+  dependencies:
+    "@syncfusion/ej2-base" "~20.4.51"
+    "@syncfusion/ej2-popups" "20.4.53"
+    "@syncfusion/ej2-react-base" "~20.4.48"
+
 "@testing-library/dom@*", "@testing-library/dom@>=5":
   "integrity" "sha512-KnH2MnJUzmFNPW6RIKfd+zf2Wue8mEKX0M3cpX6aKl5ZXrJM1/c/Pc8c2xDNYQCnJO48Sm5ITbMXgqTr3h4jxQ=="
   "resolved" "https://registry.npmjs.org/@testing-library/dom/-/dom-8.17.1.tgz"
@@ -1354,6 +1397,13 @@
   "integrity" "sha512-iIgQNzCm0v7QMhhe4Jjn9uRh+I6GoPmt03CbEtwx3ao8/EfoQcmgtqH4vQ5Db/lxiIGaWDv6nwvunuh0RyX0+A=="
   "resolved" "https://registry.npmjs.org/@types/aria-query/-/aria-query-4.2.0.tgz"
   "version" "4.2.0"
+
+"@types/axios@^0.14.0":
+  "integrity" "sha512-KqQnQbdYE54D7oa/UmYVMZKq7CO4l8DEENzOKc4aBRwxCXSlJXGz83flFx5L7AWrOQnmuN3kVsRdt+GZPPjiVQ=="
+  "resolved" "https://registry.npmjs.org/@types/axios/-/axios-0.14.0.tgz"
+  "version" "0.14.0"
+  dependencies:
+    "axios" "*"
 
 "@types/babel__core@^7.1.0":
   "integrity" "sha512-tTnhWszAqvXnhW7m5jQU9PomXSiKXk2sFxpahXvI20SZKu9ylPi8WtIxueZ6ehDWikPT0jeFujMj3X4ZHuf3Tg=="
@@ -2200,13 +2250,14 @@
   "resolved" "https://registry.npmjs.org/aws4/-/aws4-1.9.1.tgz"
   "version" "1.9.1"
 
-"axios@^0.27.2":
-  "integrity" "sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ=="
-  "resolved" "https://registry.npmjs.org/axios/-/axios-0.27.2.tgz"
-  "version" "0.27.2"
+"axios@*", "axios@^1.3.4":
+  "integrity" "sha512-toYm+Bsyl6VC5wSkfkbbNB6ROv7KY93PEBBL6xyDczaIHasAiv4wPqQ/c4RjoQzipxRD2W5g21cOqQulZ7rHwQ=="
+  "resolved" "https://registry.npmjs.org/axios/-/axios-1.3.4.tgz"
+  "version" "1.3.4"
   dependencies:
-    "follow-redirects" "^1.14.9"
+    "follow-redirects" "^1.15.0"
     "form-data" "^4.0.0"
+    "proxy-from-env" "^1.1.0"
 
 "axobject-query@^2.0.2":
   "integrity" "sha512-ICt34ZmrVt8UQnvPl6TVyDTkmhXmAyAT4Jh5ugfGUX4MOrZ+U/ZY6/sdylRw3qGNr9Ub5AJsaHeDMzNLehRdOQ=="
@@ -4824,7 +4875,7 @@
     "inherits" "^2.0.3"
     "readable-stream" "^2.3.6"
 
-"follow-redirects@^1.0.0", "follow-redirects@^1.14.9":
+"follow-redirects@^1.0.0", "follow-redirects@^1.15.0":
   "integrity" "sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA=="
   "resolved" "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.15.1.tgz"
   "version" "1.15.1"
@@ -8750,6 +8801,11 @@
     "forwarded" "~0.1.2"
     "ipaddr.js" "1.9.1"
 
+"proxy-from-env@^1.1.0":
+  "integrity" "sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg=="
+  "resolved" "https://registry.npmjs.org/proxy-from-env/-/proxy-from-env-1.1.0.tgz"
+  "version" "1.1.0"
+
 "prr@~1.0.1":
   "integrity" "sha1-0/wRS6BplaRexok/SEzrHXj19HY= sha512-yPw4Sng1gWghHQWj0B3ZggWUm4qVbPwPFcRG8KyxiU7J2OHFSoEHKS+EZ3fv5l1t9CyCiop6l/ZYeWbrgoQejw=="
   "resolved" "https://registry.npmjs.org/prr/-/prr-1.0.1.tgz"
@@ -10819,10 +10875,10 @@
   "resolved" "https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz"
   "version" "0.0.6"
 
-"typescript@^3.2.1", "typescript@>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta", "typescript@~3.7.2":
-  "integrity" "sha512-/P5lkRXkWHNAbcJIiHPfRoKqyd7bsyCma1hZNUGfn20qm64T6ZBlrzprymeu918H+mB/0rIg2gGK/BXkhhYgBw=="
-  "resolved" "https://registry.npmjs.org/typescript/-/typescript-3.7.5.tgz"
-  "version" "3.7.5"
+"typescript@^3.2.1", "typescript@^4.9.5", "typescript@>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta":
+  "integrity" "sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g=="
+  "resolved" "https://registry.npmjs.org/typescript/-/typescript-4.9.5.tgz"
+  "version" "4.9.5"
 
 "unicode-canonical-property-names-ecmascript@^1.0.4":
   "integrity" "sha512-jDrNnXWHd4oHiTZnx/ZG7gtUTVp+gCcTTKr8L0HjlwphROEW3+Him+IpvC+xcJEFegapiMZyZe02CyuOnRmbnQ=="

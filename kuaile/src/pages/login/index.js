@@ -3,6 +3,9 @@ import { SafeAreaView,View,Text,Image,TextInput,TouchableOpacity,Keyboard,Toucha
 import api from '../../services/api';
 import Svg, { Path } from 'react-native-svg';
 
+import img64 from '../../../assets/dragonmd'
+import axios from 'axios';
+
 export default function Login({navigation}){
 
     const [user, setUser] = useState('')
@@ -39,7 +42,7 @@ export default function Login({navigation}){
 
         setLoad(false)
     };
-
+  
     return(<>
 
         <SafeAreaView style={{flex:0, backgroundColor:'#c00c0c'}} />

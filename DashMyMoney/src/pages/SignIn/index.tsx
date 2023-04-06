@@ -1,7 +1,5 @@
 import React, {useState} from 'react';
 
-import logoImg from '../../assets/logo2.png';
-
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
@@ -9,7 +7,6 @@ import { useAuth } from '../../hooks/auth';
 
 import {
     Container,
-    Logo,
     Form,
     FormTitle,
 } from './styles';
@@ -22,8 +19,6 @@ const SignIn: React.FC = () => {
 
     return (
         <Container>
-            <Logo><img src={logoImg}/></Logo>
-
             <Form onSubmit={() => signIn(email, password)}>
                 <FormTitle>Entrar</FormTitle>
 

@@ -10,15 +10,12 @@ import {
     MdMenu, 
 } from 'react-icons/md';
 
-import logoImg from '../../assets/logo.svg';
-
 import { useAuth } from '../../hooks/auth';
 import { useTheme } from '../../hooks/theme';
 
 import { 
     Container,
     Header,
-    LogImg,
     Title,
     MenuContainer,
     MenuItemLink,
@@ -48,13 +45,11 @@ const Aside: React.FC = () => {
 
     return (
         <Container menuIsOpen={toggleMenuIsOpened}>
+            
             <Header>
                 <ToggleMenu onClick={handleToggleMenu}>
                 { toggleMenuIsOpened ? <MdClose /> : <MdMenu /> }
                 </ToggleMenu>
-
-                <LogImg src={logoImg} alt="Logo Minha Carteira" />
-                <Title>Minha Carteira</Title>
             </Header>
 
             <MenuContainer>

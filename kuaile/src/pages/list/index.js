@@ -33,8 +33,13 @@ import * as FileSystem from 'expo-file-system'
 import * as ImagePicker from 'expo-image-picker';
 
 import ModObs from '../../modal/modObs';
+import ModBack from "../../modal/modBack";
 
 import img64 from '../../../assets/dragonmd'
+
+import Swipeable from 'react-native-gesture-handler/Swipeable'
+
+import { FontAwesome5,Ionicons } from '@expo/vector-icons';
 
 function formatarCPF(cpf) {
     return cpf
@@ -73,14 +78,18 @@ export default function List(props){
     const [listAllAlunos, setListAllAlunos] = useState([]);
     const [listAlunos, setListAlunos] = useState(listAllAlunos);
     const [loadAlunos, setLoadAlunos] = useState(true)
+    const [loadDelete, setLoadDelete] = useState(false)
     const lottieRef = useRef(null)
     const [sound, setSound] = useState();
     const [visibleObs,setVisibleObs] = useState(false);
+    const [visibleBack, setVisibleBack] = useState(false);
     const [currentStudent, setCurrentStudent] = useState('1')
     const [alunoDetail, setAlunoDetail] = useState(null)
     const [ageForm, setAgeForm] = useState('')
     const [incomeForm, setIncomeForm] = useState(0)
     const [image, setImage] = useState(null);
+    const [alunoedit, setAlunoedit] = useState(false)
+    const [idDelete, setIdDelete] = useState('')
     
     const [form, setForm] = useState({
         name: '',
@@ -256,6 +265,7 @@ export default function List(props){
 
 
     const getAlunos = async () => {
+    
         setLoadAlunos(true)
         try{
             const response = await api.get(`/alunos/all`);
@@ -264,7 +274,8 @@ export default function List(props){
 
                 if(response.data.item.length !== 0){    
                     let copyAllList = []
-                    response.data.item.map((element) => {
+                    response.data.item.map( (element) => {
+                       
                         copyAllList.push({
                             id: element._id,
                             name: element.name,
@@ -284,10 +295,12 @@ export default function List(props){
                             guardianNis: element.guardianNis,
                             vaccineCard: element.vaccineCard,
                             income: element.income,
-                            avatar: element.avatar
+                            avatar: ''
                         })
                     })
-            
+                    
+                    copyAllList = await fAuxImage(copyAllList)
+
                     setListAllAlunos(copyAllList)
                     setListAlunos(copyAllList)
                 }else{
@@ -303,6 +316,26 @@ export default function List(props){
         }
 
         setLoadAlunos(false)
+    };
+    
+
+    const deleteAluno = async (id) => {
+        setLoadDelete(true)
+        try{
+            const response = await api.delete(`/alunos/${id}`);
+            
+            if (response.data.deletedCount > 0){
+                await getAlunos()
+            }
+          
+
+        }catch(error){
+            console.log(error)
+        }
+
+        setLoadDelete(false)
+        setVisibleBack(false)
+        setIdDelete('')
     };
 
 
@@ -320,13 +353,13 @@ export default function List(props){
       }, [searchText]);
 
 
-      const handleOrderClick = () => {
-        let newList = [...listAllAlunos];
-    
-        newList.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
-    
-        setListAlunos(newList);
-      };
+    const handleOrderClick = () => {
+    let newList = [...listAllAlunos];
+
+    newList.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+
+    setListAlunos(newList);
+    };
 
 
     const getAlllists = async () => {
@@ -561,16 +594,44 @@ export default function List(props){
         setVisibleObs(true)
     }
 
-    const onClickAlunoDetal = (item) => {
+    const onClickAlunoDetal = (item,edit) => {
 
         setCoreValue(item.core)
         setAlunoDetail(item)
+        setAlunoedit(edit)
+
+        if(edit){
+
+            setIncomeForm(item.income)
+            setCoreValue(item.core)
+            setForm({
+                name: item.name,
+                age: item.age,
+                core: item.core,
+                status: item.status,
+                birth: item.birth,
+                rg: item.rg,
+                cpf: item.cpf,
+                clothing: item.clothing,
+                shoe: item.shoe,
+                school: item.school,
+                schoolName: item.schoolName,
+                guardian: item.guardian,
+                guardianCpf: item.guardianCpf,
+                guardianCel: item.guardianCel,
+                guardianNis: item.guardianNis,
+                vaccineCard: item.vaccineCard,
+                income: item.income
+              });
+        }
+
         setVisibleObs(true)
 
     }
 
     const onClickCloseModal = () => {
         setVisibleObs(false)
+        setAlunoedit(false)
         setCoreValue(null)
         setAlunoDetail(null)
         setCurrentStudent('1')
@@ -581,6 +642,7 @@ export default function List(props){
         setAgeForm('')
         setCpf('')
         setTelefone('')
+        setIdDelete('')
         setIncomeForm(0)
         setImage(null)
         setForm({
@@ -661,8 +723,7 @@ export default function List(props){
 			guardianCel: updateStudent.guardianCel,
 			guardianNis: updateStudent.guardianNis,
 			vaccineCard: updateStudent.vaccineCard,
-			income: updateStudent.income,
-            avatar: updateStudent.avatar
+			income: updateStudent.income
 		}
     
         try{
@@ -671,13 +732,53 @@ export default function List(props){
         } catch(error){
             console.log(error)
         }
+    }
 
+    async function updateStudentForm() {
+
+        if(!!form.income){
+            if(typeof form.income !== 'string'){
+                (form.income).toString()
+            }
+        }else{
+            form.income = '0'
+        }
+
+        const objPost = {
+            name: (form.name.trim()).toUpperCase(),
+            age: form.age,
+            core: coreValue,
+            status: "1",
+            birth: form.birth,
+            rg: form.rg,
+            cpf: ((form.cpf.replace(".","")).replace(".","")).replace("-",""),
+            clothing: form.clothing,
+            shoe: form.shoe,
+            school: form.school,
+            schoolName: form.schoolName.toUpperCase(),
+            guardian: form.guardian.toUpperCase(),
+            guardianCpf: ((form.guardianCpf.replace(".","")).replace(".","")).replace("-",""),
+            guardianCel: ((form.guardianCel.replace("(","")).replace(")","")).replace("-",""),
+            guardianNis: form.guardianNis,
+            vaccineCard: vacinaValue,
+            income: parseFloat(form.income.trim().replace('.','').replace(',','.'))
+        }
+    
+        try{
+            const response = await api.put(`/alunos/${alunoDetail.id}`, objPost);
+            
+            if(response.data.message === 'sucesso'){
+                uploadimage(alunoDetail.id)
+            }
+        
+        } catch(error){
+            console.log(error)
+        }
+    
     }
 
 
     async function createStudent(){
-
-        console.log(form)
 
         if(!coreValue){
             alert('Necessário informar o núcleo')
@@ -705,7 +806,7 @@ export default function List(props){
 
         try{
             const objPost = {
-                name: form.name.toUpperCase(),
+                name: (form.name.trim()).toUpperCase(),
                 age: idade(form).toString(),
                 core: coreValue,
                 status: "1",
@@ -721,8 +822,7 @@ export default function List(props){
                 guardianCel: ((form.guardianCel.replace("(","")).replace(")","")).replace("-",""),
                 guardianNis: form.guardianNis,
                 vaccineCard: vacinaValue,
-                income: parseFloat(form.income.trim().replace('.','').replace(',','.')),
-                avatar: !image ? '' : image
+                income: parseFloat(form.income.trim().replace('.','').replace(',','.'))
             }
 
             const response = await api.post("/alunos", objPost);
@@ -730,6 +830,7 @@ export default function List(props){
             if (response.data.message === 'sucesso') {
                 onClickCloseModal()
                 getAlunos()
+                uploadimage(form.id)
                 
             } else {
                 alert('erro ao criar cadastro, contate o administrador')
@@ -773,6 +874,48 @@ export default function List(props){
           setImage('data:image/jpg;base64,'+result.assets[0].base64);
         }
       };
+
+
+
+    const uploadimage = async (id) => {
+        try{
+            const response = await api.post("/uploadimage", {
+                name: id,
+                ext: "jpg",
+                image: image
+            });
+
+        } catch(error){
+            console.log(error)
+        }
+    }
+
+    const fAuxImage = (copyList) => {
+
+        copyList.forEach(async(element,index) => {
+            copyList[index].avatar = await getimage(element.id)
+        });
+        
+        return copyList
+
+    }
+
+    const getimage = async (id) => {
+        let retorno = ''
+    
+        try{
+            const response = await api.post("/getimage", {
+                filename: id+'.jpg',
+            });
+
+            retorno = 'data:image/jpg;base64,'+response.data
+
+        } catch(error){
+        }
+
+        return retorno
+    }
+
 
     return(
         <>
@@ -1030,38 +1173,71 @@ export default function List(props){
                     :
                     <FlatList
                         data={listAlunos}
-                        renderItem={({item})=> 
-                            <TouchableOpacity 
-                                onPress={() => {onClickAlunoDetal(item)}}
-                                style={{
-                                    backgroundColor:'#fff',
-                                    height:80,
-                                    marginVertical:7,
-                                    marginTop:25,
-                                    justifyContent:'space-between',
-                                    marginHorizontal:20,
-                                    borderRadius:22,
-                                    padding:10,
-                                    paddingHorizontal:20,
-                                    shadowColor: "#000",
-                                    shadowOffset: {width: 0,height: 3},
-                                    shadowOpacity: 0.12,
-                                    shadowRadius: 1.84,
-                                    elevation: 5,
-                                }}
-                            > 
-                                <View>
-                                    <Text style={{fontWeight:'600'}}>{item.name}</Text>
-                                    <Text style={{fontWeight:'500', color:'#c00c0c'}}>{item.age} anos</Text>
-                                </View>
+                        style={{marginTop:20}}
+                        renderItem={({item})=>
+                            <Swipeable
+                                renderLeftActions={() => {
+                                    return(
+                                        <View style={{justifyContent:'space-around', flexDirection:'row'}}>
+                                            <TouchableOpacity
+                                                onPress={() => {onClickAlunoDetal(item,true)}}
+                                                style={{
+                                                    alignItems:'center',
+                                                    justifyContent:'center',
+                                                    marginHorizontal:15,
+                                                    height:80,
+                                                    marginTop:25
+                                                }}
+                                            >
+                                                <FontAwesome5 name="edit" size={24} color="#ffc800" />
+                                                <Text style={{fontSize:12}}>Editar</Text>
+                                            </TouchableOpacity>
+                                            
+                                            <TouchableOpacity onPress={()=>{setIdDelete(item.id),setVisibleBack(true)}} style={{
+                                                alignItems:'center',
+                                                justifyContent:'center',
+                                                height:80,
+                                                marginTop:25
+                                            }}>
+                                                <FontAwesome5 name="trash-alt" size={24} color="tomato" />
+                                                <Text style={{fontSize:12}}>Excluir</Text>
+                                            </TouchableOpacity> 
+                                        </View>
+                                    )}
+                                }
+                            >
+                                <TouchableOpacity 
+                                    onPress={() => {onClickAlunoDetal(item,false)}}
+                                    style={{
+                                        backgroundColor:'#fff',
+                                        height:80,
+                                        marginVertical:7,
+                                        marginTop:10,
+                                        justifyContent:'space-between',
+                                        marginHorizontal:20,
+                                        borderRadius:22,
+                                        padding:10,
+                                        paddingHorizontal:20,
+                                        shadowColor: "#000",
+                                        shadowOffset: {width: 0,height: 3},
+                                        shadowOpacity: 0.12,
+                                        shadowRadius: 1.84,
+                                        elevation: 5,
+                                    }}
+                                > 
+                                    <View>
+                                        <Text style={{fontWeight:'600'}}>{item.name}</Text>
+                                        <Text style={{fontWeight:'500', color:'#c00c0c'}}>{item.age} anos</Text>
+                                    </View>
 
-                                <View style={{flexDirection:'row'}}>
-                                    <Text style={{fontWeight:'500', color:'#c00c0c', opacity:0.6}}>Núcleo: </Text>
-                                    <Text style={{fontWeight:'500', opacity:0.6}}>{core[parseInt(item.core)]}</Text>
-                                </View>
-                                
+                                    <View style={{flexDirection:'row'}}>
+                                        <Text style={{fontWeight:'500', color:'#c00c0c', opacity:0.6}}>Núcleo: </Text>
+                                        <Text style={{fontWeight:'500', opacity:0.6}}>{core[parseInt(item.core)]}</Text>
+                                    </View>
+                                    
 
-                            </TouchableOpacity>
+                                </TouchableOpacity>
+                            </Swipeable>
                         }
 
                         keyExtractor={(item) => item.id}
@@ -1315,7 +1491,7 @@ export default function List(props){
                 { current === 'students' &&
                     <KeyboardAvoidingView
                         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                        keyboardVerticalOffset={Platform.OS === 'ios' ? 180 : 350 }
+                        keyboardVerticalOffset={Platform.OS === 'ios' ? 180 : 250 }
                         style={{
                             flex:1,
                             backgroundColor:'#F8FAFC',
@@ -1324,7 +1500,7 @@ export default function List(props){
                     >
                         <ScrollView>
                             <View style={{width:'100%',flexDirection:'row',justifyContent:'space-between'}}>
-                                { !alunoDetail ?                         
+                                { !alunoDetail || alunoedit ?                         
 
                                     image ?
                                         <TouchableOpacity onPress={pickImage} >
@@ -1399,9 +1575,9 @@ export default function List(props){
 
                                     <View>
                                         <Text>Nome:</Text>
-                                        { !!alunoDetail
-                                            ? <Text style={{fontWeight:'bold',fontSize:14}}>{alunoDetail.name}</Text>
-                                            : <TextInput style={{fontWeight:'bold',fontSize:14}} autoCorrect={false} onChangeText={(value) => handleForm('name', value)} value={form.name}/>
+                                        { !alunoDetail
+                                            ? <TextInput style={{fontWeight:'bold',fontSize:14}} autoCorrect={false} onChangeText={(value) => handleForm('name', value)} value={form.name}/>
+                                            : <Text style={{fontWeight:'bold',fontSize:14}}>{alunoDetail.name}</Text>
                                         }
                                     </View>
 
@@ -1418,15 +1594,15 @@ export default function List(props){
                                         <View>
                                             <Text>Nascimento:</Text>
                                             
-                                            { !!alunoDetail
-                                                ?   <Text style={{fontWeight:'bold',fontSize:14,textAlign:'center'}}>{alunoDetail.birth.substring(6,8)+'/'+alunoDetail.birth.substring(4,6)+'/'+alunoDetail.birth.substring(0,4)}</Text>
-                                                : <TextInput
-                                                    value={form.birth}
-                                                    onChangeText={handleChangeDate}
-                                                    placeholder={'DD/MM/YYYY'}
-                                                    keyboardType={'numeric'}
-                                                    maxLength={10}
-                                                />
+                                            { !alunoDetail
+                                                ?   <TextInput
+                                                        value={form.birth}
+                                                        onChangeText={handleChangeDate}
+                                                        placeholder={'DD/MM/YYYY'}
+                                                        keyboardType={'numeric'}
+                                                        maxLength={10}
+                                                    />
+                                                : <Text style={{fontWeight:'bold',fontSize:14,textAlign:'center'}}>{alunoDetail.birth.substring(6,8)+'/'+alunoDetail.birth.substring(4,6)+'/'+alunoDetail.birth.substring(0,4)}</Text>
                                             }
                                         </View>
                                     </View>
@@ -1473,21 +1649,17 @@ export default function List(props){
                                     <View style={{width:'60%'}}>
                                         <Text style={{fontSize:12}}>RG:</Text>
                                         
-                                        { !!alunoDetail
-                                            ? <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.rg}</Text>
-                                            : <TextInput autoCorrect={false} onChangeText={(value) => handleForm('rg', value)} value={form.rg} keyboardType="numeric"/>
+                                        { !alunoDetail || alunoedit
+                                            ? <TextInput autoCorrect={false} onChangeText={(value) => handleForm('rg', value)} value={form.rg} keyboardType="numeric"/>
+                                            : <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.rg}</Text>
                                         }
                                     </View>
 
                                     <View style={{width:'50%'}}>
                                         <Text style={{fontSize:12}}>CPF:</Text>
                                         
-                                        { !!alunoDetail
-                                            ?   
-                                                <Text style={{fontSize:16, fontWeight:'bold'}}>{formatarCPF(alunoDetail.cpf)}</Text>
-
-                                            :   
-                                                <TextInput
+                                        { !alunoDetail || alunoedit
+                                            ?   <TextInput
                                                     {...props}
                                                     keyboardType="numeric"
                                                     maxLength={14}
@@ -1495,6 +1667,8 @@ export default function List(props){
                                                     ref={inputRef}
                                                     value={form.cpf}
                                                 />
+                                            :   <Text style={{fontSize:16, fontWeight:'bold'}}>{formatarCPF(alunoDetail.cpf)}</Text>
+
                                         }
                                     </View>
                                 </View>
@@ -1508,18 +1682,18 @@ export default function List(props){
                                     <View style={{width:'60%'}}>
                                         <Text style={{fontSize:12}}>Tam. Roupa:</Text>
                                         
-                                        { !!alunoDetail
-                                            ? <Text style={{fontWeight:'bold',fontSize:16,left:20}}>{alunoDetail.clothing}</Text>
-                                            : <TextInput autoCorrect={false} onChangeText={(value) => handleForm('clothing', parseInt(value))} keyboardType='numeric' maxLength={2} value={form.clothing.toString()}/>
+                                        { !alunoDetail || alunoedit
+                                            ? <TextInput autoCorrect={false} onChangeText={(value) => handleForm('clothing', parseInt(value))} keyboardType='numeric' maxLength={2} value={form.clothing.toString()}/>
+                                            : <Text style={{fontWeight:'bold',fontSize:16,left:20}}>{alunoDetail.clothing}</Text>
                                         }
                                     </View>
 
                                     <View style={{width:'50%'}}>
                                         <Text style={{fontSize:12}}>Tam. Sapato:</Text>
                                         
-                                        { !!alunoDetail
-                                            ? <Text style={{fontWeight:'bold',fontSize:16,left:20}}>{alunoDetail.shoe}</Text>
-                                            : <TextInput autoCorrect={false} onChangeText={(value) => handleForm('shoe', parseInt(value))} keyboardType='numeric' maxLength={2} value={form.shoe.toString()}/>
+                                        { !alunoDetail || alunoedit
+                                            ? <TextInput autoCorrect={false} onChangeText={(value) => handleForm('shoe', parseInt(value))} keyboardType='numeric' maxLength={2} value={form.shoe.toString()}/>
+                                            : <Text style={{fontWeight:'bold',fontSize:16,left:20}}>{alunoDetail.shoe}</Text>
                                         }
                                     </View>
                                 </View>
@@ -1531,9 +1705,9 @@ export default function List(props){
                                     <View>
                                         <Text style={{fontSize:12}}>Escola:</Text>
                                         
-                                        { !!alunoDetail
-                                            ? <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.schoolName}</Text>
-                                            : <TextInput autoCorrect={false} onChangeText={(value) => handleForm('schoolName', value)} value={form.schoolName}/>
+                                        { !alunoDetail || alunoedit
+                                            ? <TextInput autoCorrect={false} onChangeText={(value) => handleForm('schoolName', value)} value={form.schoolName}/>
+                                            : <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.schoolName}</Text>
                                         }
                                     </View>
                                 </View>
@@ -1547,9 +1721,9 @@ export default function List(props){
                                     <View>
                                         <Text style={{fontSize:12}}>Ano escolar:</Text>
                                         
-                                        { !!alunoDetail
-                                            ? <Text style={{fontWeight:'bold',fontSize:16,textAlign:'center'}}>{alunoDetail.school}</Text>
-                                            : <TextInput autoCorrect={false} onChangeText={(value) => handleForm('school', value)} value={form.school}/>
+                                        { !alunoDetail || alunoedit
+                                            ? <TextInput autoCorrect={false} onChangeText={(value) => handleForm('school', value)} value={form.school}/>
+                                            : <Text style={{fontWeight:'bold',fontSize:16,textAlign:'center'}}>{alunoDetail.school}</Text>
                                         }
                                     </View>
 
@@ -1601,28 +1775,25 @@ export default function List(props){
                                     <View style={{width:'60%'}}>
                                         <Text style={{fontSize:12}}>CPF:</Text>
                                         
-                                        { !!alunoDetail
-                                            ?   
-                                                <Text style={{fontSize:16, fontWeight:'bold'}}>{formatarCPF(alunoDetail.guardianCpf)}</Text>
-                                            :  
-                                                <TextInput
+                                        { !alunoDetail || alunoedit
+                                            ?  <TextInput
                                                     {...props}
                                                     keyboardType="numeric"
                                                     maxLength={14}
                                                     onChangeText={(value) => {handleChangeCPF(value,'guardian')}}
                                                     ref={inputRef}
                                                     value={form.guardianCpf}
-                                                />
-                                                
+                                                /> 
+                                            :  <Text style={{fontSize:16, fontWeight:'bold'}}>{formatarCPF(alunoDetail.guardianCpf)}</Text>
                                         }
                                     </View>
 
                                     <View style={{width:'50%'}}>
                                         <Text style={{fontSize:12}}>NIS:</Text>
                                         
-                                        { !!alunoDetail
-                                            ? <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.guardianNis}</Text>
-                                            : <TextInput onChangeText={(value) => handleForm('guardianNis', value)} keyboardType="numeric" value={form.guardianNis}/>
+                                        { !alunoDetail || alunoedit
+                                            ? <TextInput onChangeText={(value) => handleForm('guardianNis', value)} keyboardType="numeric" value={form.guardianNis}/>
+                                            : <Text style={{fontWeight:'bold',fontSize:16}}>{alunoDetail.guardianNis}</Text>
                                         }
                                     </View>
                                 </View>
@@ -1635,10 +1806,8 @@ export default function List(props){
                                     <View style={{width:'60%'}}>
                                         <Text style={{fontSize:12}}>Celular:</Text>
                                         
-                                        { !!alunoDetail
-                                            ?   <Text style={{fontSize:16, fontWeight:'bold'}}>{formatarTelefone(alunoDetail.guardianCel)}</Text>
-                                            :   
-                                                <TextInput
+                                        { !alunoDetail || alunoedit
+                                            ?   <TextInput
                                                     {...props}
                                                     keyboardType="phone-pad"
                                                     maxLength={15}
@@ -1646,15 +1815,15 @@ export default function List(props){
                                                     ref={inputRefTel}
                                                     value={form.guardianCel}
                                                 />
+                                            :   <Text style={{fontSize:16, fontWeight:'bold'}}>{formatarTelefone(alunoDetail.guardianCel)}</Text>
                                         }
                                     </View>
 
                                     <View style={{width:'50%'}}>
                                         <Text style={{fontSize:12}}>Renda Familiar:</Text>
     
-                                        { !!alunoDetail
-                                            ?   <Text style={{fontWeight:'bold',fontSize:16}}>R$ {parseFloat(alunoDetail.income)}</Text>
-                                            :   <CurrencyInput
+                                        { !alunoDetail || alunoedit
+                                            ?   <CurrencyInput
                                                     value={incomeForm}
                                                     onChangeText={(value) => handleForm('income', value)}
                                                     onChangeValue={setIncomeForm}
@@ -1663,6 +1832,7 @@ export default function List(props){
                                                     separator=","
                                                     precision={2}
                                                 />
+                                            :   <Text style={{fontWeight:'bold',fontSize:16}}>R$ {parseFloat(alunoDetail.income)}</Text>
                                         }
                                     </View>
                                 </View>
@@ -1671,7 +1841,7 @@ export default function List(props){
                             }
 
 
-                            { !alunoDetail && currentStudent === '1' &&
+                            { !alunoDetail && !alunoedit && currentStudent === '1' &&
                                 <TouchableOpacity
                                     onPress={()=>{ currentStudent === '1' && createStudent() }}
                                     style={{
@@ -1696,7 +1866,32 @@ export default function List(props){
                                 </TouchableOpacity>
                             }
 
-                            { alunoDetail && currentStudent === '1' &&
+                            { alunoDetail && alunoedit && currentStudent === '1' &&
+                                <TouchableOpacity
+                                    onPress={()=>{ updateStudentForm(form),getAlunos(),onClickCloseModal() }}
+                                    style={{
+                                        backgroundColor:'#c00c0c',
+                                        alignItems:'center',
+                                        opacity:0.85,
+                                        justifyContent:'center',
+                                        marginTop:30,
+                                        marginBottom:30,
+                                        height:55,
+                                        marginHorizontal:'25%',
+                                        borderRadius:40,
+                                        shadowColor: "#000",
+                                        shadowOffset: {width: 0,height: 2},
+                                        shadowOpacity: 0.25,
+                                        shadowRadius: 3.84,
+                                        elevation: 5,
+                                    }}
+                                >
+                                    <Text style={{fontSize:22,fontWeight:'600',color:'white'}}>Atualizar</Text>
+                       
+                                </TouchableOpacity>
+                            }
+
+                            { alunoDetail && !alunoedit && currentStudent === '1' &&
                                 <TouchableOpacity
                                     onPress={()=>{ currentStudent === '1' && shareStudent() }}
                                     style={{
@@ -1728,6 +1923,58 @@ export default function List(props){
                 
              </View>
         </ModObs>
+
+        <ModBack visibleBack={visibleBack}>
+                <View style={{alignItems: 'center', marginBottom:26}}>
+                    <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
+                        <Text style={{ fontSize: 26,color:'#F4C619'}}>Atenção</Text>
+
+                        <TouchableOpacity onPress={() => {setVisibleBack(false)}}>
+                            <Ionicons name="close" size={40} color="black" />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                
+                <Text style={{ fontSize: 18,color:'#000'}}>Confirma a exclusão do aluno?</Text>
+
+                <View style={{flexDirection:'row', justifyContent:'flex-end',marginTop:60}}>
+                    <TouchableOpacity 
+                        style={{
+                            borderColor:'#c00c0c',
+                            borderWidth:2,
+                            borderRadius:5,
+                            height:35,
+                            width:'30%',
+                            justifyContent:'center',
+                            alignItems:'center'
+                        }}
+                        onPress={() => {deleteAluno(idDelete)}}
+                    >
+                        <Text style={{fontWeight:'bold'}}>Sim</Text>
+                    </TouchableOpacity>
+
+                    <View style={{
+                            backgroundColor:'#c00c0c',
+                            marginLeft:10,
+                            borderColor:'#c00c0c',
+                            borderWidth:2,
+                            borderRadius:5,
+                            height:35,
+                            width:'30%',
+                            justifyContent:'center',
+                            alignItems:'center'
+                        }}>
+                    { loadDelete 
+                        ? 
+                        <ActivityIndicator color={'#fff'} size={50}/>
+                        :
+                        <TouchableOpacity onPress={() => {setVisibleBack(false)}}>
+                            <Text style={{color:'white', fontWeight:'bold'}}>Não</Text>
+                        </TouchableOpacity>
+                    }
+                    </View>
+                </View>
+            </ModBack>
         </>
     )
 

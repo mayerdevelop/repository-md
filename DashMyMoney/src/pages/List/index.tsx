@@ -5,16 +5,18 @@ import ContentHeader from '../../components/ContentHeader';
 import SelectInput from '../../components/SelectInput';
 import HistoryFinanceCard from '../../components/HistoryFinanceCard';
 
-import gains from '../../repositories/gains';
 import expenses from '../../repositories/expenses';
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
 import listOfMonths from '../../utils/months';
 
+import GetGains from '../../repositories/gains';
+
 import { 
     Container, 
     Content, 
-    Filters 
+    Filters,
+    Create
 } from './styles';
 
 interface IRouteParams {
@@ -42,29 +44,14 @@ const List: React.FC<IRouteParams> = ({ match }) => {
     
     const movimentType = match.params.type;
 
+    const [pageData, setPageData] = useState({title: '',lineColor: '', data: []}|| {})
+    const [years,setYears] = useState([])
 
-    const pageData = useMemo(() => {
-        return movimentType === 'entry-balance' ?
-            {
-                title: 'Entradas',
-                lineColor: '#4E41F0',
-                data: gains
-            }
-            :       
-            {
-                title: 'Saídas',
-                lineColor: '#E44C4E',
-                data: expenses
-            }       
-    },[movimentType]);
-     
-
-    const years = useMemo(() => {
+    function getYear(data: any){
+    
         let uniqueYears: number[] = [];
-
-        const { data } = pageData;
-
-        data.forEach(item => {
+            
+        data.forEach((item: { date: string | number | Date; }) => {
             const date = new Date(item.date);
             const year = date.getFullYear();
 
@@ -79,8 +66,7 @@ const List: React.FC<IRouteParams> = ({ match }) => {
                 label: year,
             }
         });
-    },[pageData]);
-
+    }
 
     const months = useMemo(() => {
         return listOfMonths.map((month, index) => {
@@ -125,29 +111,54 @@ const List: React.FC<IRouteParams> = ({ match }) => {
 
 
     useEffect(() => {        
-        const { data } = pageData;
+        async function formatData(){
 
-        const filteredData = data.filter(item => {
-            const date = new Date(item.date);
-            const month = date.getMonth() + 1;
-            const year = date.getFullYear();
+            let auxPageData: any
 
-            return month === monthSelected && year === yearSelected && frequencyFilterSelected.includes(item.frequency);
-        });
-
-        const formattedData = filteredData.map(item => {
-            return {
-                id: uuid(),
-                description: item.description,
-                amountFormatted: formatCurrency(Number(item.amount)),
-                frequency: item.frequency,
-                dateFormatted: formatDate(item.date),
-                tagColor: item.frequency === 'recorrente' ? '#4E41F0' : '#E44C4E',
+            if(movimentType === 'entry-balance'){
+                auxPageData = {
+                    title: 'Entradas',
+                    lineColor: '#4E41F0',
+                    data: await GetGains()
+                }
+    
+            }else { 
+                auxPageData = {
+                    title: 'Saídas',
+                    lineColor: '#E44C4E',
+                    data: expenses
+                }
             }
-        });
-        
-        setData(formattedData);
-    },[pageData, monthSelected, yearSelected, data.length, frequencyFilterSelected]); 
+            
+            setPageData(auxPageData)
+            const {data} = auxPageData
+
+            let yearAux: any = getYear(data)
+            setYears(yearAux)
+            
+            const filteredData = data.filter((item: { date: string | number | Date; frequency: string; }) => {
+                const date = new Date(item.date);
+                const month = date.getMonth() + 1;
+                const year = date.getFullYear();
+    
+                return month === monthSelected && year === yearSelected && frequencyFilterSelected.includes(item.frequency);
+            });
+    
+            const formattedData = filteredData.map((item: { description: any; amount: any; frequency: string; date: string; }) => {
+                return {
+                    id: uuid(),
+                    description: item.description,
+                    amountFormatted: formatCurrency(Number(item.amount)),
+                    frequency: item.frequency,
+                    dateFormatted: formatDate(item.date),
+                    tagColor: item.frequency === 'recorrente' ? '#4E41F0' : '#E44C4E',
+                }
+            });        
+            setData(formattedData);
+        }
+    
+        formatData()
+    },[movimentType, monthSelected, yearSelected, data.length, frequencyFilterSelected]); 
 
 
     return (
@@ -165,32 +176,44 @@ const List: React.FC<IRouteParams> = ({ match }) => {
                 />
             </ContentHeader>
 
-            <Filters>
-                <button 
-                    type="button"
-                    className={`
-                    tag-filter 
-                    tag-filter-recurrent
-                    ${frequencyFilterSelected.includes('recorrente') && 'tag-actived'}`}
-                    onClick={() => handleFrequencyClick('recorrente')}
-                >
-                    Recorrentes
-                </button>
+            <div style={{justifyContent:'space-between', flexDirection:'row', display:'flex'}}>
+                <Filters>
+                    <button 
+                        type="button"
+                        className={`
+                        tag-filter 
+                        tag-filter-recurrent
+                        ${frequencyFilterSelected.includes('recorrente') && 'tag-actived'}`}
+                        onClick={() => handleFrequencyClick('recorrente')}
+                    >
+                        Recorrentes
+                    </button>
 
-                <button 
-                    type="button"
-                    className={`
-                    tag-filter 
-                    tag-filter-eventual
-                    ${frequencyFilterSelected.includes('eventual') && 'tag-actived'}`}
-                    onClick={() => handleFrequencyClick('eventual')}
-                >
-                    Eventuais
-                </button>
-            </Filters>
+                    <button 
+                        type="button"
+                        className={`
+                        tag-filter 
+                        tag-filter-eventual
+                        ${frequencyFilterSelected.includes('eventual') && 'tag-actived'}`}
+                        onClick={() => handleFrequencyClick('eventual')}
+                    >
+                        Eventuais
+                    </button>
+                </Filters>
+
+                <Create>
+                    <button 
+                        type="button"
+                        className={`tag-filter`}
+                        onClick={() => /*handleFrequencyClick('eventual')*/ alert('clicou')}
+                    >
+                        {`Nova ${pageData.title === 'Entradas' ? 'entrada' : 'saída'}`}
+                    </button>
+                </Create>
+            </div>
 
             <Content>
-                {
+                {  
                     data.map(item => (
                         <HistoryFinanceCard 
                             key={item.id}

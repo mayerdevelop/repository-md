@@ -16,6 +16,8 @@
     "@syncfusion/ej2-react-schedule": "^19.4.50",
     "axios": "^0.27.2",
     "bootstrap": "^5.2.0",
+    "concurrently": "^7.6.0",
+    "electron": "^23.1.2",
     "react": "^17.0.2",
     "react-bootstrap": "^2.5.0",
     "react-dom": "^17.0.2",
@@ -23,13 +25,15 @@
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.0",
     "react.build": "^1.0.5",
-    "styled-components": "^5.3.5"
+    "styled-components": "^5.3.5",
+    "wait-on": "^7.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron-dev": "concurrently \"BROWSER=node yarn start\" \"wait-on http://localhost:3000 && electron .\" "
   },
   "eslintConfig": {
     "extends": [
