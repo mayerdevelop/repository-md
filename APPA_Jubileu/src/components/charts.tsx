@@ -18,7 +18,7 @@ import {
 
 import { graphics } from '../utils/data';
 
-export default function charts({navigation}){
+export default function charts(){
 
     const { width: windowWidth, height: windowHeight } = useWindowDimensions();
     const scrollXGraphics = useRef(new Animated.Value(0)).current;
@@ -54,7 +54,7 @@ export default function charts({navigation}){
                     </Style.MainIndicatorGraphics>
                 </Style.HeaderGraphics>
             
-                <Style.GraphicSections>
+                <Style.GraphicSections style={Style.styleSheet.shadow}>
                     <ScrollView
                         horizontal={true}
                         pagingEnabled
@@ -76,7 +76,6 @@ export default function charts({navigation}){
                                             <VictoryLine
                                                 style={item.style}
                                                 interpolation="natural"
-                                                animate={item.animated}
                                                 data={item.data}
                                             />
                                         </VictoryChart>
@@ -88,7 +87,6 @@ export default function charts({navigation}){
                                             data={item.data}
                                             padAngle={3}
                                             innerRadius={100}
-                                            animated={item.animated}
                                         />
                                     )}
                                 </View>

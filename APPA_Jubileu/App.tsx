@@ -1,10 +1,11 @@
 import React,{useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import Routes from './src/Routes/routes';
+import Routes from './src/routes/routes';
 import { LogBox,StatusBar,BackHandler,Platform } from 'react-native';
-import CartProvider from './src/Contexts/cart';
 import * as Updates from "expo-updates";
 
+import 'react-native-reanimated'
+import 'react-native-gesture-handler'
 
 if(Platform.OS === 'android') {
   require('intl');
@@ -12,6 +13,7 @@ if(Platform.OS === 'android') {
 }
 
 LogBox.ignoreAllLogs();//Ignore all log notifications
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -32,10 +34,8 @@ const App: React.FC = () => {
 
   return (
     <NavigationContainer>
-      <StatusBar hidden={true} />
-      <CartProvider>
+      <StatusBar translucent backgroundColor={'#3C5CAE'} />
         <Routes/>
-      </CartProvider>
     </NavigationContainer>
   );
 };

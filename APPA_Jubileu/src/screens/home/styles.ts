@@ -1,5 +1,4 @@
-import styled from 'styled-components'
-import {Animated} from 'react-native'
+import styled from 'styled-components/native'
 
 export const SafeContainer = styled.SafeAreaView`
     flex:1;
@@ -9,17 +8,17 @@ export const SafeContainer = styled.SafeAreaView`
 
 export const HeaderComponent = styled.View`
     background-color:#426AD0;
-    min-height:120px;
+    height:16%;
     border-bottom-left-radius:50px;
     border-bottom-right-radius:50px;
-    padding:20px;
+    padding:25px;
     justify-content:space-between;
-    align-items:center;
+    align-items:flex-end;
     flex-direction:row;
     width:100%;
 `
 
-export const TextName = styled.Text`
+export const TextName = styled.Text<{size: number}>`
     color:#fff;
     ${({ size }) => `font-size:${size}px`};
     font-weight: ${props => props.size === 24 ? 500 : 200};
@@ -39,18 +38,12 @@ export const TextProfileButton = styled.Text`
     font-size:16px;
 `
 
-export const FooterComponent = styled.View`
-    bottom:40px;
-    position: absolute;
-    background-color:#426AD0;
-    width:80%;
-    height:45px;
-    border-radius:20px;
-    justify-content:space-around;
-    align-items:center;
-    flex-direction:row;
-`
-
 export const ScrollMainContainer = styled.ScrollView`
     max-height:70%;
+`
+
+export const TextOffLine = styled.Text`
+    color:tomato;
+    font-weight:600;
+    margin-top:5px;
 `
